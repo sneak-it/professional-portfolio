@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import sizeOf from 'image-size';
+import { safeSlug } from './slug';
 
 export interface GalleryImage {
   id: string;
@@ -34,7 +35,9 @@ export function getGallerySlugs() {
 }
 
 export function getGalleryBySlug(slug: string): Gallery | null {
-  const realSlug = slug.replace(/\.mdx$/, '');
+  const realSlug = safeSlug(slug);
+  if (realSlug === null) return null;
+
   const fullPath = path.join(galleriesDirectory, `${realSlug}.mdx`);
 
   if (!fs.existsSync(fullPath)) return null;
