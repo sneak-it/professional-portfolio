@@ -17,7 +17,7 @@ export default function DynamicBackground() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [particles, setParticles] = useState<Particle[]>([]);
-  
+
   const springConfig = { damping: 25, stiffness: 150 };
   const smoothMouseX = useSpring(mouseX, springConfig);
   const smoothMouseY = useSpring(mouseY, springConfig);
@@ -56,35 +56,44 @@ export default function DynamicBackground() {
 
       {/* Animated Aurora Orbs */}
       <div className="absolute inset-0 opacity-60 dark:opacity-40 mix-blend-multiply dark:mix-blend-screen filter blur-[80px] md:blur-[120px]">
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 90, 0],
           }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          style={{ x: useTransform(smoothMouseX, v => v * 2), y: useTransform(smoothMouseY, v => v * 2) }}
-          className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" 
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          style={{
+            x: useTransform(smoothMouseX, (v) => v * 2),
+            y: useTransform(smoothMouseY, (v) => v * 2),
+          }}
+          className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
         />
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.5, 1],
             rotate: [0, -90, 0],
           }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          style={{ x: useTransform(smoothMouseX, v => v * -1.5), y: useTransform(smoothMouseY, v => v * -1.5) }}
-          className="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" 
+          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+          style={{
+            x: useTransform(smoothMouseX, (v) => v * -1.5),
+            y: useTransform(smoothMouseY, (v) => v * -1.5),
+          }}
+          className="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-gradient-to-r from-cyan-500 to-blue-500"
         />
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.3, 1],
             rotate: [0, 180, 0],
           }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          style={{ x: useTransform(smoothMouseX, v => v * 0.5), y: useTransform(smoothMouseY, v => v * -2) }}
-          className="absolute bottom-[-20%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-r from-orange-500 to-pink-500" 
+          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+          style={{
+            x: useTransform(smoothMouseX, (v) => v * 0.5),
+            y: useTransform(smoothMouseY, (v) => v * -2),
+          }}
+          className="absolute bottom-[-20%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-r from-orange-500 to-pink-500"
         />
       </div>
-      
+
       {/* Particles */}
       <div className="absolute inset-0 z-10 opacity-80 dark:opacity-60">
         {particles.map((p) => (
@@ -107,7 +116,7 @@ export default function DynamicBackground() {
               duration: p.duration,
               repeat: Infinity,
               delay: p.delay,
-              ease: "linear"
+              ease: 'linear',
             }}
           />
         ))}

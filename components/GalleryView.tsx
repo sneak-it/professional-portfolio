@@ -14,19 +14,22 @@ export default function GalleryView({ gallery }: { gallery: Gallery }) {
   return (
     <PageTransition>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-        <Link href="/gallery" className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-500 transition-colors mb-8">
+        <Link
+          href="/gallery"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-500 transition-colors mb-8"
+        >
           <ArrowLeft size={16} /> Back to Galleries
         </Link>
 
         <div className="mb-16">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-4"
           >
             {gallery.title}
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -70,7 +73,7 @@ export default function GalleryView({ gallery }: { gallery: Gallery }) {
               className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
               onClick={() => setSelectedImage(null)}
             >
-              <button 
+              <button
                 className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors z-50"
                 onClick={() => setSelectedImage(null)}
               >
@@ -80,7 +83,7 @@ export default function GalleryView({ gallery }: { gallery: Gallery }) {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                 className="relative max-w-5xl max-h-[90vh] w-full h-full"
                 onClick={(e) => e.stopPropagation()}
               >

@@ -14,15 +14,20 @@ export default function Contact() {
           transition={{ duration: 0.6 }}
         >
           <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
-            Let&apos;s create something <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">amazing</span> together.
+            Let&apos;s create something{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+              amazing
+            </span>{' '}
+            together.
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
-            I&apos;m currently available for freelance work and open to new opportunities. 
-            Whether you have a project in mind or just want to say hi, feel free to reach out!
+            I&apos;m currently available for freelance work and open to new
+            opportunities. Whether you have a project in mind or just want to
+            say hi, feel free to reach out!
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -32,12 +37,15 @@ export default function Contact() {
                 <Mail size={32} />
               </div>
               <h3 className="text-xl font-bold mb-2">Email</h3>
-              <a href="mailto:hello@example.com" className="text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-colors">
+              <a
+                href="mailto:hello@example.com"
+                className="text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-colors"
+              >
                 hello@example.com
               </a>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -48,12 +56,13 @@ export default function Contact() {
               </div>
               <h3 className="text-xl font-bold mb-2">Location</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                San Francisco, CA<br />
+                San Francisco, CA
+                <br />
                 Available Worldwide
               </p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -63,7 +72,10 @@ export default function Contact() {
                 <Phone size={32} />
               </div>
               <h3 className="text-xl font-bold mb-2">Phone</h3>
-              <a href="tel:+1234567890" className="text-gray-600 dark:text-gray-400 hover:text-pink-500 transition-colors">
+              <a
+                href="tel:+1234567890"
+                className="text-gray-600 dark:text-gray-400 hover:text-pink-500 transition-colors"
+              >
                 +1 (234) 567-890
               </a>
             </motion.div>

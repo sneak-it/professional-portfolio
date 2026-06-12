@@ -14,21 +14,39 @@ export default function Footer() {
               Building digital experiences with passion.
             </p>
           </div>
-          
+
           <div className="flex space-x-6">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
               <span className="sr-only">GitHub</span>
               <GitFork size={20} />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
               <span className="sr-only">LinkedIn</span>
               <LinkIcon size={20} />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
               <span className="sr-only">X (Twitter)</span>
               <X size={20} />
             </a>
-            <a href="mailto:hello@example.com" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <a
+              href="mailto:hello@example.com"
+              className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
               <span className="sr-only">Email</span>
               <Mail size={20} />
             </a>

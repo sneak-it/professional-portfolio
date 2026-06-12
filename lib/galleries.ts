@@ -28,13 +28,15 @@ export function getGallerySlugs() {
   if (!fs.existsSync(galleriesDirectory)) {
     return [];
   }
-  return fs.readdirSync(galleriesDirectory).filter(file => file.endsWith('.mdx'));
+  return fs
+    .readdirSync(galleriesDirectory)
+    .filter((file) => file.endsWith('.mdx'));
 }
 
 export function getGalleryBySlug(slug: string): Gallery | null {
   const realSlug = slug.replace(/\.mdx$/, '');
   const fullPath = path.join(galleriesDirectory, `${realSlug}.mdx`);
-  
+
   if (!fs.existsSync(fullPath)) return null;
 
   const fileContents = fs.readFileSync(fullPath, 'utf8');
@@ -55,7 +57,7 @@ export function getGalleryBySlug(slug: string): Gallery | null {
           images.push({
             id: file,
             src: `/galleries/${realSlug}/${file}`,
-            alt: file.replace(/\.[^/.]+$/, ""), // Remove extension for alt text
+            alt: file.replace(/\.[^/.]+$/, ''), // Remove extension for alt text
             width: dimensions.width || 800,
             height: dimensions.height || 600,
           });
@@ -69,10 +71,34 @@ export function getGalleryBySlug(slug: string): Gallery | null {
   // Fallback to placeholder images if the directory is empty (for demo purposes)
   if (images.length === 0) {
     images.push(
-      { id: 'p1', src: `https://picsum.photos/seed/${realSlug}1/800/1200`, alt: 'Placeholder 1', width: 800, height: 1200 },
-      { id: 'p2', src: `https://picsum.photos/seed/${realSlug}2/1200/800`, alt: 'Placeholder 2', width: 1200, height: 800 },
-      { id: 'p3', src: `https://picsum.photos/seed/${realSlug}3/800/800`, alt: 'Placeholder 3', width: 800, height: 800 },
-      { id: 'p4', src: `https://picsum.photos/seed/${realSlug}4/1200/1600`, alt: 'Placeholder 4', width: 1200, height: 1600 }
+      {
+        id: 'p1',
+        src: `https://picsum.photos/seed/${realSlug}1/800/1200`,
+        alt: 'Placeholder 1',
+        width: 800,
+        height: 1200,
+      },
+      {
+        id: 'p2',
+        src: `https://picsum.photos/seed/${realSlug}2/1200/800`,
+        alt: 'Placeholder 2',
+        width: 1200,
+        height: 800,
+      },
+      {
+        id: 'p3',
+        src: `https://picsum.photos/seed/${realSlug}3/800/800`,
+        alt: 'Placeholder 3',
+        width: 800,
+        height: 800,
+      },
+      {
+        id: 'p4',
+        src: `https://picsum.photos/seed/${realSlug}4/1200/1600`,
+        alt: 'Placeholder 4',
+        width: 1200,
+        height: 1600,
+      },
     );
   }
 

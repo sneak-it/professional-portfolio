@@ -30,11 +30,11 @@ export function getPostSlugs() {
 export function getPostBySlug(slug: string): BlogPost | null {
   const realSlug = slug.replace(/\.mdx$/, '');
   const fullPath = path.join(postsDirectory, `${realSlug}.mdx`);
-  
+
   if (!fs.existsSync(fullPath)) {
     return null;
   }
-  
+
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   const { data, content } = matter(fileContents);
 

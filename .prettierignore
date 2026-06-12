@@ -1,0 +1,19 @@
+# Build artifacts and dependencies
+.next/
+node_modules/
+out/
+
+# Lockfiles and generated types
+package-lock.json
+next-env.d.ts
+
+# Content prose — leave authoring formatting untouched
+*.mdx
+*.md
+
+# Config & data formats — quoting/layout is intentional, not Prettier's call
+*.css
+*.json
+*.yml
+*.yaml
+eslint.config.mjs

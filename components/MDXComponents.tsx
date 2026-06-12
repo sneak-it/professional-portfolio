@@ -54,11 +54,23 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   );
 }
 
-function SafeImage({ src, alt = '', ...rest }: ComponentPropsWithoutRef<'img'>) {
+function SafeImage({
+  src,
+  alt = '',
+  ...rest
+}: ComponentPropsWithoutRef<'img'>) {
   // Plain <img> (not next/image) because MDX content has no build-time
   // dimensions; loading + referrer policy kept consistent with the rest of the site.
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} loading="lazy" referrerPolicy="no-referrer" {...rest} />;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      referrerPolicy="no-referrer"
+      {...rest}
+    />
+  );
 }
 
 export const mdxComponents = {

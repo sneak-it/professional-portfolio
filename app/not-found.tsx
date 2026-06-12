@@ -11,7 +11,8 @@ export default function NotFound() {
         This page wandered off.
       </h1>
       <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
-        The page you&apos;re looking for doesn&apos;t exist or may have been moved.
+        The page you&apos;re looking for doesn&apos;t exist or may have been
+        moved.
       </p>
       <Link
         href="/"

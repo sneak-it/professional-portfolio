@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import next from "eslint-config-next";
 import tseslint from "typescript-eslint";
+import prettier from "eslint-config-prettier/flat";
 
 export default defineConfig(
   // Exclude build artifacts, node_modules, generated files, and JS config files.
@@ -100,4 +101,8 @@ export default defineConfig(
       "no-useless-escape": "warn",
     },
   },
+
+  // Disable ESLint rules that conflict with Prettier formatting.
+  // Must come last so it overrides formatting rules from the configs above.
+  prettier,
 );

@@ -12,26 +12,27 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
     <PageTransition>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div className="text-center mb-16">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-4"
           >
             Blog
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
           >
-            Thoughts, tutorials, and insights on web development, design, and technology.
+            Thoughts, tutorials, and insights on web development, design, and
+            technology.
           </motion.p>
         </div>
 
         <div className="space-y-12">
           {posts.map((post, index) => (
-            <motion.article 
+            <motion.article
               key={post.slug}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -48,27 +49,37 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
                   referrerPolicy="no-referrer"
                 />
               </div>
-              
+
               <div className="flex flex-col flex-grow justify-center h-full py-2">
                 <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
-                  <span className="text-orange-500 font-medium uppercase tracking-wider">{post.meta.category}</span>
-                  <span className="flex items-center gap-1"><Calendar size={14} /> {post.meta.date}</span>
-                  <span className="flex items-center gap-1"><Clock size={14} /> {post.meta.readTime}</span>
+                  <span className="text-orange-500 font-medium uppercase tracking-wider">
+                    {post.meta.category}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Calendar size={14} /> {post.meta.date}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock size={14} /> {post.meta.readTime}
+                  </span>
                 </div>
-                
+
                 <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-orange-500 transition-colors">
                   <Link href={`/blog/${post.slug}`}>
                     <span className="absolute inset-0" />
                     {post.meta.title}
                   </Link>
                 </h2>
-                
+
                 <p className="text-gray-600 dark:text-gray-400 mb-6 line-clamp-3">
                   {post.meta.excerpt}
                 </p>
-                
+
                 <div className="mt-auto flex items-center text-orange-500 font-medium">
-                  Read Article <ArrowRight size={16} className="ml-2 group-hover:translate-x-2 transition-transform" />
+                  Read Article{' '}
+                  <ArrowRight
+                    size={16}
+                    className="ml-2 group-hover:translate-x-2 transition-transform"
+                  />
                 </div>
               </div>
             </motion.article>

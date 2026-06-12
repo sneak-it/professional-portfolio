@@ -34,7 +34,9 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#f5f5f5]/80 backdrop-blur-md shadow-sm dark:bg-[#0f1115]/80 dark:border-b dark:border-white/10' : 'bg-transparent'
+        scrolled
+          ? 'bg-[#f5f5f5]/80 backdrop-blur-md shadow-sm dark:bg-[#0f1115]/80 dark:border-b dark:border-white/10'
+          : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,7 +46,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav 
+          <nav
             className="hidden md:flex items-center space-x-2"
             onMouseLeave={() => setHoveredPath(null)}
           >
@@ -58,16 +60,18 @@ export default function Navbar() {
                   href={link.href}
                   onMouseEnter={() => setHoveredPath(link.href)}
                   className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full ${
-                    isActive ? 'text-orange-500' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                    isActive
+                      ? 'text-orange-500'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
-                  <motion.span 
+                  <motion.span
                     className="relative z-10 block"
                     whileTap={{ scale: 0.9 }}
                   >
                     {link.name}
                   </motion.span>
-                  
+
                   {isHovered && (
                     <motion.div
                       layoutId="navbar-hover"
@@ -75,15 +79,23 @@ export default function Navbar() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      transition={{
+                        type: 'spring',
+                        bounce: 0.2,
+                        duration: 0.6,
+                      }}
                     />
                   )}
-                  
+
                   {isActive && (
                     <motion.div
                       layoutId="navbar-active"
                       className="absolute bottom-1 left-4 right-4 h-[2px] bg-orange-500"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      transition={{
+                        type: 'spring',
+                        bounce: 0.2,
+                        duration: 0.6,
+                      }}
                     />
                   )}
                 </Link>

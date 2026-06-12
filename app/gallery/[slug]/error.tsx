@@ -4,7 +4,9 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { RotateCw, ArrowLeft } from 'lucide-react';
 
-export default function Error({
+// Segment-level boundary: a single broken gallery (e.g. an unreadable image or
+// malformed metadata) degrades gracefully here rather than failing the segment.
+export default function GalleryError({
   error,
   reset,
 }: {
@@ -12,7 +14,6 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Surface the error for server-side log aggregation.
     console.error(error);
   }, [error]);
 
@@ -22,11 +23,11 @@ export default function Error({
         Oops
       </p>
       <h1 className="mt-6 text-3xl md:text-4xl font-display font-bold tracking-tight">
-        Something went wrong.
+        This gallery couldn&apos;t be loaded.
       </h1>
       <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
-        An unexpected error occurred while rendering this page. You can try
-        again or head back home.
+        Something went wrong while rendering these images. You can try again or
+        browse the rest of the galleries.
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
         <button
@@ -37,11 +38,11 @@ export default function Error({
           Try again
         </button>
         <Link
-          href="/"
+          href="/gallery"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-gray-200 dark:border-white/10 font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
         >
           <ArrowLeft size={18} />
-          Back home
+          Back to galleries
         </Link>
       </div>
     </div>

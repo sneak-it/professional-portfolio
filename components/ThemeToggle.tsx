@@ -12,11 +12,14 @@ export function ThemeToggle() {
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -42,21 +45,30 @@ export function ThemeToggle() {
             className="absolute right-0 mt-2 w-36 rounded-md border border-gray-200 bg-[#f5f5f5] p-1 shadow-lg dark:border-white/10 dark:bg-[#0f1115]"
           >
             <button
-              onClick={() => { setTheme('light'); setIsOpen(false); }}
+              onClick={() => {
+                setTheme('light');
+                setIsOpen(false);
+              }}
               className={`flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-gray-200 dark:hover:bg-white/10 ${theme === 'light' ? 'text-orange-500' : 'text-gray-700 dark:text-gray-300'}`}
             >
               <Sun className="h-4 w-4" />
               Light
             </button>
             <button
-              onClick={() => { setTheme('dark'); setIsOpen(false); }}
+              onClick={() => {
+                setTheme('dark');
+                setIsOpen(false);
+              }}
               className={`flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-gray-200 dark:hover:bg-white/10 ${theme === 'dark' ? 'text-orange-500' : 'text-gray-700 dark:text-gray-300'}`}
             >
               <Moon className="h-4 w-4" />
               Dark
             </button>
             <button
-              onClick={() => { setTheme('system'); setIsOpen(false); }}
+              onClick={() => {
+                setTheme('system');
+                setIsOpen(false);
+              }}
               className={`flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-gray-200 dark:hover:bg-white/10 ${theme === 'system' ? 'text-orange-500' : 'text-gray-700 dark:text-gray-300'}`}
             >
               <Laptop className="h-4 w-4" />
