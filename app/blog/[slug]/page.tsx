@@ -1,6 +1,7 @@
 import { getPostBySlug, getPostSlugs } from '@/lib/mdx';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import BlogPostContent from '@/components/BlogPostContent';
+import { mdxComponents } from '@/components/MDXComponents';
 import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
@@ -20,7 +21,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
   return (
     <BlogPostContent post={post}>
-      <MDXRemote source={post.content} />
+      <MDXRemote source={post.content} components={mdxComponents} />
     </BlogPostContent>
   );
 }
