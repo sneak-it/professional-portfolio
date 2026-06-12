@@ -1,6 +1,6 @@
 # Professional Portfolio
 
-A modern, highly polished personal portfolio website built with Next.js 16, Tailwind CSS, and Framer Motion.
+A modern, highly polished personal portfolio website built with Next.js 16, Tailwind CSS, and Motion.
 
 ## Features
 
