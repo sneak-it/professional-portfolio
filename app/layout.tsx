@@ -5,6 +5,8 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DynamicBackground from '@/components/DynamicBackground';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import JsonLd from '@/components/JsonLd';
+import { siteConfig } from '@/lib/site';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const spaceGrotesk = Space_Grotesk({
@@ -13,8 +15,46 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'Professional Portfolio',
-  description: 'A highly polished personal portfolio website.',
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.title,
+    // Per-route titles inherit this template: "About | Professional Portfolio".
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.author }],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: siteConfig.twitterHandle,
+    creator: siteConfig.twitterHandle,
+    title: siteConfig.title,
+    description: siteConfig.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: siteConfig.author,
+  url: siteConfig.url,
+  jobTitle: 'Frontend Developer & Designer',
+  description: siteConfig.description,
 };
 
 export default function RootLayout({
@@ -32,6 +72,7 @@ export default function RootLayout({
         className="font-sans antialiased bg-[#f5f5f5] text-gray-900 dark:bg-[#0f1115] dark:text-gray-100 flex flex-col min-h-screen"
         suppressHydrationWarning
       >
+        <JsonLd data={personJsonLd} />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

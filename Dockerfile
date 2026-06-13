@@ -21,6 +21,13 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Canonical site origin, baked into the statically-generated SEO output
+# (metadata/OG URLs, sitemap.xml, robots.txt). Must be supplied at BUILD time
+# — those routes are prerendered — e.g. `--build-arg NEXT_PUBLIC_SITE_URL=https://your-domain`.
+# Falls back to the localhost default in lib/site.ts when unset.
+ARG NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+
 RUN npm run build
 
 # Production image, copy all the files and run next
