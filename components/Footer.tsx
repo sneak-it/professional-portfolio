@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { GitHubIcon, LinkedInIcon, XIcon } from '@/components/icons/BrandIcons';
+import { siteConfig } from '@/lib/site';
 
 export default function Footer() {
   return (
@@ -18,7 +19,7 @@ export default function Footer() {
 
           <div className="flex space-x-6">
             <a
-              href="https://github.com"
+              href={siteConfig.social.github}
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
@@ -27,7 +28,7 @@ export default function Footer() {
               <GitHubIcon size={20} />
             </a>
             <a
-              href="https://linkedin.com"
+              href={siteConfig.social.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
@@ -36,7 +37,7 @@ export default function Footer() {
               <LinkedInIcon size={20} />
             </a>
             <a
-              href="https://twitter.com"
+              href={siteConfig.social.twitter}
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
@@ -45,7 +46,7 @@ export default function Footer() {
               <XIcon size={20} />
             </a>
             <a
-              href="mailto:hello@example.com"
+              href={`mailto:${siteConfig.email}`}
               className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
             >
               <span className="sr-only">Email</span>

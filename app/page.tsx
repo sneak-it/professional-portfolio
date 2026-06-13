@@ -11,7 +11,6 @@ import {
   useTransform,
 } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
-import PageTransition from '@/components/PageTransition';
 import Reveal from '@/components/Reveal';
 import { useMagnetic } from '@/hooks/use-magnetic';
 
@@ -166,7 +165,7 @@ export default function Home() {
     useMagnetic<HTMLDivElement>(0.4);
 
   return (
-    <PageTransition>
+    <>
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         <GradientMesh />
@@ -320,6 +319,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </PageTransition>
+    </>
   );
 }

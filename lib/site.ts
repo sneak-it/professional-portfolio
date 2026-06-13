@@ -21,4 +21,27 @@ export const siteConfig = {
   author: 'John Doe',
   // Twitter/X handle (with leading @) for the twitter card `creator`/`site`.
   twitterHandle: '@johndoe',
+  // Contact details, surfaced on the contact page and footer.
+  email: 'hello@example.com',
+  phone: '+1 (234) 567-890',
+  phoneHref: 'tel:+1234567890',
+  location: 'San Francisco, CA',
+  locationNote: 'Available Worldwide',
+  // Social profiles, rendered in the footer.
+  social: {
+    github: 'https://github.com',
+    linkedin: 'https://linkedin.com',
+    twitter: 'https://twitter.com',
+  },
 } as const;
+
+/** Primary navigation, shared by the navbar (desktop + mobile menus). */
+export const navLinks = [
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about' },
+  { name: 'Resume', href: '/resume' },
+  { name: 'Projects', href: '/projects' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'Gallery', href: '/gallery' },
+  { name: 'Contact', href: '/contact' },
+] as const;

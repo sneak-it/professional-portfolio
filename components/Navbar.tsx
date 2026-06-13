@@ -6,16 +6,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-
-const links = [
-  { name: 'Home', href: '/' },
-  { name: 'About', href: '/about' },
-  { name: 'Resume', href: '/resume' },
-  { name: 'Projects', href: '/projects' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Gallery', href: '/gallery' },
-  { name: 'Contact', href: '/contact' },
-];
+import { navLinks as links } from '@/lib/site';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
