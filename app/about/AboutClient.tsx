@@ -43,6 +43,8 @@ export default function AboutClient() {
                 src="https://picsum.photos/seed/portrait/800/800"
                 alt="Portrait"
                 fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 448px"
                 className="object-cover"
                 referrerPolicy="no-referrer"
               />

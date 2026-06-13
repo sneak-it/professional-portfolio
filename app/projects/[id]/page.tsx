@@ -145,6 +145,8 @@ export default async function ProjectDetail({
               src={project.image}
               alt={project.title}
               fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
               referrerPolicy="no-referrer"
             />

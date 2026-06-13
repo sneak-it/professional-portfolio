@@ -12,6 +12,8 @@ import {
 } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import PageTransition from '@/components/PageTransition';
+import Reveal from '@/components/Reveal';
+import { useMagnetic } from '@/hooks/use-magnetic';
 
 const WORDS = ['Experiences', 'Opportunities', 'Connections', 'Solutions'];
 
@@ -45,6 +47,25 @@ function TypewriterText() {
   }, [textIndex, count]);
 
   return <motion.span>{displayText}</motion.span>;
+}
+
+/** Slowly-rotating conic-gradient glow behind the hero headline. Augments the
+ *  typewriter; static when motion is disabled. */
+function GradientMesh() {
+  // Static glow: a one-shot entrance fade only. Previously this rotated
+  // infinitely, which kept re-compositing a large blurred layer behind the
+  // hero every frame — pure cost for a barely-perceptible effect.
+  return (
+    <motion.div
+      aria-hidden="true"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 1.2, ease: 'easeOut' }}
+      className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2"
+    >
+      <div className="h-full w-full rounded-full opacity-30 blur-[64px] dark:opacity-40 [background:conic-gradient(from_0deg,var(--accent-from),var(--accent-via),var(--accent-to),var(--accent-from))]" />
+    </motion.div>
+  );
 }
 
 function TiltCard({
@@ -96,25 +117,73 @@ function TiltCard({
   );
 }
 
+function FeaturedProjectCard({ item }: { item: number }) {
+  const { ref: magneticRef, style: magneticStyle } =
+    useMagnetic<HTMLDivElement>(0.15);
+
+  return (
+    <Reveal delay={item * 0.1}>
+      <motion.div ref={magneticRef} style={magneticStyle}>
+        <TiltCard className="group relative rounded-2xl overflow-hidden bg-white dark:bg-black border border-gray-100 dark:border-white/10 h-full">
+          <div className="aspect-[4/3] relative overflow-hidden bg-gray-100 dark:bg-gray-900">
+            <Image
+              src={`https://picsum.photos/seed/project${item}/800/600`}
+              alt={`Project ${item}`}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </div>
+          <div className="p-6">
+            <div className="flex gap-2 mb-3">
+              <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
+                Next.js
+              </span>
+              <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
+                Tailwind
+              </span>
+            </div>
+            <h3 className="text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
+              Project Title {item}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              A brief description of the project and the value it provides to
+              the users.
+            </p>
+          </div>
+        </TiltCard>
+      </motion.div>
+    </Reveal>
+  );
+}
+
 export default function Home() {
+  const { ref: ctaPrimaryRef, style: ctaPrimaryStyle } =
+    useMagnetic<HTMLDivElement>(0.4);
+  const { ref: ctaSecondaryRef, style: ctaSecondaryStyle } =
+    useMagnetic<HTMLDivElement>(0.4);
+
   return (
     <PageTransition>
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        <GradientMesh />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <motion.h2
+            <motion.p
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2, ease: 'backOut' }}
               className="text-sm md:text-base font-semibold tracking-widest text-orange-500 uppercase mb-4"
             >
               Frontend Developer & Designer
-            </motion.h2>
+            </motion.p>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter mb-6 flex flex-wrap justify-center gap-x-4">
               <motion.span
                 initial={{
@@ -143,7 +212,7 @@ export default function Home() {
                   delay: 0.2,
                   ease: [0.2, 0.65, 0.3, 0.9],
                 }}
-                className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 inline-block"
+                className="text-transparent bg-clip-text bg-gradient-to-r from-accent-from via-accent-via to-accent-to inline-block"
               >
                 <TypewriterText />
                 <motion.span
@@ -175,25 +244,37 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.8, ease: 'easeOut' }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <Link
-                href="/projects"
-                className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-black dark:bg-white dark:text-black rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(249,115,22,0.4)]"
+              <motion.div
+                ref={ctaPrimaryRef}
+                style={ctaPrimaryStyle}
+                className="inline-block"
               >
-                <span className="relative z-10 flex items-center gap-2">
-                  View Projects{' '}
-                  <ArrowRight
-                    size={18}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
-                </span>
-                <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-orange-500 to-pink-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-black dark:text-white border border-gray-200 dark:border-white/20 rounded-full hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                <Link
+                  href="/projects"
+                  className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-black dark:bg-white dark:text-black rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(249,115,22,0.4)]"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    View Projects{' '}
+                    <ArrowRight
+                      size={18}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                  </span>
+                  <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-accent-from to-accent-via transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out" />
+                </Link>
+              </motion.div>
+              <motion.div
+                ref={ctaSecondaryRef}
+                style={ctaSecondaryStyle}
+                className="inline-block"
               >
-                Contact Me
-              </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-black dark:text-white border border-gray-200 dark:border-white/20 rounded-full hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                >
+                  Contact Me
+                </Link>
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
@@ -225,43 +306,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 [perspective:1000px]">
             {[1, 2].map((item) => (
-              <motion.div
-                key={item}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: item * 0.1 }}
-              >
-                <TiltCard className="group relative rounded-2xl overflow-hidden bg-white dark:bg-black border border-gray-100 dark:border-white/10 h-full">
-                  <div className="aspect-[4/3] relative overflow-hidden bg-gray-100 dark:bg-gray-900">
-                    <Image
-                      src={`https://picsum.photos/seed/project${item}/800/600`}
-                      alt={`Project ${item}`}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <div className="p-6">
-                    <div className="flex gap-2 mb-3">
-                      <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
-                        Next.js
-                      </span>
-                      <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
-                        Tailwind
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
-                      Project Title {item}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      A brief description of the project and the value it
-                      provides to the users.
-                    </p>
-                  </div>
-                </TiltCard>
-              </motion.div>
+              <FeaturedProjectCard key={item} item={item} />
             ))}
           </div>
 

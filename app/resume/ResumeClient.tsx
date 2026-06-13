@@ -100,7 +100,7 @@ export default function ResumeClient() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="relative pl-8"
                 >
-                  <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-orange-500 ring-4 ring-white dark:ring-[#050505]" />
+                  <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-orange-500 ring-4 ring-white dark:ring-background-deep" />
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
                     <h3 className="text-xl font-bold">{item.role}</h3>
                     <span className="text-sm font-medium text-orange-500 bg-orange-50 dark:bg-orange-500/10 px-3 py-1 rounded-full w-fit">
@@ -137,7 +137,7 @@ export default function ResumeClient() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="relative pl-8"
                 >
-                  <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-purple-500 ring-4 ring-white dark:ring-[#050505]" />
+                  <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-purple-500 ring-4 ring-white dark:ring-background-deep" />
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
                     <h3 className="text-xl font-bold">{item.degree}</h3>
                     <span className="text-sm font-medium text-purple-500 bg-purple-50 dark:bg-purple-500/10 px-3 py-1 rounded-full w-fit">

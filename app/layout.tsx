@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
+import { MotionConfig } from 'motion/react';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DynamicBackground from '@/components/DynamicBackground';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import JsonLd from '@/components/JsonLd';
+import ViewTransitions from '@/components/ViewTransitions';
 import { siteConfig } from '@/lib/site';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -69,20 +71,31 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="font-sans antialiased bg-[#f5f5f5] text-gray-900 dark:bg-[#0f1115] dark:text-gray-100 flex flex-col min-h-screen"
+        className="font-sans antialiased bg-background text-gray-900 dark:text-gray-100 flex flex-col min-h-screen"
         suppressHydrationWarning
       >
         <JsonLd data={personJsonLd} />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-lg"
+        >
+          Skip to content
+        </a>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <DynamicBackground />
-          <Navbar />
-          <main className="flex-grow pt-20">{children}</main>
-          <Footer />
+          <MotionConfig reducedMotion="user">
+            <ViewTransitions />
+            <DynamicBackground />
+            <Navbar />
+            <main id="main-content" className="flex-grow pt-20">
+              {children}
+            </main>
+            <Footer />
+          </MotionConfig>
         </ThemeProvider>
       </body>
     </html>

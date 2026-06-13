@@ -2,8 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, Clock, Share2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock } from 'lucide-react';
 import PageTransition from '@/components/PageTransition';
+import ShareButton from '@/components/ShareButton';
 import type { BlogPost } from '@/lib/mdx';
 
 export default function BlogPostContent({
@@ -45,13 +46,15 @@ export default function BlogPostContent({
               src={post.meta.image ?? '/default-post.jpg'}
               alt={post.meta.title}
               fill
+              priority
+              sizes="(max-width: 768px) 100vw, 768px"
               className="object-cover"
               referrerPolicy="no-referrer"
             />
           </div>
         </header>
 
-        <div className="prose prose-lg dark:prose-invert prose-orange max-w-none">
+        <div className="prose prose-lg dark:prose-invert prose-orange max-w-none prose-headings:font-display prose-headings:tracking-tight prose-h2:mt-12 prose-a:font-medium prose-a:underline-offset-4 prose-img:rounded-2xl prose-pre:rounded-2xl prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-white/10 prose-code:before:content-none prose-code:after:content-none prose-code:rounded prose-code:bg-gray-100 dark:prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal">
           {children}
         </div>
 
@@ -71,9 +74,7 @@ export default function BlogPostContent({
             </div>
           </div>
 
-          <button className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-colors">
-            <Share2 size={18} />
-          </button>
+          <ShareButton title={post.meta.title} />
         </footer>
       </article>
     </PageTransition>

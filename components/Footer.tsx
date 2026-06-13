@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { GitFork, Link as LinkIcon, X, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
+import { GitHubIcon, LinkedInIcon, XIcon } from '@/components/icons/BrandIcons';
 
 export default function Footer() {
   return (
@@ -20,32 +21,32 @@ export default function Footer() {
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
             >
               <span className="sr-only">GitHub</span>
-              <GitFork size={20} />
+              <GitHubIcon size={20} />
             </a>
             <a
               href="https://linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
             >
               <span className="sr-only">LinkedIn</span>
-              <LinkIcon size={20} />
+              <LinkedInIcon size={20} />
             </a>
             <a
               href="https://twitter.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
             >
               <span className="sr-only">X (Twitter)</span>
-              <X size={20} />
+              <XIcon size={20} />
             </a>
             <a
               href="mailto:hello@example.com"
-              className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
             >
               <span className="sr-only">Email</span>
               <Mail size={20} />
@@ -53,7 +54,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-200 dark:border-white/10 text-center">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             &copy; {new Date().getFullYear()} My Portfolio. All rights reserved.
           </p>
         </div>

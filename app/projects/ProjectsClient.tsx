@@ -4,8 +4,9 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
-import { ExternalLink, GitFork } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import PageTransition from '@/components/PageTransition';
+import { GitHubIcon } from '@/components/icons/BrandIcons';
 
 const categories = ['All', 'Web', 'Mobile', 'Design'];
 
@@ -109,6 +110,8 @@ export default function ProjectsClient() {
 
         {/* Filters */}
         <motion.div
+          role="group"
+          aria-label="Filter projects by category"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -118,6 +121,7 @@ export default function ProjectsClient() {
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
+              aria-pressed={activeCategory === category}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                 activeCategory === category
                   ? 'bg-black text-white dark:bg-white dark:text-black'
@@ -129,13 +133,19 @@ export default function ProjectsClient() {
           ))}
         </motion.div>
 
+        <p className="sr-only" aria-live="polite">
+          Showing {filteredProjects.length}{' '}
+          {filteredProjects.length === 1 ? 'project' : 'projects'}
+          {activeCategory !== 'All' ? ` in ${activeCategory}` : ''}.
+        </p>
+
         {/* Project Grid */}
         <motion.div
           layout
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project) => (
+            {filteredProjects.map((project, index) => (
               <motion.div
                 key={project.id}
                 layout
@@ -150,6 +160,8 @@ export default function ProjectsClient() {
                     src={project.image}
                     alt={project.title}
                     fill
+                    priority={index === 0}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
@@ -159,6 +171,7 @@ export default function ProjectsClient() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform"
+                      aria-label="View live project"
                     >
                       <ExternalLink size={20} />
                     </a>
@@ -167,8 +180,9 @@ export default function ProjectsClient() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform"
+                      aria-label="View source on GitHub"
                     >
-                      <GitFork size={20} />
+                      <GitHubIcon size={20} />
                     </a>
                   </div>
                 </div>
@@ -179,11 +193,11 @@ export default function ProjectsClient() {
                       {project.category}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
+                  <h2 className="text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
                     <Link href={`/projects/${project.id}`}>
                       {project.title}
                     </Link>
-                  </h3>
+                  </h2>
                   <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">
                     {project.description}
                   </p>

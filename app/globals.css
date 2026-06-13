@@ -1,37 +1,81 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-html {
-  scroll-behavior: smooth;
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens — single source of truth for backgrounds + the signature
+   accent gradient. Declared under :root / .dark so every consumer is correct
+   in both themes by construction. Surfaced to Tailwind via @theme inline
+   below (inline = utilities emit `var(--token)` so the .dark override applies
+   at runtime instead of being inlined at build time).
+   The same hex trio is mirrored inline in app/icon.tsx / opengraph-image.tsx /
+   apple-icon.tsx because next/og cannot read CSS variables.
+--------------------------------------------------------------------------- */
+:root {
+  --background: #f5f5f5;
+  --background-deep: #f5f5f5;
+  --accent-from: #f97316; /* orange-500 */
+  --accent-via: #ec4899; /* pink-500   */
+  --accent-to: #a855f7; /* purple-500 */
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
+.dark {
+  --background: #0f1115;
+  --background-deep: #050505;
+}
 
 @theme {
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
-  
-  --animate-blob: blob 7s infinite;
 }
 
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
+@theme inline {
+  --color-background: var(--background);
+  --color-background-deep: var(--background-deep);
+  --color-accent: var(--accent-from);
+  --color-accent-from: var(--accent-from);
+  --color-accent-via: var(--accent-via);
+  --color-accent-to: var(--accent-to);
+}
+
+/* Smooth scroll only when the user hasn't asked for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
 
-.animation-delay-2000 {
-  animation-delay: 2s;
+/* On-brand, consistent keyboard focus ring across all interactive elements. */
+:focus-visible {
+  outline: 2px solid var(--accent-from);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
-.animation-delay-4000 {
-  animation-delay: 4s;
+
+/* Native View Transitions cross-fade for route changes (see components/
+   ViewTransitions.tsx). Gated by reduced-motion below. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Reduced-motion backstop: neutralize any residual CSS animation/transition
+   and view-transition, regardless of what JS gating misses. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

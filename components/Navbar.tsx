@@ -24,18 +24,34 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 20);
+        ticking = false;
+      });
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close the mobile menu on Escape.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen]);
 
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[#f5f5f5]/80 backdrop-blur-md shadow-sm dark:bg-[#0f1115]/80 dark:border-b dark:border-white/10'
+          ? 'bg-background/80 backdrop-blur-md shadow-sm dark:border-b dark:border-white/10'
           : 'bg-transparent'
       }`}
     >
@@ -112,6 +128,9 @@ export default function Navbar() {
             <button
               className="p-2 text-gray-600 dark:text-gray-300"
               onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -123,10 +142,11 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#f5f5f5] dark:bg-[#0f1115] border-t border-gray-200 dark:border-white/10"
+            className="md:hidden bg-background border-t border-gray-200 dark:border-white/10"
           >
             <div className="px-4 pt-2 pb-6 space-y-1">
               {links.map((link) => (

@@ -1,0 +1,95 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+
+type DocWithVT = Document & {
+  startViewTransition?: (cb: () => Promise<void> | void) => unknown;
+};
+
+/**
+ * Wraps client-side route navigations in the native View Transitions API so
+ * route changes cross-fade (see ::view-transition rules in globals.css).
+ *
+ * Implementation: a capture-phase click listener intercepts internal-link
+ * clicks before next/link's own handler runs (preventDefault makes Link bail),
+ * then drives navigation inside document.startViewTransition(). The transition
+ * promise resolves once the pathname commits. Browsers without the API (or
+ * users with reduced motion) get a plain navigation / cut — graceful fallback.
+ */
+export default function ViewTransitions() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const finishRef = useRef<(() => void) | null>(null);
+
+  // Resolve the pending transition once the new route has committed.
+  useEffect(() => {
+    if (finishRef.current) {
+      finishRef.current();
+      finishRef.current = null;
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const doc = document as DocWithVT;
+    const startViewTransition = doc.startViewTransition;
+    if (typeof startViewTransition !== 'function') return;
+
+    const onClick = (e: MouseEvent) => {
+      if (
+        e.defaultPrevented ||
+        e.button !== 0 ||
+        e.metaKey ||
+        e.ctrlKey ||
+        e.shiftKey ||
+        e.altKey
+      ) {
+        return;
+      }
+      const anchor = (e.target as HTMLElement | null)?.closest('a');
+      if (!anchor) return;
+      const href = anchor.getAttribute('href');
+      if (
+        !href ||
+        anchor.target === '_blank' ||
+        anchor.hasAttribute('download')
+      ) {
+        return;
+      }
+
+      const url = new URL(href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      // Same page (in-page anchor or no-op) — let the browser handle it.
+      if (
+        url.pathname === window.location.pathname &&
+        url.search === window.location.search
+      ) {
+        return;
+      }
+
+      e.preventDefault();
+      startViewTransition.call(
+        doc,
+        () =>
+          new Promise<void>((resolve) => {
+            finishRef.current = resolve;
+            router.push(url.pathname + url.search + url.hash);
+            // Safety: never leave the transition hanging if the route
+            // change doesn't trigger the pathname effect.
+            setTimeout(() => {
+              if (finishRef.current === resolve) {
+                finishRef.current = null;
+                resolve();
+              }
+            }, 800);
+          }),
+      );
+    };
+
+    document.addEventListener('click', onClick, { capture: true });
+    return () =>
+      document.removeEventListener('click', onClick, { capture: true });
+  }, [router]);
+
+  return null;
+}

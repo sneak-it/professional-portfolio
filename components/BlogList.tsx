@@ -45,6 +45,8 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
                   src={post.meta.image ?? '/default-post.jpg'}
                   alt={post.meta.title}
                   fill
+                  priority={index === 0}
+                  sizes="(max-width: 768px) 100vw, 40vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
