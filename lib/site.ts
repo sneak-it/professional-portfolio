@@ -14,7 +14,10 @@ export const siteConfig = {
   name: 'Professional Portfolio',
   title: 'Professional Portfolio',
   description: 'A highly polished personal portfolio website.',
-  url: (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(
+  // Trim first so a blank/whitespace-only env var (e.g. an unset Docker build
+  // arg expanding to '') falls back to localhost instead of throwing
+  // `new URL('')` during the prerender of metadata-bearing routes.
+  url: (process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000').replace(
     /\/$/,
     '',
   ),

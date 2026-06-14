@@ -47,6 +47,8 @@ jobs:
           context: .
           push: true
           target: production
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=https://ianrt.com
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
