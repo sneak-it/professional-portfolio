@@ -17,10 +17,9 @@ export const siteConfig = {
   // Trim first so a blank/whitespace-only env var (e.g. an unset Docker build
   // arg expanding to '') falls back to localhost instead of throwing
   // `new URL('')` during the prerender of metadata-bearing routes.
-  url: (process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000').replace(
-    /\/$/,
-    '',
-  ),
+  url: (
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000'
+  ).replace(/\/$/, ''),
   author: 'John Doe',
   // Twitter/X handle (with leading @) for the twitter card `creator`/`site`.
   twitterHandle: '@johndoe',
