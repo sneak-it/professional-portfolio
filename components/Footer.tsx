@@ -54,11 +54,6 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-gray-200 dark:border-white/10 text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            &copy; {new Date().getFullYear()} My Portfolio. All rights reserved.
-          </p>
-        </div>
       </div>
     </footer>
   );
