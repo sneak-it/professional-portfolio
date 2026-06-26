@@ -51,7 +51,7 @@ export default function GalleryView({ gallery }: { gallery: Gallery }) {
     <Container>
       <Link
         href="/gallery"
-        className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-500 transition-colors mb-8"
+        className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors mb-8"
       >
         <ArrowLeft size={16} /> Back to Galleries
       </Link>

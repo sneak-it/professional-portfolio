@@ -60,7 +60,7 @@ function GradientMesh() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 1.2, ease: 'easeOut' }}
-      className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2"
+      className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[85vh] w-[85vh] -translate-x-1/2 -translate-y-1/2"
     >
       <div className="h-full w-full rounded-full opacity-30 blur-[64px] dark:opacity-40 [background:conic-gradient(from_0deg,var(--accent-from),var(--accent-via),var(--accent-to),var(--accent-from))]" />
     </motion.div>
@@ -144,7 +144,7 @@ function FeaturedProjectCard({ item }: { item: number }) {
                 Tailwind
               </span>
             </div>
-            <h3 className="text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
+            <h3 className="text-xl font-bold mb-2 group-hover:text-accent transition-colors">
               Project Title {item}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
@@ -179,7 +179,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2, ease: 'backOut' }}
-              className="text-sm md:text-base font-semibold tracking-widest text-orange-500 uppercase mb-4"
+              className="text-sm md:text-base font-semibold tracking-widest text-accent uppercase font-mono mb-4"
             >
               Frontend Developer & Designer
             </motion.p>
@@ -221,7 +221,7 @@ export default function Home() {
                     duration: 0.8,
                     ease: 'linear',
                   }}
-                  className="inline-block w-[4px] h-[0.9em] bg-orange-500 ml-2 align-middle -mt-2"
+                  className="inline-block w-[4px] h-[0.9em] bg-accent ml-2 align-middle -mt-2"
                 />
               </motion.span>
             </h1>
@@ -293,7 +293,7 @@ export default function Home() {
             </div>
             <Link
               href="/projects"
-              className="hidden md:flex items-center gap-2 text-orange-500 hover:text-orange-600 font-medium group"
+              className="hidden md:flex items-center gap-2 text-accent hover:text-accent font-medium group"
             >
               View all{' '}
               <ArrowRight
@@ -312,7 +312,7 @@ export default function Home() {
           <div className="mt-8 text-center md:hidden">
             <Link
               href="/projects"
-              className="inline-flex items-center gap-2 text-orange-500 font-medium"
+              className="inline-flex items-center gap-2 text-accent font-medium"
             >
               View all projects <ArrowRight size={16} />
             </Link>

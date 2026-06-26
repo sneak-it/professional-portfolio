@@ -6,9 +6,8 @@ import type { ReactNode } from 'react';
  * names (dynamically built `bg-${color}-100` strings would be purged).
  */
 const COLORS = {
-  orange: 'bg-orange-100 dark:bg-orange-500/20 text-orange-500',
-  purple: 'bg-purple-100 dark:bg-purple-500/20 text-purple-500',
-  pink: 'bg-pink-100 dark:bg-pink-500/20 text-pink-500',
+  primary: 'bg-accent/10 dark:bg-accent/20 text-accent',
+  secondary: 'bg-accent-2/10 dark:bg-accent-2/20 text-accent-2',
 } as const;
 
 const SIZES = {
@@ -18,7 +17,7 @@ const SIZES = {
 } as const;
 
 export default function IconBadge({
-  color = 'orange',
+  color = 'primary',
   size = 'sm',
   shape = 'full',
   className = '',

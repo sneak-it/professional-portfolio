@@ -86,7 +86,7 @@ export function ThemeToggle() {
                 }}
                 className={`flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-gray-200 dark:hover:bg-white/10 ${
                   theme === value
-                    ? 'text-orange-500'
+                    ? 'text-accent'
                     : 'text-gray-700 dark:text-gray-300'
                 }`}
               >

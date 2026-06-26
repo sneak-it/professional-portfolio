@@ -13,11 +13,22 @@
    apple-icon.tsx because next/og cannot read CSS variables.
 --------------------------------------------------------------------------- */
 :root {
+  /* ===== EDIT HERE TO RESKIN THE WHOLE SITE ===========================
+     Dual green→blue accent system (welcoming, not corporate). Every link,
+     CTA, gradient, focus ring and the animated background reads from these.
+     Swap a scheme by changing the five hexes below — then mirror --accent-*
+     into app/icon.tsx, app/apple-icon.tsx, app/opengraph-image.tsx (next/og
+     can't read CSS variables). */
+  --accent: #14b87a; /* primary   — welcoming emerald-green       */
+  --accent-2: #4f7cff; /* secondary — friendly indigo-blue         */
+  /* Gradient stops (text/CTAs) — derived green→teal→blue, never rainbow. */
+  --accent-from: #14b87a; /* = --accent      */
+  --accent-via: #0ea5a4; /* teal bridge     */
+  --accent-to: #4f7cff; /* = --accent-2    */
+  /* ===================================================================== */
+
   --background: #f5f5f5;
   --background-deep: #f5f5f5;
-  --accent-from: #f97316; /* orange-500 */
-  --accent-via: #ec4899; /* pink-500   */
-  --accent-to: #a855f7; /* purple-500 */
 }
 
 .dark {
@@ -28,15 +39,24 @@
 @theme {
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-background-deep: var(--background-deep);
-  --color-accent: var(--accent-from);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
   --color-accent-from: var(--accent-from);
   --color-accent-via: var(--accent-via);
   --color-accent-to: var(--accent-to);
+}
+
+/* Blog prose links follow the accent token (replaces the prose-orange
+   modifier) so editing --accent reskins article links too. */
+.prose {
+  --tw-prose-links: var(--accent);
+  --tw-prose-invert-links: var(--accent);
 }
 
 /* Smooth scroll only when the user hasn't asked for reduced motion. */

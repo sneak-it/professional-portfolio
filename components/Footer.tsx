@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0 text-center md:text-left">
             <Link href="/" className="text-2xl font-bold tracking-tighter">
-              Portfolio<span className="text-orange-500">.</span>
+              Portfolio<span className="text-accent">.</span>
             </Link>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               Building digital experiences with passion.

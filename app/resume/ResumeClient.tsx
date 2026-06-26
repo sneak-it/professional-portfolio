@@ -12,13 +12,13 @@ function Timeline({
   accent,
 }: {
   entries: TimelineEntry[];
-  accent: 'orange' | 'purple';
+  accent: 'primary' | 'secondary';
 }) {
-  const dot = accent === 'orange' ? 'bg-orange-500' : 'bg-purple-500';
+  const dot = accent === 'primary' ? 'bg-accent' : 'bg-accent-2';
   const badge =
-    accent === 'orange'
-      ? 'text-orange-500 bg-orange-50 dark:bg-orange-500/10'
-      : 'text-purple-500 bg-purple-50 dark:bg-purple-500/10';
+    accent === 'primary'
+      ? 'text-accent bg-accent/10 dark:bg-accent/10'
+      : 'text-accent-2 bg-accent-2/10 dark:bg-accent-2/10';
 
   return (
     <div className="relative border-l border-gray-200 dark:border-gray-800 ml-5 space-y-12">
@@ -90,22 +90,22 @@ export default function ResumeClient() {
       <div className="space-y-20">
         <section>
           <div className="flex items-center gap-3 mb-8">
-            <IconBadge color="orange">
+            <IconBadge color="primary">
               <Briefcase size={20} />
             </IconBadge>
             <h2 className="text-2xl font-bold">Experience</h2>
           </div>
-          <Timeline entries={experience} accent="orange" />
+          <Timeline entries={experience} accent="primary" />
         </section>
 
         <section>
           <div className="flex items-center gap-3 mb-8">
-            <IconBadge color="purple">
+            <IconBadge color="secondary">
               <GraduationCap size={20} />
             </IconBadge>
             <h2 className="text-2xl font-bold">Education</h2>
           </div>
-          <Timeline entries={education} accent="purple" />
+          <Timeline entries={education} accent="secondary" />
         </section>
       </div>
     </Container>

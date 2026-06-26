@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 export default function NotFound() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 text-center">
-      <p className="font-display font-bold text-7xl md:text-9xl text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+      <p className="font-display font-bold text-7xl md:text-9xl text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-2">
         404
       </p>
       <h1 className="mt-6 text-3xl md:text-4xl font-display font-bold tracking-tight">

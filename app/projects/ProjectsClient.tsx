@@ -109,11 +109,11 @@ export default function ProjectsClient() {
 
               <div className="p-6 flex flex-col flex-grow">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-medium text-orange-500 uppercase tracking-wider">
+                  <span className="text-xs font-medium text-accent font-mono uppercase tracking-wider">
                     {project.category}
                   </span>
                 </div>
-                <h2 className="text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
+                <h2 className="text-xl font-bold mb-2 group-hover:text-accent transition-colors">
                   <Link href={`/projects/${project.id}`}>{project.title}</Link>
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">
