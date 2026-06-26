@@ -15,7 +15,7 @@ export default function ProjectDetailClient({
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
         <motion.div {...fadeInUp}>
-          <span className="text-orange-500 font-medium uppercase tracking-wider text-sm mb-4 block">
+          <span className="text-accent font-medium font-mono uppercase tracking-wider text-sm mb-4 block">
             {project.category}
           </span>
           <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
@@ -45,7 +45,7 @@ export default function ProjectDetailClient({
           </div>
 
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-3">
+            <h3 className="text-sm font-bold font-mono uppercase tracking-wider text-gray-400 mb-3">
               Technologies
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -89,7 +89,7 @@ export default function ProjectDetailClient({
                 className="flex items-start gap-3 text-gray-600 dark:text-gray-400"
               >
                 <CheckCircle2
-                  className="text-orange-500 shrink-0 mt-1"
+                  className="text-accent shrink-0 mt-1"
                   size={20}
                 />
                 <span>{feature}</span>

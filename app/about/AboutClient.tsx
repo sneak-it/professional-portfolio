@@ -68,7 +68,7 @@ export default function AboutClient() {
             <a
               href="/resume.pdf"
               download
-              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-full font-medium hover:bg-orange-600 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-medium hover:bg-accent transition-colors"
             >
               <Download size={18} /> Download Resume
             </a>
@@ -101,7 +101,7 @@ export default function AboutClient() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white/60 dark:bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-gray-200/50 dark:border-white/10 hover:border-orange-500/50 transition-colors shadow-lg"
+              className="bg-white/60 dark:bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-gray-200/50 dark:border-white/10 hover:border-accent/50 transition-colors shadow-lg"
             >
               <IconBadge size="md" shape="xl" className="mb-6">
                 {SKILL_ICONS[skillGroup.icon]}
@@ -115,7 +115,7 @@ export default function AboutClient() {
                     key={item}
                     className="text-gray-800 dark:text-gray-200 font-medium flex items-center gap-2"
                   >
-                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
                     {item}
                   </li>
                 ))}

@@ -40,7 +40,8 @@ export default function OpengraphImage() {
             fontSize: 56,
             fontWeight: 700,
             borderRadius: 20,
-            background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)',
+            // keep in sync with --accent-* in app/globals.css
+            background: 'linear-gradient(135deg, #14b87a 0%, #4f7cff 100%)',
           }}
         >
           P
@@ -75,7 +76,8 @@ export default function OpengraphImage() {
           marginTop: 'auto',
           height: 12,
           width: '100%',
-          background: 'linear-gradient(90deg, #f97316, #ec4899, #a855f7)',
+          // keep in sync with --accent-* in app/globals.css
+          background: 'linear-gradient(90deg, #14b87a, #0ea5a4, #4f7cff)',
           borderRadius: 999,
         }}
       />

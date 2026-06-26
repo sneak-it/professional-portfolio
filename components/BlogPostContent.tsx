@@ -18,14 +18,14 @@ export default function BlogPostContent({
     <Container as="article" size="sm">
       <Link
         href="/blog"
-        className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-500 transition-colors mb-8"
+        className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors mb-8"
       >
         <ArrowLeft size={16} /> Back to Blog
       </Link>
 
       <header className="mb-10">
-        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6">
-          <span className="text-orange-500 font-medium uppercase tracking-wider">
+        <div className="flex items-center gap-4 text-sm font-mono text-gray-500 dark:text-gray-400 mb-6">
+          <span className="text-accent font-medium font-mono uppercase tracking-wider">
             {post.meta.category}
           </span>
           <span className="flex items-center gap-1">
@@ -53,7 +53,7 @@ export default function BlogPostContent({
         </div>
       </header>
 
-      <div className="prose prose-lg dark:prose-invert prose-orange max-w-none prose-headings:font-display prose-headings:tracking-tight prose-h2:mt-12 prose-a:font-medium prose-a:underline-offset-4 prose-img:rounded-2xl prose-pre:rounded-2xl prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-white/10 prose-code:before:content-none prose-code:after:content-none prose-code:rounded prose-code:bg-gray-100 dark:prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal">
+      <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-headings:tracking-tight prose-h2:mt-12 prose-a:font-medium prose-a:underline-offset-4 prose-img:rounded-2xl prose-pre:rounded-2xl prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-white/10 prose-code:before:content-none prose-code:after:content-none prose-code:rounded prose-code:bg-gray-100 dark:prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal">
         {children}
       </div>
 

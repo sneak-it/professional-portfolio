@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk } from 'next/font/google';
+import { Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
 import { MotionConfig } from 'motion/react';
 import './globals.css';
 import Navbar from '@/components/Navbar';
@@ -10,11 +10,18 @@ import JsonLd from '@/components/JsonLd';
 import ViewTransitions from '@/components/ViewTransitions';
 import { siteConfig } from '@/lib/site';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
-const spaceGrotesk = Space_Grotesk({
+// One characterful neo-grotesque carries both body and display; a monospace
+// handles small-caps labels / meta / numbers. See globals.css @theme.
+const grotesk = Hanken_Grotesk({
   subsets: ['latin'],
+  variable: '--font-sans',
+});
+const displayGrotesk = Hanken_Grotesk({
+  subsets: ['latin'],
+  weight: ['600', '700', '800'],
   variable: '--font-display',
 });
+const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -67,7 +74,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable}`}
+      className={`${grotesk.variable} ${displayGrotesk.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <body

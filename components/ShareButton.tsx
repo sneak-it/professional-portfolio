@@ -44,7 +44,7 @@ export default function ShareButton({ title }: { title: string }) {
         type="button"
         onClick={handleShare}
         aria-label="Share this post"
-        className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-colors"
+        className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center hover:bg-accent hover:text-white transition-colors"
       >
         {copied ? <Check size={18} /> : <Share2 size={18} />}
       </button>

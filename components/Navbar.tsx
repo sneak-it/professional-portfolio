@@ -48,8 +48,11 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <Link href="/" className="text-2xl font-bold tracking-tighter">
-            Portfolio<span className="text-orange-500">.</span>
+          <Link
+            href="/"
+            className="text-xl font-mono font-bold tracking-tight lowercase"
+          >
+            Portfolio<span className="text-accent">.</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -68,7 +71,7 @@ export default function Navbar() {
                   onMouseEnter={() => setHoveredPath(link.href)}
                   className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full ${
                     isActive
-                      ? 'text-orange-500'
+                      ? 'text-accent'
                       : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
@@ -97,7 +100,7 @@ export default function Navbar() {
                   {isActive && (
                     <motion.div
                       layoutId="navbar-active"
-                      className="absolute bottom-1 left-4 right-4 h-[2px] bg-orange-500"
+                      className="absolute bottom-1 left-4 right-4 h-[2px] bg-accent"
                       transition={{
                         type: 'spring',
                         bounce: 0.2,
@@ -147,7 +150,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className={`block px-3 py-3 text-base font-medium rounded-md ${
                     pathname === link.href
-                      ? 'text-orange-500 bg-orange-50 dark:bg-orange-500/10'
+                      ? 'text-accent bg-accent/10 dark:bg-accent/10'
                       : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
                   }`}
                 >

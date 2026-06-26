@@ -39,7 +39,7 @@ export default function BlogList({
             key={post.slug}
             {...fadeInUpOnView}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="group relative flex flex-col md:flex-row gap-8 items-start bg-white dark:bg-[#111] p-6 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-orange-500/50 transition-colors"
+            className="group relative flex flex-col md:flex-row gap-8 items-start bg-white dark:bg-[#111] p-6 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-accent/50 transition-colors"
           >
             <div className="w-full md:w-2/5 aspect-video md:aspect-square lg:aspect-[4/3] relative rounded-2xl overflow-hidden shrink-0">
               <Image
@@ -54,8 +54,8 @@ export default function BlogList({
             </div>
 
             <div className="flex flex-col flex-grow justify-center h-full py-2">
-              <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
-                <span className="text-orange-500 font-medium uppercase tracking-wider">
+              <div className="flex items-center gap-4 text-sm font-mono text-gray-500 dark:text-gray-400 mb-4">
+                <span className="text-accent font-medium font-mono uppercase tracking-wider">
                   {post.meta.category}
                 </span>
                 <span className="flex items-center gap-1">
@@ -66,7 +66,7 @@ export default function BlogList({
                 </span>
               </div>
 
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-orange-500 transition-colors">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-accent transition-colors">
                 <Link href={`/blog/${post.slug}`}>
                   <span className="absolute inset-0" />
                   {post.meta.title}
@@ -77,7 +77,7 @@ export default function BlogList({
                 {post.meta.excerpt}
               </p>
 
-              <div className="mt-auto flex items-center text-orange-500 font-medium">
+              <div className="mt-auto flex items-center text-accent font-medium">
                 Read Article{' '}
                 <ArrowRight
                   size={16}
@@ -99,7 +99,7 @@ export default function BlogList({
               href={pageHref(currentPage - 1)}
               rel="prev"
               aria-label="Previous page"
-              className="flex items-center justify-center h-10 w-10 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-orange-500/50 hover:text-orange-500 transition-colors"
+              className="flex items-center justify-center h-10 w-10 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-accent/50 hover:text-accent transition-colors"
             >
               <ChevronLeft size={18} />
             </Link>
@@ -122,8 +122,8 @@ export default function BlogList({
                 aria-current={isActive ? 'page' : undefined}
                 className={`flex items-center justify-center h-10 w-10 rounded-full border text-sm font-medium transition-colors ${
                   isActive
-                    ? 'border-orange-500 bg-orange-500 text-white'
-                    : 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-orange-500/50 hover:text-orange-500'
+                    ? 'border-accent bg-accent text-white'
+                    : 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-accent/50 hover:text-accent'
                 }`}
               >
                 {page}
@@ -136,7 +136,7 @@ export default function BlogList({
               href={pageHref(currentPage + 1)}
               rel="next"
               aria-label="Next page"
-              className="flex items-center justify-center h-10 w-10 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-orange-500/50 hover:text-orange-500 transition-colors"
+              className="flex items-center justify-center h-10 w-10 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-accent/50 hover:text-accent transition-colors"
             >
               <ChevronRight size={18} />
             </Link>

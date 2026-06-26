@@ -15,7 +15,8 @@ export default function AppleIcon() {
         fontSize: 120,
         fontWeight: 700,
         color: 'white',
-        background: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)',
+        // keep in sync with --accent-* in app/globals.css
+        background: 'linear-gradient(135deg, #14b87a 0%, #4f7cff 100%)',
       }}
     >
       P
