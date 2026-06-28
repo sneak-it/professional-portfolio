@@ -1,9 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
-import { ArrowLeft, Calendar, Clock } from 'lucide-react';
+import { Calendar, Clock } from 'lucide-react';
 import Container from '@/components/Container';
+import BackButton from '@/components/BackButton';
 import ShareButton from '@/components/ShareButton';
 import type { BlogPost } from '@/lib/mdx';
 
@@ -16,12 +16,7 @@ export default function BlogPostContent({
 }) {
   return (
     <Container as="article" size="sm">
-      <Link
-        href="/blog"
-        className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors mb-8"
-      >
-        <ArrowLeft size={16} /> Back to Blog
-      </Link>
+      <BackButton href="/blog" label="Back to Blog" />
 
       <header className="mb-10">
         <div className="flex items-center gap-4 text-sm font-mono text-gray-500 dark:text-gray-400 mb-6">

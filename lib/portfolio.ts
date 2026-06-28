@@ -3,6 +3,7 @@ import path from 'path';
 import { parseFrontmatter } from './frontmatter';
 import sizeOf from 'image-size';
 import { safeSlug } from './slug';
+import { byDateDesc } from './sort';
 
 /**
  * Unified, MDX-driven Portfolio data layer.
@@ -107,10 +108,6 @@ function sectionDir(section: SectionSlug): string {
 function readMdxSlugs(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter((file) => file.endsWith('.mdx'));
-}
-
-function byDateDesc<T extends { date: string }>(a: T, b: T): number {
-  return a.date > b.date ? -1 : 1;
 }
 
 // -- Project sections --------------------------------------------------------
