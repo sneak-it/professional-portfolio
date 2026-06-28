@@ -12,7 +12,6 @@ import {
 } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import Reveal from '@/components/Reveal';
-import { useMagnetic } from '@/hooks/use-magnetic';
 
 const WORDS = ['Experiences', 'Opportunities', 'Connections', 'Solutions'];
 
@@ -117,53 +116,43 @@ function TiltCard({
 }
 
 function FeaturedProjectCard({ item }: { item: number }) {
-  const { ref: magneticRef, style: magneticStyle } =
-    useMagnetic<HTMLDivElement>(0.15);
-
   return (
     <Reveal delay={item * 0.1}>
-      <motion.div ref={magneticRef} style={magneticStyle}>
-        <TiltCard className="group relative rounded-2xl overflow-hidden bg-white dark:bg-black border border-gray-100 dark:border-white/10 h-full">
-          <div className="aspect-[4/3] relative overflow-hidden bg-gray-100 dark:bg-gray-900">
-            <Image
-              src={`https://picsum.photos/seed/project${item}/800/600`}
-              alt={`Project ${item}`}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <TiltCard className="group relative rounded-2xl overflow-hidden bg-white dark:bg-black border border-gray-100 dark:border-white/10 h-full">
+        <div className="aspect-[4/3] relative overflow-hidden bg-gray-100 dark:bg-gray-900">
+          <Image
+            src={`https://picsum.photos/seed/project${item}/800/600`}
+            alt={`Project ${item}`}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
+        <div className="p-6">
+          <div className="flex gap-2 mb-3">
+            <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
+              Next.js
+            </span>
+            <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
+              Tailwind
+            </span>
           </div>
-          <div className="p-6">
-            <div className="flex gap-2 mb-3">
-              <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
-                Next.js
-              </span>
-              <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
-                Tailwind
-              </span>
-            </div>
-            <h3 className="text-xl font-bold mb-2 group-hover:text-accent transition-colors">
-              Project Title {item}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              A brief description of the project and the value it provides to
-              the users.
-            </p>
-          </div>
-        </TiltCard>
-      </motion.div>
+          <h3 className="text-xl font-bold mb-2 group-hover:text-accent transition-colors">
+            Project Title {item}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
+            A brief description of the project and the value it provides to the
+            users.
+          </p>
+        </div>
+      </TiltCard>
     </Reveal>
   );
 }
 
 export default function Home() {
-  const { ref: ctaPrimaryRef, style: ctaPrimaryStyle } =
-    useMagnetic<HTMLDivElement>(0.4);
-  const { ref: ctaSecondaryRef, style: ctaSecondaryStyle } =
-    useMagnetic<HTMLDivElement>(0.4);
-
   return (
     <>
       {/* Hero Section */}
@@ -243,11 +232,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.8, ease: 'easeOut' }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <motion.div
-                ref={ctaPrimaryRef}
-                style={ctaPrimaryStyle}
-                className="inline-block"
-              >
+              <div className="inline-block">
                 <Link
                   href="/projects"
                   className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-black dark:bg-white dark:text-black rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(249,115,22,0.4)]"
@@ -261,19 +246,15 @@ export default function Home() {
                   </span>
                   <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-accent-from to-accent-via transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out" />
                 </Link>
-              </motion.div>
-              <motion.div
-                ref={ctaSecondaryRef}
-                style={ctaSecondaryStyle}
-                className="inline-block"
-              >
+              </div>
+              <div className="inline-block">
                 <Link
                   href="/contact"
                   className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-black dark:text-white border border-gray-200 dark:border-white/20 rounded-full hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                 >
                   Contact Me
                 </Link>
-              </motion.div>
+              </div>
             </motion.div>
           </motion.div>
         </div>
