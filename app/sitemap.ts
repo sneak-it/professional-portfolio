@@ -4,6 +4,10 @@ import { getAllGalleries } from '@/lib/galleries';
 import { getProjectIds } from '@/lib/projects';
 import { siteConfig } from '@/lib/site';
 
+// Re-read posts/galleries every 60s so the sitemap tracks content edits rather
+// than freezing at build-time content.
+export const revalidate = 60;
+
 /**
  * Parses an ISO `YYYY-MM-DD` frontmatter date, falling back to the build time
  * if it's missing or unparseable so `lastModified` is always a valid Date.

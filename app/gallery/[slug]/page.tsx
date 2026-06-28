@@ -5,6 +5,10 @@ import JsonLd from '@/components/JsonLd';
 import { siteConfig } from '@/lib/site';
 import { notFound } from 'next/navigation';
 
+// Prerendered slugs (below) revalidate every 60s, and dynamicParams (default
+// true) renders newly-added galleries on demand — both without a rebuild.
+export const revalidate = 60;
+
 export function generateStaticParams() {
   const galleries = getAllGalleries();
   return galleries.map((g) => ({
