@@ -8,9 +8,15 @@ import { X, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '@/components/Container';
 import PageHeader from '@/components/PageHeader';
 import { useFocusTrap } from '@/hooks/use-focus-trap';
-import type { Gallery } from '@/lib/galleries';
+import type { GalleryItem } from '@/lib/portfolio';
 
-export default function GalleryView({ gallery }: { gallery: Gallery }) {
+export default function GalleryView({
+  gallery,
+  backHref = '/portfolio/photography',
+}: {
+  gallery: GalleryItem;
+  backHref?: string;
+}) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const isOpen = selectedIndex !== null;
   const dialogRef = useFocusTrap<HTMLDivElement>(isOpen);
@@ -50,10 +56,10 @@ export default function GalleryView({ gallery }: { gallery: Gallery }) {
   return (
     <Container>
       <Link
-        href="/gallery"
+        href={backHref}
         className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors mb-8"
       >
-        <ArrowLeft size={16} /> Back to Galleries
+        <ArrowLeft size={16} /> Back to Photography
       </Link>
 
       <PageHeader

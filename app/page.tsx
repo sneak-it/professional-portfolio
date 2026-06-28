@@ -234,11 +234,11 @@ export default function Home() {
             >
               <div className="inline-block">
                 <Link
-                  href="/projects"
+                  href="/portfolio"
                   className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-black dark:bg-white dark:text-black rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(249,115,22,0.4)]"
                 >
                   <span className="relative z-10 flex items-center gap-2">
-                    View Projects{' '}
+                    View Portfolio{' '}
                     <ArrowRight
                       size={18}
                       className="group-hover:translate-x-1 transition-transform"
@@ -273,7 +273,7 @@ export default function Home() {
               </p>
             </div>
             <Link
-              href="/projects"
+              href="/portfolio"
               className="hidden md:flex items-center gap-2 text-accent hover:text-accent font-medium group"
             >
               View all{' '}
@@ -292,10 +292,10 @@ export default function Home() {
 
           <div className="mt-8 text-center md:hidden">
             <Link
-              href="/projects"
+              href="/portfolio"
               className="inline-flex items-center gap-2 text-accent font-medium"
             >
-              View all projects <ArrowRight size={16} />
+              View all work <ArrowRight size={16} />
             </Link>
           </div>
         </div>

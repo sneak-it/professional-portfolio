@@ -1,10 +1,13 @@
 import type { MetadataRoute } from 'next';
 import { getAllPosts } from '@/lib/mdx';
-import { getAllGalleries } from '@/lib/galleries';
-import { getProjectIds } from '@/lib/projects';
+import {
+  PORTFOLIO_SECTIONS,
+  getProjectItems,
+  getPhotographyGalleries,
+} from '@/lib/portfolio';
 import { siteConfig } from '@/lib/site';
 
-// Re-read posts/galleries every 60s so the sitemap tracks content edits rather
+// Re-read posts/portfolio every 60s so the sitemap tracks content edits rather
 // than freezing at build-time content.
 export const revalidate = 60;
 
@@ -38,19 +41,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${base}/projects`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${base}/blog`,
+      url: `${base}/portfolio`,
       lastModified: now,
       changeFrequency: 'weekly',
-      priority: 0.7,
+      priority: 0.8,
     },
+    ...PORTFOLIO_SECTIONS.map((section) => ({
+      url: `${base}/portfolio/${section.slug}`,
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
     {
-      url: `${base}/gallery`,
+      url: `${base}/blog`,
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.7,
@@ -76,19 +79,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  const galleries: MetadataRoute.Sitemap = getAllGalleries().map((gallery) => ({
-    url: `${base}/gallery/${gallery.slug}`,
-    lastModified: toDate(gallery.date),
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  }));
+  const photography: MetadataRoute.Sitemap = getPhotographyGalleries().map(
+    (gallery) => ({
+      url: `${base}/portfolio/photography/${gallery.slug}`,
+      lastModified: toDate(gallery.date),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    }),
+  );
 
-  const projects: MetadataRoute.Sitemap = getProjectIds().map((id) => ({
-    url: `${base}/projects/${id}`,
-    lastModified: now,
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  }));
+  const projects: MetadataRoute.Sitemap = PORTFOLIO_SECTIONS.filter(
+    (s) => s.type === 'project',
+  ).flatMap((section) =>
+    getProjectItems(section.slug).map((item) => ({
+      url: `${base}/portfolio/${section.slug}/${item.slug}`,
+      lastModified: toDate(item.date),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+  );
 
-  return [...staticRoutes, ...posts, ...galleries, ...projects];
+  return [...staticRoutes, ...posts, ...photography, ...projects];
 }
