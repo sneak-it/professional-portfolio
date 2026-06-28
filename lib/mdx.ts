@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { parseFrontmatter } from './frontmatter';
 import { safeSlug } from './slug';
+import { byDateDesc } from './sort';
 
 const postsDirectory = path.join(process.cwd(), 'content/blog');
 
@@ -56,6 +57,6 @@ export function getAllPosts() {
     .map((slug) => getPostBySlug(slug))
     .filter((post): post is NonNullable<typeof post> => post !== null)
     // sort posts by date in descending order
-    .sort((post1, post2) => (post1.meta.date > post2.meta.date ? -1 : 1));
+    .sort((post1, post2) => byDateDesc(post1.meta, post2.meta));
   return posts;
 }

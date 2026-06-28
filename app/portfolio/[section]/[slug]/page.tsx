@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Container from '@/components/Container';
+import BackButton from '@/components/BackButton';
 import GalleryView from '@/components/GalleryView';
 import JsonLd from '@/components/JsonLd';
 import { mdxComponents } from '@/components/MDXComponents';
@@ -145,12 +144,10 @@ export default async function PortfolioItemPage({
       <JsonLd data={projectJsonLd} />
       <JsonLd data={breadcrumbBase(project.title, url)} />
       <Container size="lg">
-        <Link
+        <BackButton
           href={`/portfolio/${config.slug}`}
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors mb-8"
-        >
-          <ArrowLeft size={16} /> Back to {config.name}
-        </Link>
+          label={`Back to ${config.name}`}
+        />
 
         <ProjectDetailClient project={project} sectionName={config.name} />
 

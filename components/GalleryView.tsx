@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '@/components/Container';
+import BackButton from '@/components/BackButton';
+import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import { useFocusTrap } from '@/hooks/use-focus-trap';
 import type { GalleryItem } from '@/lib/portfolio';
@@ -55,12 +56,7 @@ export default function GalleryView({
 
   return (
     <Container>
-      <Link
-        href={backHref}
-        className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors mb-8"
-      >
-        <ArrowLeft size={16} /> Back to Photography
-      </Link>
+      <BackButton href={backHref} label="Back to Photography" />
 
       <PageHeader
         align="left"
@@ -69,9 +65,7 @@ export default function GalleryView({
       />
 
       {gallery.images.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-gray-300 dark:border-white/15 py-20 text-center text-gray-500 dark:text-gray-400">
-          No images in this gallery yet.
-        </div>
+        <EmptyState>No images in this gallery yet.</EmptyState>
       )}
 
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">

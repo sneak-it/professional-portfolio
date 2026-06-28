@@ -3,8 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'motion/react';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import Container from '@/components/Container';
+import BackButton from '@/components/BackButton';
+import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import { GitHubIcon } from '@/components/icons/BrandIcons';
 import { scaleIn } from '@/lib/motion';
@@ -23,19 +25,12 @@ export default function SectionProjectList({
 }) {
   return (
     <Container>
-      <Link
-        href="/portfolio"
-        className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors mb-8"
-      >
-        <ArrowLeft size={16} /> Back to Portfolio
-      </Link>
+      <BackButton href="/portfolio" label="Back to Portfolio" />
 
       <PageHeader title={title} description={description} />
 
       {projects.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-300 dark:border-white/15 py-20 text-center text-gray-500 dark:text-gray-400">
-          Nothing here yet.
-        </div>
+        <EmptyState>Nothing here yet.</EmptyState>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => {

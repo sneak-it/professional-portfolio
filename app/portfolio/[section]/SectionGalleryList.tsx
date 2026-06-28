@@ -3,8 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'motion/react';
-import { ArrowLeft, ImageIcon } from 'lucide-react';
+import { ImageIcon } from 'lucide-react';
 import Container from '@/components/Container';
+import BackButton from '@/components/BackButton';
+import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import { fadeInUpOnView } from '@/lib/motion';
 import type { GalleryItem } from '@/lib/portfolio';
@@ -22,19 +24,12 @@ export default function SectionGalleryList({
 }) {
   return (
     <Container>
-      <Link
-        href="/portfolio"
-        className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors mb-8"
-      >
-        <ArrowLeft size={16} /> Back to Portfolio
-      </Link>
+      <BackButton href="/portfolio" label="Back to Portfolio" />
 
       <PageHeader title={title} description={description} />
 
       {galleries.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-300 dark:border-white/15 py-20 text-center text-gray-500 dark:text-gray-400">
-          No collections here yet.
-        </div>
+        <EmptyState>No collections here yet.</EmptyState>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {galleries.map((gallery, index) => (
