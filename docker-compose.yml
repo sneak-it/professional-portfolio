@@ -7,6 +7,12 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+    # Host dirs must exist and be traversable by the container user (uid 1001):
+    #   mkdir -p public/galleries
+    #   chmod o+rx content content/blog content/galleries public/galleries
+    volumes:
+      - ./content:/app/content:ro
+      - ./public/galleries:/app/public/galleries:ro
     restart: unless-stopped
     security_opt:
       - "apparmor=docker-default"

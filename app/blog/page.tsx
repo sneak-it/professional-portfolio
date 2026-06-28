@@ -2,6 +2,10 @@ import type { Metadata } from 'next';
 import { getAllPosts } from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
 
+// Re-read MDX content at request time (cached, refreshed in the background every
+// 60s) so edits appear without a rebuild. See lib/mdx.ts.
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Blog',
   description: 'Musings on web development, design, and modern technologies.',
