@@ -4,9 +4,10 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { RotateCw, ArrowLeft } from 'lucide-react';
 
-// Segment-level boundary: a single broken gallery (e.g. an unreadable image or
-// malformed metadata) degrades gracefully here rather than failing the segment.
-export default function GalleryError({
+// Segment-level boundary: a single broken portfolio item (e.g. an unreadable
+// image or malformed metadata) degrades gracefully here rather than failing the
+// whole section.
+export default function PortfolioItemError({
   error,
   reset,
 }: {
@@ -23,11 +24,11 @@ export default function GalleryError({
         Oops
       </p>
       <h1 className="mt-6 text-3xl md:text-4xl font-display font-bold tracking-tight">
-        This gallery couldn&apos;t be loaded.
+        This item couldn&apos;t be loaded.
       </h1>
       <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
-        Something went wrong while rendering these images. You can try again or
-        browse the rest of the galleries.
+        Something went wrong while rendering this page. You can try again or
+        browse the rest of the portfolio.
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
         <button
@@ -38,11 +39,11 @@ export default function GalleryError({
           Try again
         </button>
         <Link
-          href="/gallery"
+          href="/portfolio"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-gray-200 dark:border-white/10 font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
         >
           <ArrowLeft size={18} />
-          Back to galleries
+          Back to Portfolio
         </Link>
       </div>
     </div>
