@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
+import { parseFrontmatter } from './frontmatter';
 import sizeOf from 'image-size';
 import { safeSlug } from './slug';
 
@@ -43,7 +43,7 @@ export function getGalleryBySlug(slug: string): Gallery | null {
   if (!fs.existsSync(fullPath)) return null;
 
   const fileContents = fs.readFileSync(fullPath, 'utf8');
-  const { data, content } = matter(fileContents);
+  const { data, content } = parseFrontmatter(fileContents);
 
   // Auto-read images from public/galleries/[slug]
   const imagesDir = path.join(publicGalleriesDirectory, realSlug);
@@ -105,14 +105,14 @@ export function getGalleryBySlug(slug: string): Gallery | null {
     );
   }
 
-  const coverImage = data.coverImage || images[0].src;
+  const coverImage = (data.coverImage as string) || images[0].src;
 
   return {
     slug: realSlug,
-    title: data.title || realSlug,
-    description: data.description || '',
+    title: (data.title as string) || realSlug,
+    description: (data.description as string) || '',
     coverImage,
-    date: data.date || '',
+    date: (data.date as string) || '',
     images,
     content,
   };

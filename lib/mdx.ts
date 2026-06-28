@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
+import { parseFrontmatter } from './frontmatter';
 import { safeSlug } from './slug';
 
 const postsDirectory = path.join(process.cwd(), 'content/blog');
@@ -41,7 +41,7 @@ export function getPostBySlug(slug: string): BlogPost | null {
   }
 
   const fileContents = fs.readFileSync(fullPath, 'utf8');
-  const { data, content } = matter(fileContents);
+  const { data, content } = parseFrontmatter(fileContents);
 
   return {
     slug: realSlug,
