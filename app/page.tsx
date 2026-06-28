@@ -1,17 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import {
   animate,
   motion,
   useMotionValue,
-  useSpring,
   useTransform,
 } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
-import Reveal from '@/components/Reveal';
 
 const WORDS = ['Experiences', 'Opportunities', 'Connections', 'Solutions'];
 
@@ -63,92 +60,6 @@ function GradientMesh() {
     >
       <div className="h-full w-full rounded-full opacity-30 blur-[64px] dark:opacity-40 [background:conic-gradient(from_0deg,var(--accent-from),var(--accent-via),var(--accent-to),var(--accent-from))]" />
     </motion.div>
-  );
-}
-
-function TiltCard({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
-  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['5deg', '-5deg']);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-5deg', '5deg']);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.div
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        rotateY,
-        rotateX,
-        transformStyle: 'preserve-3d',
-      }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function FeaturedProjectCard({ item }: { item: number }) {
-  return (
-    <Reveal delay={item * 0.1}>
-      <TiltCard className="group relative rounded-2xl overflow-hidden bg-white dark:bg-black border border-gray-100 dark:border-white/10 h-full">
-        <div className="aspect-[4/3] relative overflow-hidden bg-gray-100 dark:bg-gray-900">
-          <Image
-            src={`https://picsum.photos/seed/project${item}/800/600`}
-            alt={`Project ${item}`}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        </div>
-        <div className="p-6">
-          <div className="flex gap-2 mb-3">
-            <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
-              Next.js
-            </span>
-            <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-full">
-              Tailwind
-            </span>
-          </div>
-          <h3 className="text-xl font-bold mb-2 group-hover:text-accent transition-colors">
-            Project Title {item}
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
-            A brief description of the project and the value it provides to the
-            users.
-          </p>
-        </div>
-      </TiltCard>
-    </Reveal>
   );
 }
 
@@ -257,47 +168,6 @@ export default function Home() {
               </div>
             </motion.div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Featured Projects Preview */}
-      <section className="py-24 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight">
-                Selected Work
-              </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                Some of my recent projects.
-              </p>
-            </div>
-            <Link
-              href="/portfolio"
-              className="hidden md:flex items-center gap-2 text-accent hover:text-accent font-medium group"
-            >
-              View all{' '}
-              <ArrowRight
-                size={16}
-                className="group-hover:translate-x-1 transition-transform"
-              />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 [perspective:1000px]">
-            {[1, 2].map((item) => (
-              <FeaturedProjectCard key={item} item={item} />
-            ))}
-          </div>
-
-          <div className="mt-8 text-center md:hidden">
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center gap-2 text-accent font-medium"
-            >
-              View all work <ArrowRight size={16} />
-            </Link>
-          </div>
         </div>
       </section>
     </>
