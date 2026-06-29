@@ -4,7 +4,7 @@ import { MotionConfig } from 'motion/react';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import DynamicBackground from '@/components/DynamicBackground';
+import BackgroundCanvas from '@/components/BackgroundCanvas';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import JsonLd from '@/components/JsonLd';
 import ViewTransitions from '@/components/ViewTransitions';
@@ -96,7 +96,7 @@ export default function RootLayout({
         >
           <MotionConfig reducedMotion="user">
             <ViewTransitions />
-            <DynamicBackground />
+            <BackgroundCanvas />
             <Navbar />
             <main id="main-content" className="flex-grow pt-20">
               {children}
