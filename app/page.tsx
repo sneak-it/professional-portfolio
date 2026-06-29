@@ -44,31 +44,12 @@ function TypewriterText() {
   return <motion.span>{displayText}</motion.span>;
 }
 
-/** Slowly-rotating conic-gradient glow behind the hero headline. Augments the
- *  typewriter; static when motion is disabled. */
-function GradientMesh() {
-  // Static glow: a one-shot entrance fade only. Previously this rotated
-  // infinitely, which kept re-compositing a large blurred layer behind the
-  // hero every frame — pure cost for a barely-perceptible effect.
-  return (
-    <motion.div
-      aria-hidden="true"
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 1.2, ease: 'easeOut' }}
-      className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[85vh] w-[85vh] -translate-x-1/2 -translate-y-1/2"
-    >
-      <div className="h-full w-full rounded-full opacity-30 blur-[64px] dark:opacity-40 [background:conic-gradient(from_0deg,var(--accent-from),var(--accent-via),var(--accent-to),var(--accent-from))]" />
-    </motion.div>
-  );
-}
-
 export default function Home() {
   return (
     <>
-      {/* Hero Section */}
+      {/* Hero Section — the animated gradient backdrop is provided site-wide by
+          components/BackgroundCanvas.tsx. */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <GradientMesh />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
