@@ -152,7 +152,7 @@ export default async function PortfolioItemPage({
         <ProjectDetailClient project={project} sectionName={config.name} />
 
         {project.content && project.content.trim() && (
-          <div className="prose prose-lg dark:prose-invert max-w-none mt-16 prose-headings:font-display prose-headings:tracking-tight prose-h2:mt-12 prose-a:font-medium prose-a:underline-offset-4 prose-img:rounded-2xl">
+          <div className="surface p-8 md:p-12 mt-16 prose prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-headings:tracking-tight prose-h2:mt-12 prose-a:font-medium prose-a:underline-offset-4 prose-img:rounded-2xl">
             <MDXRemote source={project.content} components={mdxComponents} />
           </div>
         )}

@@ -41,7 +41,7 @@ export default function OpengraphImage() {
             fontWeight: 700,
             borderRadius: 20,
             // keep in sync with --accent-* in app/globals.css
-            background: 'linear-gradient(135deg, #14b87a 0%, #4f7cff 100%)',
+            background: 'linear-gradient(135deg, #ffb400 0%, #ff1e78 100%)',
           }}
         >
           P
@@ -77,7 +77,7 @@ export default function OpengraphImage() {
           height: 12,
           width: '100%',
           // keep in sync with --accent-* in app/globals.css
-          background: 'linear-gradient(90deg, #14b87a, #0ea5a4, #4f7cff)',
+          background: 'linear-gradient(90deg, #ffb400, #ff6b3d, #ff1e78)',
           borderRadius: 999,
         }}
       />

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import { Download, Code2, Palette, Terminal, Database } from 'lucide-react';
 import Container from '@/components/Container';
+import Surface from '@/components/Surface';
 import IconBadge from '@/components/IconBadge';
 import { skills, type SkillIcon } from '@/lib/about';
 
@@ -42,37 +43,40 @@ export default function AboutClient() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
-            About Me
-          </h1>
-          <div className="space-y-4 text-lg text-gray-600 dark:text-gray-300">
-            <p>
-              Hello! I&apos;m a passionate software engineer and designer with
-              over 5 years of experience creating digital products. I specialize
-              in building robust, scalable web applications with a strong focus
-              on user experience and beautiful interfaces.
-            </p>
-            <p>
-              My journey started with a curiosity for how things work on the
-              internet, which led me to dive deep into frontend and backend
-              technologies. I believe that great software is a perfect blend of
-              solid engineering and thoughtful design.
-            </p>
-            <p>
-              When I&apos;m not coding, you can find me exploring the outdoors,
-              reading sci-fi novels, or experimenting with new cooking recipes.
-            </p>
-          </div>
+          <Surface padding="lg">
+            <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
+              About Me
+            </h1>
+            <div className="space-y-4 text-lg text-gray-600 dark:text-gray-300">
+              <p>
+                Hello! I&apos;m a passionate software engineer and designer with
+                over 5 years of experience creating digital products. I
+                specialize in building robust, scalable web applications with a
+                strong focus on user experience and beautiful interfaces.
+              </p>
+              <p>
+                My journey started with a curiosity for how things work on the
+                internet, which led me to dive deep into frontend and backend
+                technologies. I believe that great software is a perfect blend
+                of solid engineering and thoughtful design.
+              </p>
+              <p>
+                When I&apos;m not coding, you can find me exploring the
+                outdoors, reading sci-fi novels, or experimenting with new
+                cooking recipes.
+              </p>
+            </div>
 
-          <div className="mt-8 flex gap-4">
-            <a
-              href="/resume.pdf"
-              download
-              className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-medium hover:bg-accent transition-colors"
-            >
-              <Download size={18} /> Download Resume
-            </a>
-          </div>
+            <div className="mt-8 flex gap-4">
+              <a
+                href="/resume.pdf"
+                download
+                className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-medium hover:bg-accent transition-colors"
+              >
+                <Download size={18} /> Download Resume
+              </a>
+            </div>
+          </Surface>
         </motion.div>
       </div>
 
@@ -85,10 +89,10 @@ export default function AboutClient() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight">
+          <h2 className="heading-legible text-3xl md:text-4xl font-display font-bold tracking-tight">
             Technical Arsenal
           </h2>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
+          <p className="heading-legible mt-4 text-gray-600 dark:text-gray-400">
             The tools and technologies I use to bring ideas to life.
           </p>
         </motion.div>
@@ -101,7 +105,7 @@ export default function AboutClient() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white/60 dark:bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-gray-200/50 dark:border-white/10 hover:border-accent/50 transition-colors shadow-lg"
+              className="surface p-6 hover:border-accent/50 transition-colors"
             >
               <IconBadge size="md" shape="xl" className="mb-6">
                 {SKILL_ICONS[skillGroup.icon]}

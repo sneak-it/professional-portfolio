@@ -6,9 +6,11 @@ import {
   animate,
   motion,
   useMotionValue,
+  useSpring,
   useTransform,
 } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
+import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 
 const WORDS = ['Experiences', 'Opportunities', 'Connections', 'Solutions'];
 
@@ -45,11 +47,57 @@ function TypewriterText() {
 }
 
 export default function Home() {
+  const { tier } = useMotionEnabled();
+  const interactive = tier === 'full';
+
+  // Pointer position normalized to [-0.5, 0.5] from the hero center, smoothed
+  // by a spring. Drives the trailing accent glow only — the headline itself
+  // stays put. Stays at 0 unless `interactive`, so mobile (`lite`) and
+  // reduced-motion (`none`) render a perfectly static hero.
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const spx = useSpring(px, { stiffness: 120, damping: 20, mass: 0.5 });
+  const spy = useSpring(py, { stiffness: 120, damping: 20, mass: 0.5 });
+
+  const glowX = useTransform(spx, [-0.5, 0.5], ['38%', '62%']);
+  const glowY = useTransform(spy, [-0.5, 0.5], ['38%', '62%']);
+
+  function handlePointer(e: React.MouseEvent) {
+    if (!interactive) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    px.set((e.clientX - r.left) / r.width - 0.5);
+    py.set((e.clientY - r.top) / r.height - 0.5);
+  }
+  function resetPointer() {
+    px.set(0);
+    py.set(0);
+  }
+
   return (
     <>
       {/* Hero Section — the animated gradient backdrop is provided site-wide by
           components/BackgroundCanvas.tsx. */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <section
+        onMouseMove={handlePointer}
+        onMouseLeave={resetPointer}
+        className="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
+      >
+        {/* Readability vignette — keeps the headline legible over the brighter
+            palette + glow, regardless of where the animated background lands. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,var(--background-deep)_0%,transparent_70%)] opacity-70 dark:opacity-80"
+        />
+
+        {/* Cursor-following accent glow — soft depth cue, desktop + motion only. */}
+        {interactive && (
+          <motion.div
+            aria-hidden
+            style={{ left: glowX, top: glowY }}
+            className="pointer-events-none absolute z-0 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,var(--accent)_0%,transparent_65%)] opacity-20 blur-3xl"
+          />
+        )}
+
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -110,7 +158,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
-              className="mt-4 max-w-2xl mx-auto mb-10 p-6 rounded-2xl bg-white/60 dark:bg-black/40 backdrop-blur-md border border-gray-200/50 dark:border-white/10 shadow-xl"
+              className="surface mt-4 max-w-2xl mx-auto mb-10 p-6"
             >
               <p className="text-xl text-gray-800 dark:text-gray-200 font-medium">
                 I build accessible, pixel-perfect digital experiences for the
@@ -127,7 +175,7 @@ export default function Home() {
               <div className="inline-block">
                 <Link
                   href="/portfolio"
-                  className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-black dark:bg-white dark:text-black rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(249,115,22,0.4)]"
+                  className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-black dark:bg-white dark:text-black rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_-4px_var(--accent)]"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     View Portfolio{' '}

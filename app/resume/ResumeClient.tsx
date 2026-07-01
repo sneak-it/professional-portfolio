@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { Briefcase, GraduationCap, Download } from 'lucide-react';
 import Container from '@/components/Container';
+import Surface from '@/components/Surface';
 import IconBadge from '@/components/IconBadge';
 import { fadeInUp } from '@/lib/motion';
 import { experience, education, type TimelineEntry } from '@/lib/resume';
@@ -63,14 +64,14 @@ export default function ResumeClient() {
         <div>
           <motion.h1
             {...fadeInUp}
-            className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-4"
+            className="heading-legible text-4xl md:text-5xl font-display font-bold tracking-tight mb-4"
           >
             Resume
           </motion.h1>
           <motion.p
             {...fadeInUp}
             transition={{ delay: 0.1 }}
-            className="text-lg text-gray-600 dark:text-gray-400"
+            className="heading-legible text-lg text-gray-600 dark:text-gray-400"
           >
             My professional journey and educational background.
           </motion.p>
@@ -87,8 +88,8 @@ export default function ResumeClient() {
         </motion.a>
       </div>
 
-      <div className="space-y-20">
-        <section>
+      <div className="space-y-12">
+        <Surface as="section" padding="lg">
           <div className="flex items-center gap-3 mb-8">
             <IconBadge color="primary">
               <Briefcase size={20} />
@@ -96,9 +97,9 @@ export default function ResumeClient() {
             <h2 className="text-2xl font-bold">Experience</h2>
           </div>
           <Timeline entries={experience} accent="primary" />
-        </section>
+        </Surface>
 
-        <section>
+        <Surface as="section" padding="lg">
           <div className="flex items-center gap-3 mb-8">
             <IconBadge color="secondary">
               <GraduationCap size={20} />
@@ -106,7 +107,7 @@ export default function ResumeClient() {
             <h2 className="text-2xl font-bold">Education</h2>
           </div>
           <Timeline entries={education} accent="secondary" />
-        </section>
+        </Surface>
       </div>
     </Container>
   );
