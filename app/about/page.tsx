@@ -4,12 +4,12 @@ import AboutClient from './AboutClient';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Software engineer and designer building robust, scalable web applications with a focus on user experience and beautiful interfaces.',
+    'Get to know Your Name - the technologist, tinkerer, photographer, and gearhead behind the work.',
   alternates: { canonical: '/about' },
   openGraph: {
     title: 'About',
     description:
-      'Software engineer and designer building robust, scalable web applications with a focus on user experience and beautiful interfaces.',
+      'Get to know Your Name - the technologist, tinkerer, photographer, and gearhead behind the work.',
     url: '/about',
   },
 };

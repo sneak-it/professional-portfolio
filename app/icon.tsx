@@ -12,17 +12,19 @@ export default function Icon() {
         width: '100%',
         height: '100%',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: 22,
-        fontWeight: 700,
-        color: 'white',
         // keep in sync with --accent-* in app/globals.css
-        background: 'linear-gradient(135deg, #ffb400 0%, #ff1e78 100%)',
+        background: '#000000',
         borderRadius: 7,
       }}
     >
-      P
+      {/* Serif capital "I" drawn as three bars so it reads as a letter, not a
+          bare vertical line. Top and bottom serifs bracket a narrower stem. */}
+      <div style={{ width: 14, height: 3, background: 'white' }} />
+      <div style={{ width: 4, height: 10, background: 'white' }} />
+      <div style={{ width: 14, height: 3, background: 'white' }} />
     </div>,
     size,
   );

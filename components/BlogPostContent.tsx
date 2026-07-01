@@ -65,8 +65,7 @@ export default function BlogPostContent({
               referrerPolicy="no-referrer"
             />
             <div>
-              <p className="font-bold">John Doe</p>
-              <p className="text-sm text-gray-500">Frontend Developer</p>
+              <p className="font-bold">Your Name</p>
             </div>
           </div>
 
