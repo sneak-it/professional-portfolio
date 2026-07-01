@@ -52,7 +52,7 @@ export default function Navbar() {
             href="/"
             className="text-xl font-mono font-bold tracking-tight uppercase"
           >
-IRT<span className="text-accent">.</span>
+            IRT<span className="text-accent">.</span>
           </Link>
 
           {/* Desktop Navigation */}

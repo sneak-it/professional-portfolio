@@ -24,9 +24,8 @@ export default function ContactClient() {
           !
         </h1>
         <p className="heading-legible text-lg text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
-          Looking to collaborate, chat, or just say hi?
-          I’m always open to new opportunities and conversations.
-          Reach out and let’s connect!
+          Looking to collaborate, chat, or just say hi? I’m always open to new
+          opportunities and conversations. Reach out and let’s connect!
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">

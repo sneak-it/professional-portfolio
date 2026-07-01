@@ -11,8 +11,7 @@ export default function NotFound() {
         These aren't the droids you're looking for.
       </h1>
       <p className="heading-legible mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
-        The page you're looking for doesn't exist or may have been
-        moved.
+        The page you're looking for doesn't exist or may have been moved.
       </p>
       <Link
         href="/"

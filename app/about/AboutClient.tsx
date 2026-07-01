@@ -29,44 +29,45 @@ const SKILL_ICONS: Record<SkillIcon, React.ReactNode> = {
 };
 
 // Personal interests for the "Off the Clock" section.
-const INTERESTS: Array<{ name: string; icon: React.ReactNode; blurb: string }> = [
-  {
-    name: 'Homelab & Self-Hosting',
-    icon: <Server size={24} />,
-    blurb:
-      'A rack that is perpetually half-reorganized. I self-host what I can, break it regularly, and learn something every time I put it back together.',
-  },
-  {
-    name: 'AI & Tinkering',
-    icon: <Bot size={24} />,
-    blurb:
-      'Local models, agentic workflows, and automating the boring parts of my day. If it has an API, I have probably poked at it.',
-  },
-  {
-    name: 'Gaming & Esports',
-    icon: <Gamepad2 size={24} />,
-    blurb:
-      'Where a lot of this started. I built a community of nearly two million players and still keep a controller - and a server or two - close by.',
-  },
-  {
-    name: 'Photography',
-    icon: <Camera size={24} />,
-    blurb:
-      'A good excuse to slow down and pay attention. Mostly nature and the odd geometry of cities - some of it lives in my portfolio.',
-  },
-  {
-    name: 'Cars & Wrenching',
-    icon: <Wrench size={24} />,
-    blurb:
-      'I like machines I can actually put my hands on. Plenty of weekends involve a hood up, a socket set out, and grease under my fingernails.',
-  },
-  {
-    name: 'Gardening',
-    icon: <Sprout size={24} />,
-    blurb:
-      'A slower, dirtier kind of system to maintain - and a nice reminder that not everything worthwhile reboots in thirty seconds.',
-  },
-];
+const INTERESTS: Array<{ name: string; icon: React.ReactNode; blurb: string }> =
+  [
+    {
+      name: 'Homelab & Self-Hosting',
+      icon: <Server size={24} />,
+      blurb:
+        'A rack that is perpetually half-reorganized. I self-host what I can, break it regularly, and learn something every time I put it back together.',
+    },
+    {
+      name: 'AI & Tinkering',
+      icon: <Bot size={24} />,
+      blurb:
+        'Local models, agentic workflows, and automating the boring parts of my day. If it has an API, I have probably poked at it.',
+    },
+    {
+      name: 'Gaming & Esports',
+      icon: <Gamepad2 size={24} />,
+      blurb:
+        'Where a lot of this started. I built a community of nearly two million players and still keep a controller - and a server or two - close by.',
+    },
+    {
+      name: 'Photography',
+      icon: <Camera size={24} />,
+      blurb:
+        'A good excuse to slow down and pay attention. Mostly nature and the odd geometry of cities - some of it lives in my portfolio.',
+    },
+    {
+      name: 'Cars & Wrenching',
+      icon: <Wrench size={24} />,
+      blurb:
+        'I like machines I can actually put my hands on. Plenty of weekends involve a hood up, a socket set out, and grease under my fingernails.',
+    },
+    {
+      name: 'Gardening',
+      icon: <Sprout size={24} />,
+      blurb:
+        'A slower, dirtier kind of system to maintain - and a nice reminder that not everything worthwhile reboots in thirty seconds.',
+    },
+  ];
 
 export default function AboutClient() {
   return (
@@ -102,18 +103,14 @@ export default function AboutClient() {
             </h1>
             <div className="space-y-4 text-lg text-gray-600 dark:text-gray-300">
               <p>
-                Hi, I'm Ian - a Connecticut-based technologist who
-                genuinely likes this stuff. I've spent years running IT
-                operations, wrangling infrastructure, and untangling the kinds
-                of problems that make other people's eyes glaze over.
-                Somewhere along the way it stopped being just a job.
+                Hi, I'm Ian - a Connecticut-based technologist who genuinely
+                likes this stuff. I've spent years running IT operations,
+                wrangling infrastructure, and untangling the kinds of problems
+                that make other people's eyes glaze over. Somewhere along the
+                way it stopped being just a job.
               </p>
-              <p>
-                Paragraph two.
-              </p>
-              <p>
-                Paragraph three.
-              </p>
+              <p>Paragraph two.</p>
+              <p>Paragraph three.</p>
             </div>
 
             <div className="mt-8 flex gap-4">
@@ -192,9 +189,9 @@ export default function AboutClient() {
             Off the Clock
           </h2>
           <p className="heading-legible mt-4 max-w-2xl mx-auto text-gray-600 dark:text-gray-400">
-            When I'm not being paid to think about technology, I'm
-            usually still thinking about technology - plus a few things that keep
-            me away from a screen.
+            When I'm not being paid to think about technology, I'm usually still
+            thinking about technology - plus a few things that keep me away from
+            a screen.
           </p>
         </motion.div>
 
