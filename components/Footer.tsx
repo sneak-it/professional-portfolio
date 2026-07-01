@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0 text-center md:text-left">
             <Link href="/" className="text-2xl font-bold tracking-tighter">
-YN<span className="text-accent">.</span>
+              YN<span className="text-accent">.</span>
             </Link>
           </div>
 

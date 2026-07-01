@@ -115,9 +115,9 @@ export default function Home() {
               className="surface mt-4 max-w-2xl mx-auto mb-10 p-6"
             >
               <p className="text-xl text-gray-800 dark:text-gray-200 font-medium">
-                I'm Ian - I run technology for a living and can't
-                leave it at the office. When I'm off the clock you'll
-                find me in the homelab, behind a camera, or under a car hood.
+                I'm Ian - I run technology for a living and can't leave it at
+                the office. When I'm off the clock you'll find me in the
+                homelab, behind a camera, or under a car hood.
               </p>
             </motion.div>
 

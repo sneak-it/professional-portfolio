@@ -52,7 +52,7 @@ export default function Navbar() {
             href="/"
             className="text-xl font-mono font-bold tracking-tight uppercase"
           >
-YN<span className="text-accent">.</span>
+            YN<span className="text-accent">.</span>
           </Link>
 
           {/* Desktop Navigation */}
