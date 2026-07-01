@@ -7,10 +7,10 @@ export default function NotFound() {
       <p className="font-display font-bold text-7xl md:text-9xl text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-2">
         404
       </p>
-      <h1 className="mt-6 text-3xl md:text-4xl font-display font-bold tracking-tight">
+      <h1 className="heading-legible mt-6 text-3xl md:text-4xl font-display font-bold tracking-tight">
         These aren't the droids you're looking for.
       </h1>
-      <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+      <p className="heading-legible mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
         The page you&apos;re looking for doesn&apos;t exist or may have been
         moved.
       </p>

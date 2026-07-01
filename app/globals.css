@@ -19,12 +19,12 @@
      Swap a scheme by changing the five hexes below — then mirror --accent-*
      into app/icon.tsx, app/apple-icon.tsx, app/opengraph-image.tsx (next/og
      can't read CSS variables). */
-  --accent: #14b87a; /* primary   — welcoming emerald-green       */
-  --accent-2: #4f7cff; /* secondary — friendly indigo-blue         */
-  /* Gradient stops (text/CTAs) — derived green→teal→blue, never rainbow. */
-  --accent-from: #14b87a; /* = --accent      */
-  --accent-via: #0ea5a4; /* teal bridge     */
-  --accent-to: #4f7cff; /* = --accent-2    */
+  --accent: #ff4d6d; /* primary   — coral-rose (vivid, warm)      */
+  --accent-2: #ffb400; /* secondary — amber-gold                   */
+  /* Gradient stops (text/CTAs) — "Solar Flare" warm sunset, amber→coral→rose. */
+  --accent-from: #ffb400; /* amber gold      (low elevation)  */
+  --accent-via: #ff6b3d; /* vivid coral     (mid)            */
+  --accent-to: #ff1e78; /* hot rose-magenta (high)           */
   /* ===================================================================== */
 
   --background: #f5f5f5;
@@ -50,6 +50,36 @@
   --color-accent-from: var(--accent-from);
   --color-accent-via: var(--accent-via);
   --color-accent-to: var(--accent-to);
+}
+
+/* Frosted-glass reading surface — the single source of truth for the panel
+   that lifts body text off the animated topographic background (see
+   components/BackgroundCanvas.tsx). Mirrors the inline treatment that the
+   homepage CTA and skill cards already use; consumed via components/Surface.tsx
+   and applied directly to existing wrappers. */
+.surface {
+  background-color: rgb(255 255 255 / 0.85);
+  border: 1px solid rgb(229 231 235 / 0.6); /* gray-200/60 */
+  border-radius: 1.5rem; /* rounded-3xl */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+.dark .surface {
+  background-color: rgb(10 12 16 / 0.8);
+  border-color: rgb(255 255 255 / 0.12);
+}
+
+/* Soft theme-aware halo for centered titles that stay over the bare
+   background (no panel). The shadow uses the page background color so glyphs
+   gain local contrast against the moving contour lines. */
+.heading-legible {
+  text-shadow: 0 1px 16px rgb(245 245 245 / 0.85); /* --background */
+}
+.dark .heading-legible {
+  text-shadow: 0 1px 18px rgb(5 5 5 / 0.7); /* --background-deep */
 }
 
 /* Blog prose links follow the accent token (replaces the prose-orange

@@ -15,14 +15,14 @@ export default function ContactClient() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
+        <h1 className="heading-legible text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
           Let&apos;s create something{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-2">
             amazing
           </span>{' '}
           together.
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
+        <p className="heading-legible text-lg text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
           I&apos;m currently available for freelance work and open to new
           opportunities. Whether you have a project in mind or just want to say
           hi, feel free to reach out!

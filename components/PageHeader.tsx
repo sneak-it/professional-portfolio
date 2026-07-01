@@ -24,7 +24,7 @@ export default function PageHeader({
     <div className={`${centered ? 'text-center' : ''} mb-16 ${className}`}>
       <motion.h1
         {...fadeInUp}
-        className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-4"
+        className="heading-legible text-4xl md:text-5xl font-display font-bold tracking-tight mb-4"
       >
         {title}
       </motion.h1>
@@ -32,7 +32,7 @@ export default function PageHeader({
         <motion.p
           {...fadeInUp}
           transition={{ delay: 0.1 }}
-          className={`text-lg text-gray-600 dark:text-gray-400 max-w-2xl ${
+          className={`heading-legible text-lg text-gray-600 dark:text-gray-400 max-w-2xl ${
             centered ? 'mx-auto' : ''
           }`}
         >
