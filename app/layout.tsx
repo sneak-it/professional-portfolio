@@ -46,8 +46,6 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    site: siteConfig.twitterHandle,
-    creator: siteConfig.twitterHandle,
     title: siteConfig.title,
     description: siteConfig.description,
   },
@@ -62,7 +60,6 @@ const personJsonLd = {
   '@type': 'Person',
   name: siteConfig.author,
   url: siteConfig.url,
-  jobTitle: 'Frontend Developer & Designer',
   description: siteConfig.description,
 };
 

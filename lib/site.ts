@@ -11,29 +11,23 @@
  * polished. This module only owns the technical plumbing.
  */
 export const siteConfig = {
-  name: 'Professional Portfolio',
-  title: 'Professional Portfolio',
-  description: 'A highly polished personal portfolio website.',
+  name: 'Ian Rodriguez-Torrent',
+  title: 'Ian Rodriguez-Torrent',
+  description:
+    'Ian Rodriguez-Torrent — technology leader by day; homelab tinkerer, photographer, and gearhead by night.',
   // Trim first so a blank/whitespace-only env var (e.g. an unset Docker build
   // arg expanding to '') falls back to localhost instead of throwing
   // `new URL('')` during the prerender of metadata-bearing routes.
   url: (
     process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000'
   ).replace(/\/$/, ''),
-  author: 'John Doe',
-  // Twitter/X handle (with leading @) for the twitter card `creator`/`site`.
-  twitterHandle: '@johndoe',
+  author: 'Ian Rodriguez-Torrent',
   // Contact details, surfaced on the contact page and footer.
-  email: 'hello@example.com',
-  phone: '+1 (234) 567-890',
-  phoneHref: 'tel:+1234567890',
-  location: 'San Francisco, CA',
-  locationNote: 'Available Worldwide',
+  location: 'Litchfield County, CT',
   // Social profiles, rendered in the footer.
   social: {
-    github: 'https://github.com',
-    linkedin: 'https://linkedin.com',
-    twitter: 'https://twitter.com',
+    github: 'https://github.com/sneak_it',
+    linkedin: 'https://linkedin.com/in/ianrt',
   },
 } as const;
 
@@ -41,7 +35,6 @@ export const siteConfig = {
 export const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'About', href: '/about' },
-  { name: 'Resume', href: '/resume' },
   { name: 'Portfolio', href: '/portfolio' },
   { name: 'Blog', href: '/blog' },
   { name: 'Contact', href: '/contact' },

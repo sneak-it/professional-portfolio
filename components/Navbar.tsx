@@ -50,9 +50,9 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           <Link
             href="/"
-            className="text-xl font-mono font-bold tracking-tight lowercase"
+            className="text-xl font-mono font-bold tracking-tight uppercase"
           >
-            Portfolio<span className="text-accent">.</span>
+IRT<span className="text-accent">.</span>
           </Link>
 
           {/* Desktop Navigation */}

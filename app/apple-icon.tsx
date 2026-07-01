@@ -10,16 +10,18 @@ export default function AppleIcon() {
         width: '100%',
         height: '100%',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: 120,
-        fontWeight: 700,
-        color: 'white',
         // keep in sync with --accent-* in app/globals.css
         background: 'linear-gradient(135deg, #ffb400 0%, #ff1e78 100%)',
       }}
     >
-      P
+      {/* Serif capital "I" drawn as three bars so it reads as a letter, not a
+          bare vertical line. Top and bottom serifs bracket a narrower stem. */}
+      <div style={{ width: 79, height: 17, background: 'white' }} />
+      <div style={{ width: 22, height: 56, background: 'white' }} />
+      <div style={{ width: 79, height: 17, background: 'white' }} />
     </div>,
     size,
   );

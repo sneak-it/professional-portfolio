@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 /**
- * Circular (or rounded) icon chip used in the resume, about, and contact
+ * Circular (or rounded) icon chip used in the about and contact
  * pages. Color/size are static lookups so Tailwind can see the full class
  * names (dynamically built `bg-${color}-100` strings would be purged).
  */
