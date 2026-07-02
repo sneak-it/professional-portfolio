@@ -1,18 +1,16 @@
 services:
   portfolio:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/sneak-it/professional-portfolio:latest
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
     # Host dirs must exist and be traversable by the container user (uid 1001):
-    #   mkdir -p public/galleries
-    #   chmod o+rx content content/blog content/galleries public/galleries
+    #   mkdir -p public/portfolio/photography
+    #   chmod o+rx content content/blog content/portfolio public/portfolio public/portfolio/photography
     volumes:
       - ./content:/app/content:ro
-      - ./public/galleries:/app/public/galleries:ro
+      - ./public/portfolio:/app/public/portfolio:ro
     restart: unless-stopped
     security_opt:
       - "apparmor=docker-default"
