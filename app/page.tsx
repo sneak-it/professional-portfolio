@@ -5,9 +5,9 @@ import styles from './page.module.css';
 
 // Server component: the hero markup is rendered on the server and painted
 // immediately (no opacity:0 / hydration gate). Entrance animations are CSS-only
-// (see the .hero-* classes in globals.css) so they run on first paint without
-// waiting on ~245 KB of JS. The one interactive bit — the typewriter — is a
-// small client island (components/Typewriter.tsx).
+// (see page.module.css) so they run on first paint without waiting on ~245 KB
+// of JS. The one interactive bit — the typewriter — is a small client island
+// (app/Typewriter.tsx).
 export default function Home() {
   return (
     <>
