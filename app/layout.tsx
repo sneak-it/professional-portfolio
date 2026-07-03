@@ -10,16 +10,14 @@ import JsonLd from '@/components/JsonLd';
 import ViewTransitions from '@/components/ViewTransitions';
 import { siteConfig } from '@/lib/site';
 
-// One characterful neo-grotesque carries both body and display; a monospace
-// handles small-caps labels / meta / numbers. See globals.css @theme.
+// One characterful neo-grotesque carries both body and display: a single
+// variable-font instance covers every weight we use (incl. the display
+// 600/700/800), so --font-display maps to this same instance in globals.css
+// @theme instead of fetching the family a second time. A monospace handles
+// small-caps labels / meta / numbers.
 const grotesk = Hanken_Grotesk({
   subsets: ['latin'],
   variable: '--font-sans',
-});
-const displayGrotesk = Hanken_Grotesk({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-display',
 });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
 
@@ -71,7 +69,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${grotesk.variable} ${displayGrotesk.variable} ${mono.variable}`}
+      className={`${grotesk.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <body

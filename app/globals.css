@@ -38,7 +38,7 @@
 
 @theme {
   --font-sans: var(--font-sans);
-  --font-display: var(--font-display);
+  --font-display: var(--font-sans);
   --font-mono: var(--font-mono);
 }
 
