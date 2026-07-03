@@ -1,0 +1,63 @@
+/* Homepage hero entrance */
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+@keyframes heroFadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+@keyframes heroBlurIn {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(50px) scale(0.9);
+  }
+}
+@keyframes heroCursorBlink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.enter {
+  animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+.eyebrow {
+  animation: heroFadeScale 0.8s ease-out 0.2s backwards;
+}
+.word {
+  animation: heroBlurIn 1s cubic-bezier(0.2, 0.65, 0.3, 0.9) backwards;
+}
+/* Second headline word starts just after the first. Must follow .word so its
+   longhand delay overrides the shorthand's implicit 0s. */
+.word2 {
+  animation-delay: 0.2s;
+}
+.surface {
+  animation: heroFadeUp 0.8s ease-out 0.6s backwards;
+}
+.cta {
+  animation: heroFadeUp 0.8s ease-out 0.8s backwards;
+}
+.cursor {
+  animation: heroCursorBlink 0.8s steps(1) infinite;
+}
+
+/* Reduced motion: skip the entrances entirely — the elements' visible default
+   state shows immediately (no `backwards` start frame to sit on). */
+@media (prefers-reduced-motion: reduce) {
+  .enter,
+  .eyebrow,
+  .word,
+  .word2,
+  .surface,
+  .cta,
+  .cursor {
+    animation: none;
+  }
+}
