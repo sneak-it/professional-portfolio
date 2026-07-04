@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 
 const WORDS = ['Experiences', 'Opportunities', 'Connections', 'Solutions'];
-const TYPE_MS = 1000; // time to type a full word (matches the old 1s tween)
-const DELETE_MS = 500; // time to delete a full word (matches the old 0.5s tween)
+const TYPE_MS = 1000; // time to type a full word
+const DELETE_MS = 500; // time to delete a full word
 const HOLD_MS = 2000; // pause on a completed word before deleting
 
 export default function Typewriter() {
   const [wordIndex, setWordIndex] = useState(0);
-  const [text, setText] = useState('');
+  // Start with the first word already typed
+  const [text, setText] = useState(WORDS[0]);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
