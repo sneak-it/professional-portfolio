@@ -11,6 +11,8 @@ services:
     volumes:
       - ./content:/app/content:ro
       - ./public/portfolio:/app/public/portfolio:ro
+      # Persist the Next.js image optimizer cache
+      - ./images:/app/.next/cache/images
     restart: unless-stopped
     security_opt:
       - "apparmor=docker-default"

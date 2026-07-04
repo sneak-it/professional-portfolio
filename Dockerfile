@@ -42,9 +42,12 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+# Set the correct permission for prerender cache. Pre-create the image
+# optimizer cache dir and chown it so that a named volume mounted here
+# (see docker-compose.yml) is initialized as nextjs-owned rather than
+# root-owned, letting uid 1001 write optimized images to it.
+RUN mkdir -p .next/cache/images
+RUN chown -R nextjs:nodejs .next
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
