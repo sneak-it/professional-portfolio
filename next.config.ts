@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
         pathname: '/seed/**',
       },
     ],
+    formats: ['image/webp'],
+    minimumCacheTTL: 604800,
+    qualities: [80],
+    deviceSizes: [640, 828, 1200, 1920, 2560, 3840],
+    imageSizes: [256, 384],
   },
 
   async headers() {
