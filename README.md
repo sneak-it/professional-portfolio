@@ -62,7 +62,7 @@ docker run -p 3000:3000 \
 
    ```bash
    git clone https://github.com/sneak-it/professional-portfolio.git
-   cd portfolio
+   cd professional-portfolio
    ```
 
 2. Install dependencies:
