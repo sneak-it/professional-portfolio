@@ -61,6 +61,6 @@ jobs:
           context: .
           push: false
           target: production
-          tags: personal-website:test
+          tags: professional-portfolio:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
