@@ -39,7 +39,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6.1.0
         with:
-          images: ghcr.io/sneak-it/personal-website
+          images: ghcr.io/sneak-it/professional-portfolio
           tags: |
             type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
