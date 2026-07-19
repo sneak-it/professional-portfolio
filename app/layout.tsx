@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
 import { MotionConfig } from 'motion/react';
 import './globals.css';
@@ -90,7 +91,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <MotionConfig reducedMotion="user">
-            <ViewTransitions />
+            {/* Suspense: ViewTransitions reads useSearchParams (keeps static
+                pages static). Renders null, so no visible fallback. */}
+            <Suspense fallback={null}>
+              <ViewTransitions />
+            </Suspense>
             <BackgroundCanvas />
             <Navbar />
             <main id="main-content" className="flex-grow pt-20">
