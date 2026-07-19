@@ -20,16 +20,16 @@ export default function Typewriter() {
     if (!deleting) {
       if (text.length < word.length) {
         timer = setTimeout(
-          () => setText(word.slice(0, text.length + 1)),
+          () => { setText(word.slice(0, text.length + 1)); },
           TYPE_MS / word.length,
         );
       } else {
-        timer = setTimeout(() => setDeleting(true), HOLD_MS);
+        timer = setTimeout(() => { setDeleting(true); }, HOLD_MS);
       }
     } else {
       if (text.length > 0) {
         timer = setTimeout(
-          () => setText(word.slice(0, text.length - 1)),
+          () => { setText(word.slice(0, text.length - 1)); },
           DELETE_MS / word.length,
         );
       } else {
@@ -43,7 +43,7 @@ export default function Typewriter() {
       }
     }
 
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); };
   }, [text, deleting, wordIndex]);
 
   return <span>{text}</span>;

@@ -29,7 +29,7 @@ export function ThemeToggle() {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => { document.removeEventListener('mousedown', handleClickOutside); };
   }, []);
 
   // Move focus into the menu when it opens.
@@ -49,7 +49,7 @@ export function ThemeToggle() {
     <div className="relative" ref={dropdownRef}>
       <button
         ref={triggerRef}
-        onClick={() => setIsOpen((o) => !o)}
+        onClick={() => { setIsOpen((o) => !o); }}
         className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 bg-background text-gray-600 transition-colors hover:bg-gray-200 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/10"
         aria-label="Toggle theme"
         aria-haspopup="menu"
