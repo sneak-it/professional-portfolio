@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 type DocWithVT = Document & {
   startViewTransition?: (cb: () => Promise<void> | void) => unknown;
@@ -20,15 +20,17 @@ type DocWithVT = Document & {
 export default function ViewTransitions() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const finishRef = useRef<(() => void) | null>(null);
 
-  // Resolve the pending transition once the new route has committed.
+  // Resolve on path AND query change — query-only navs (e.g. ?page=2) commit
+  // without a pathname change and would otherwise hang until the safety timeout.
   useEffect(() => {
     if (finishRef.current) {
       finishRef.current();
       finishRef.current = null;
     }
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   useEffect(() => {
     const doc = document as DocWithVT;
