@@ -46,7 +46,7 @@ export default function SectionProjectList({
                   href={`/portfolio/${project.section}/${project.slug}`}
                   className="relative aspect-[4/3] overflow-hidden block"
                 >
-                  {project.coverImage && (
+                  {project.coverImage ? (
                     <Image
                       src={project.coverImage}
                       alt={project.title}
@@ -56,6 +56,8 @@ export default function SectionProjectList({
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       referrerPolicy="no-referrer"
                     />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-accent-2/30" />
                   )}
                 </Link>
                 {(project.link || project.github) && (

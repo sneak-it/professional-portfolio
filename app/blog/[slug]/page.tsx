@@ -5,6 +5,7 @@ import BlogPostContent from '@/components/BlogPostContent';
 import { mdxComponents } from '@/components/MDXComponents';
 import JsonLd from '@/components/JsonLd';
 import { siteConfig } from '@/lib/site';
+import { breadcrumbJsonLd } from '@/lib/jsonld';
 import { notFound } from 'next/navigation';
 
 // Prerendered slugs (below) revalidate every 60s, and dynamicParams (default
@@ -81,25 +82,16 @@ export default async function BlogPost({
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
   };
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Blog',
-        item: `${siteConfig.url}/blog`,
-      },
-      { '@type': 'ListItem', position: 3, name: post.meta.title, item: url },
-    ],
-  };
-
   return (
     <>
       <JsonLd data={articleJsonLd} />
-      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'Blog', path: '/blog' },
+          { name: post.meta.title, path: `/blog/${post.slug}` },
+        ])}
+      />
       <BlogPostContent post={post}>
         <MDXRemote source={post.content} components={mdxComponents} />
       </BlogPostContent>

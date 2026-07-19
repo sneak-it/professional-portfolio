@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getSectionSummaries } from '@/lib/portfolio';
-import { siteConfig } from '@/lib/site';
+import { breadcrumbJsonLd } from '@/lib/jsonld';
 import JsonLd from '@/components/JsonLd';
 import PortfolioHub from './PortfolioHub';
 
@@ -25,23 +25,14 @@ export const metadata: Metadata = {
 export default function PortfolioPage() {
   const sections = getSectionSummaries();
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Portfolio',
-        item: `${siteConfig.url}/portfolio`,
-      },
-    ],
-  };
-
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'Portfolio', path: '/portfolio' },
+        ])}
+      />
       <PortfolioHub sections={sections} />
     </>
   );

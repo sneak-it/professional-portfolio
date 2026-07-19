@@ -3,15 +3,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import {
-  Calendar,
-  Clock,
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '@/components/Container';
 import PageHeader from '@/components/PageHeader';
+import PostMeta from '@/components/PostMeta';
 import { fadeInUpOnView } from '@/lib/motion';
 import type { BlogPost } from '@/lib/mdx';
 
@@ -54,17 +49,12 @@ export default function BlogList({
             </div>
 
             <div className="flex flex-col flex-grow justify-center h-full py-2">
-              <div className="flex items-center gap-4 text-sm font-mono text-gray-500 dark:text-gray-400 mb-4">
-                <span className="text-accent font-medium font-mono uppercase tracking-wider">
-                  {post.meta.category}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar size={14} /> {post.meta.date}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock size={14} /> {post.meta.readTime}
-                </span>
-              </div>
+              <PostMeta
+                category={post.meta.category}
+                date={post.meta.date}
+                readTime={post.meta.readTime}
+                className="mb-4"
+              />
 
               <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-accent transition-colors">
                 <Link href={`/blog/${post.slug}`}>

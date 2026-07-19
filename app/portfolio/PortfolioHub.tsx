@@ -1,11 +1,10 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
 import { motion } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
 import Container from '@/components/Container';
 import PageHeader from '@/components/PageHeader';
+import CoverCard from '@/components/CoverCard';
 import { fadeInUpOnView } from '@/lib/motion';
 import type { SectionSummary } from '@/lib/portfolio';
 
@@ -40,41 +39,21 @@ export default function PortfolioHub({
             {...fadeInUpOnView}
             transition={{ duration: 0.5, delay: index * 0.1 }}
           >
-            <Link
+            <CoverCard
               href={`/portfolio/${section.slug}`}
-              className="group block relative rounded-3xl overflow-hidden aspect-[4/5] bg-gray-100 dark:bg-gray-900"
-            >
-              {section.coverImage ? (
-                <Image
-                  src={section.coverImage}
-                  alt={section.name}
-                  fill
-                  priority={index === 0}
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-accent-2/30" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
-
-              <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/15 backdrop-blur flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <ArrowUpRight size={20} />
-              </div>
-
-              <div className="absolute bottom-0 left-0 right-0 p-8 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+              coverImage={section.coverImage}
+              title={section.name}
+              description={section.description}
+              aspect="aspect-[4/5]"
+              priority={index === 0}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              badge={<ArrowUpRight size={20} />}
+              meta={
                 <p className="text-white/70 mb-2 text-sm font-medium font-mono uppercase tracking-wider">
                   {countLabel(section.slug, section.count)}
                 </p>
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  {section.name}
-                </h2>
-                <p className="text-white/70 text-sm line-clamp-2">
-                  {section.description}
-                </p>
-              </div>
-            </Link>
+              }
+            />
           </motion.div>
         ))}
       </div>
