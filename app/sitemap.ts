@@ -7,15 +7,20 @@ import {
 } from '@/lib/portfolio';
 import { siteConfig } from '@/lib/site';
 
-// Rendered at request time. Sitemaps are crawled infrequently, so re-reading
-// content per request is cheap; in exchange the emitted origin always reflects
-// the runtime `SITE_URL` (see lib/site.ts) instead of a build-time value, which
-// matters for anyone running the prebuilt image under their own domain. The
-// entries themselves derive `lastModified` from stable frontmatter dates, so
-// repeated regenerations produce identical output (no crawler-noise concern).
+// Rendered at request time so the emitted origin always reflects the runtime
+// `SITE_URL` (see lib/site.ts) rather than a build-time value — this is what
+// lets one prebuilt image serve any domain. The expensive part (scanning every
+// content file for dates) is memoized below, so per-request work is just a
+// cache lookup plus prepending the origin.
 export const dynamic = 'force-dynamic';
 
 type Entry = MetadataRoute.Sitemap[number];
+
+/** A sitemap route as a site-relative path; the origin is applied per request. */
+interface Route {
+  path: string;
+  lastModified?: Date;
+}
 
 /** Parses an ISO frontmatter date, or `undefined` if missing/unparseable. */
 function toDate(value: string | undefined): Date | undefined {
@@ -35,53 +40,91 @@ function entry(url: string, lastModified?: Date): Entry {
   return { url, ...(lastModified && { lastModified }) };
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const base = siteConfig.url;
-
+/**
+ * Scans all content and returns origin-independent routes. This is the costly
+ * step — it reads and parses every blog/portfolio file — so its result is
+ * cached (see `getRoutes`). Deliberately excludes the origin: it's applied per
+ * request instead, so a runtime `SITE_URL` change can never be served stale
+ * from this cache.
+ */
+function buildRoutes(): Route[] {
   const postItems = getAllPosts().map((post) => ({
-    url: `${base}/blog/${post.slug}`,
+    path: `/blog/${post.slug}`,
     date: toDate(post.meta.date),
   }));
 
   const photographyItems = getPhotographyGalleries().map((gallery) => ({
-    url: `${base}/portfolio/photography/${gallery.slug}`,
+    path: `/portfolio/photography/${gallery.slug}`,
     date: toDate(gallery.date),
   }));
 
   const projectItems = PORTFOLIO_SECTIONS.filter((s) => s.type === 'project').flatMap(
     (section) =>
       getProjectItems(section.slug).map((item) => ({
-        url: `${base}/portfolio/${section.slug}/${item.slug}`,
+        path: `/portfolio/${section.slug}/${item.slug}`,
         date: toDate(item.date),
         section: section.slug,
       })),
   );
 
-  const posts = postItems.map((i) => entry(i.url, i.date));
-  const photography = photographyItems.map((i) => entry(i.url, i.date));
-  const projects = projectItems.map((i) => entry(i.url, i.date));
+  const posts: Route[] = postItems.map((i) => ({ path: i.path, lastModified: i.date }));
+  const photography: Route[] = photographyItems.map((i) => ({
+    path: i.path,
+    lastModified: i.date,
+  }));
+  const projects: Route[] = projectItems.map((i) => ({
+    path: i.path,
+    lastModified: i.date,
+  }));
 
   // Index/hub pages change when their content changes, so their lastModified
   // tracks the newest child date (omitted entirely when a section is empty).
-  const sectionRoutes: MetadataRoute.Sitemap = PORTFOLIO_SECTIONS.map((section) => {
+  const sectionRoutes: Route[] = PORTFOLIO_SECTIONS.map((section) => {
     const childDates = (
       section.type === 'gallery'
         ? photographyItems
         : projectItems.filter((i) => i.section === section.slug)
     ).map((i) => i.date);
-    return entry(`${base}/portfolio/${section.slug}`, latest(childDates));
+    return { path: `/portfolio/${section.slug}`, lastModified: latest(childDates) };
   });
 
-  const staticRoutes: MetadataRoute.Sitemap = [
+  const staticRoutes: Route[] = [
     // No meaningful runtime change-date, so lastModified is omitted; these change
     // on code deploys, not on content edits.
-    entry(`${base}/`),
-    entry(`${base}/about`),
-    entry(`${base}/contact`),
+    { path: '/' },
+    { path: '/about' },
+    { path: '/contact' },
     // Index pages track their newest content.
-    entry(`${base}/portfolio`, latest([...photographyItems, ...projectItems].map((i) => i.date))),
-    entry(`${base}/blog`, latest(postItems.map((i) => i.date))),
+    {
+      path: '/portfolio',
+      lastModified: latest([...photographyItems, ...projectItems].map((i) => i.date)),
+    },
+    { path: '/blog', lastModified: latest(postItems.map((i) => i.date)) },
   ];
 
   return [...staticRoutes, ...sectionRoutes, ...posts, ...photography, ...projects];
+}
+
+// How long a scanned route list is reused before the next request rebuilds it.
+// This is purely a cost knob: it bounds how often the content tree is walked,
+// and (like the previous ISR window) how quickly a newly uploaded file appears
+// in the sitemap. It does NOT affect the origin, which is applied per request.
+// Crawlers fetch sitemap.xml infrequently, so even a long TTL collapses any
+// burst to a single scan.
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12h
+
+let routeCache: { at: number; routes: Route[] } | null = null;
+
+/** Cached `buildRoutes()` — one filesystem scan per TTL, per container. */
+function getRoutes(): Route[] {
+  const now = Date.now();
+  if (routeCache && now - routeCache.at < CACHE_TTL_MS) return routeCache.routes;
+  const routes = buildRoutes();
+  routeCache = { at: now, routes };
+  return routes;
+}
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const base = siteConfig.url;
+  return getRoutes().map((r) => entry(`${base}${r.path}`, r.lastModified));
 }
