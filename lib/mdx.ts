@@ -1,7 +1,5 @@
-import fs from 'fs';
 import path from 'path';
-import { parseFrontmatter } from './frontmatter';
-import { safeSlug } from './slug';
+import { listMdxSlugs, readMdxFile } from './content';
 import { byDateDesc } from './sort';
 
 const postsDirectory = path.join(process.cwd(), 'content/blog');
@@ -23,47 +21,24 @@ export interface BlogPost {
 }
 
 export function getPostSlugs() {
-  if (!fs.existsSync(postsDirectory)) {
-    return [];
-  }
-  return fs.readdirSync(postsDirectory);
+  return listMdxSlugs(postsDirectory);
 }
 
 export function getPostBySlug(slug: string): BlogPost | null {
-  const realSlug = safeSlug(slug);
-  if (realSlug === null) {
-    return null;
-  }
+  const file = readMdxFile(postsDirectory, slug);
+  if (file === null) return null;
 
-  const fullPath = path.join(postsDirectory, `${realSlug}.mdx`);
-
-  if (!fs.existsSync(fullPath)) {
-    return null;
-  }
-
-  try {
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data, content } = parseFrontmatter(fileContents);
-
-    return {
-      slug: realSlug,
-      meta: data as BlogPostMeta,
-      content,
-    };
-  } catch (e) {
-    // A malformed file (e.g. invalid YAML frontmatter) must not take down the
-    // whole listing — skip it and let the .filter(...) chains drop the null.
-    console.error(`Failed to load blog post "${realSlug}"`, e);
-    return null;
-  }
+  return {
+    slug: file.slug,
+    meta: file.data as BlogPostMeta,
+    content: file.content,
+  };
 }
 
 export function getAllPosts() {
-  const slugs = getPostSlugs();
-  const posts = slugs
+  return getPostSlugs()
     .map((slug) => getPostBySlug(slug))
     .filter((post): post is NonNullable<typeof post> => post !== null)
     // sort posts by date in descending order
     .sort((post1, post2) => byDateDesc(post1.meta, post2.meta));
-  return posts;
 }
