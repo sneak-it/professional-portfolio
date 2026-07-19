@@ -41,14 +41,21 @@ export function getPostBySlug(slug: string): BlogPost | null {
     return null;
   }
 
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  const { data, content } = parseFrontmatter(fileContents);
+  try {
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const { data, content } = parseFrontmatter(fileContents);
 
-  return {
-    slug: realSlug,
-    meta: data as BlogPostMeta,
-    content,
-  };
+    return {
+      slug: realSlug,
+      meta: data as BlogPostMeta,
+      content,
+    };
+  } catch (e) {
+    // A malformed file (e.g. invalid YAML frontmatter) must not take down the
+    // whole listing — skip it and let the .filter(...) chains drop the null.
+    console.error(`Failed to load blog post "${realSlug}"`, e);
+    return null;
+  }
 }
 
 export function getAllPosts() {
