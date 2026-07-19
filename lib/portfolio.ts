@@ -122,23 +122,30 @@ export function getProjectItem(
   const fullPath = path.join(sectionDir(section), `${realSlug}.mdx`);
   if (!fs.existsSync(fullPath)) return null;
 
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  const { data, content } = parseFrontmatter(fileContents);
+  try {
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const { data, content } = parseFrontmatter(fileContents);
 
-  return {
-    section,
-    slug: realSlug,
-    title: (data.title as string) || realSlug,
-    description: (data.description as string) || '',
-    coverImage: (data.coverImage as string) || '',
-    date: (data.date as string) || '',
-    content,
-    tech: data.tech as string[] | undefined,
-    link: (data.link as string) || undefined,
-    github: (data.github as string) || undefined,
-    features: data.features as string[] | undefined,
-    challenges: (data.challenges as string) || undefined,
-  };
+    return {
+      section,
+      slug: realSlug,
+      title: (data.title as string) || realSlug,
+      description: (data.description as string) || '',
+      coverImage: (data.coverImage as string) || '',
+      date: (data.date as string) || '',
+      content,
+      tech: data.tech as string[] | undefined,
+      link: (data.link as string) || undefined,
+      github: (data.github as string) || undefined,
+      features: data.features as string[] | undefined,
+      challenges: (data.challenges as string) || undefined,
+    };
+  } catch (e) {
+    // A malformed file (e.g. invalid YAML frontmatter) must not take down the
+    // whole section — skip it and let the .filter(...) chains drop the null.
+    console.error(`Failed to load project item "${section}/${realSlug}"`, e);
+    return null;
+  }
 }
 
 export function getProjectItems(section: SectionSlug): ProjectItem[] {
@@ -220,22 +227,29 @@ export function getPhotographyGallery(slug: string): GalleryItem | null {
   const fullPath = path.join(sectionDir('photography'), `${realSlug}.mdx`);
   if (!fs.existsSync(fullPath)) return null;
 
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  const { data, content } = parseFrontmatter(fileContents);
+  try {
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const { data, content } = parseFrontmatter(fileContents);
 
-  const images = scanImages(realSlug);
-  const coverImage = (data.coverImage as string) || images[0].src;
+    const images = scanImages(realSlug);
+    const coverImage = (data.coverImage as string) || images[0]?.src || '';
 
-  return {
-    section: 'photography',
-    slug: realSlug,
-    title: (data.title as string) || realSlug,
-    description: (data.description as string) || '',
-    coverImage,
-    date: (data.date as string) || '',
-    content,
-    images,
-  };
+    return {
+      section: 'photography',
+      slug: realSlug,
+      title: (data.title as string) || realSlug,
+      description: (data.description as string) || '',
+      coverImage,
+      date: (data.date as string) || '',
+      content,
+      images,
+    };
+  } catch (e) {
+    // A malformed file (e.g. invalid YAML frontmatter) must not take down the
+    // whole section — skip it and let the .filter(...) chains drop the null.
+    console.error(`Failed to load photography gallery "${realSlug}"`, e);
+    return null;
+  }
 }
 
 export function getPhotographyGalleries(): GalleryItem[] {
