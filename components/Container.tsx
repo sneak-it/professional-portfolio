@@ -11,7 +11,7 @@ const SIZES = {
   xl: 'max-w-7xl',
 } as const;
 
-type Tag = 'div' | 'article' | 'section' | 'main';
+type Tag = 'div' | 'article' | 'section';
 
 export default function Container({
   size = 'xl',

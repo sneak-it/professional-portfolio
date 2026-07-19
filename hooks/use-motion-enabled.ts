@@ -15,17 +15,14 @@ import { useIsMobile } from '@/hooks/use-mobile';
  */
 export type MotionTier = 'none' | 'lite' | 'full';
 
-export function useMotionEnabled(): {
-  motionEnabled: boolean;
-  tier: MotionTier;
-} {
+export function useMotionEnabled(): { tier: MotionTier } {
   // motion's useReducedMotion returns null until mounted, then a boolean.
   const prefersReduced = useReducedMotion();
   const isMobile = useIsMobile();
 
   if (prefersReduced) {
-    return { motionEnabled: false, tier: 'none' };
+    return { tier: 'none' };
   }
 
-  return { motionEnabled: true, tier: isMobile ? 'lite' : 'full' };
+  return { tier: isMobile ? 'lite' : 'full' };
 }
