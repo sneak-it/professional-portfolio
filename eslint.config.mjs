@@ -73,14 +73,14 @@ export default defineConfig(
       "@typescript-eslint/use-unknown-in-catch-callback-variable": "warn",
 
       "@typescript-eslint/no-misused-promises": "off",
-      "@typescript-eslint/no-confusing-void-expression": "off",
-      "@typescript-eslint/no-unnecessary-condition": "warn",
+      "@typescript-eslint/no-confusing-void-expression": "warn",
+      "@typescript-eslint/no-unnecessary-condition": "off",
 
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-argument": "off",
-      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-unsafe-assignment": "error",
+      "@typescript-eslint/no-unsafe-member-access": "error",
+      "@typescript-eslint/no-unsafe-call": "error",
+      "@typescript-eslint/no-unsafe-argument": "error",
+      "@typescript-eslint/no-unsafe-return": "error",
 
       "jsx-a11y/alt-text": "warn",
       "jsx-a11y/aria-props": "warn",
