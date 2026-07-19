@@ -90,7 +90,7 @@ export default function ViewTransitions() {
 
     document.addEventListener('click', onClick, { capture: true });
     return () =>
-      document.removeEventListener('click', onClick, { capture: true });
+      { document.removeEventListener('click', onClick, { capture: true }); };
   }, [router]);
 
   return null;
