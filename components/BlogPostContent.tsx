@@ -1,11 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { Calendar, Clock } from 'lucide-react';
 import Container from '@/components/Container';
 import Surface from '@/components/Surface';
 import BackButton from '@/components/BackButton';
 import ShareButton from '@/components/ShareButton';
+import PostMeta from '@/components/PostMeta';
+import { PROSE, PROSE_CODE } from '@/lib/prose';
 import type { BlogPost } from '@/lib/mdx';
 
 export default function BlogPostContent({
@@ -21,17 +22,12 @@ export default function BlogPostContent({
 
       <Surface as="div" padding="lg" className="mt-6">
         <header className="mb-10">
-          <div className="flex items-center gap-4 text-sm font-mono text-gray-500 dark:text-gray-400 mb-6">
-            <span className="text-accent font-medium font-mono uppercase tracking-wider">
-              {post.meta.category}
-            </span>
-            <span className="flex items-center gap-1">
-              <Calendar size={14} /> {post.meta.date}
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock size={14} /> {post.meta.readTime}
-            </span>
-          </div>
+          <PostMeta
+            category={post.meta.category}
+            date={post.meta.date}
+            readTime={post.meta.readTime}
+            className="mb-6"
+          />
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-8">
             {post.meta.title}
@@ -50,7 +46,7 @@ export default function BlogPostContent({
           </div>
         </header>
 
-        <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-headings:tracking-tight prose-h2:mt-12 prose-a:font-medium prose-a:underline-offset-4 prose-img:rounded-2xl prose-pre:rounded-2xl prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-white/10 prose-code:before:content-none prose-code:after:content-none prose-code:rounded prose-code:bg-gray-100 dark:prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal">
+        <div className={`${PROSE} ${PROSE_CODE}`}>
           {children}
         </div>
 

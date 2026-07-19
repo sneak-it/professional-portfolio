@@ -15,6 +15,8 @@ import {
   getPhotographyGalleries,
 } from '@/lib/portfolio';
 import { siteConfig } from '@/lib/site';
+import { breadcrumbJsonLd } from '@/lib/jsonld';
+import { PROSE } from '@/lib/prose';
 import ProjectDetailClient from './ProjectDetailClient';
 
 // Prerendered slugs (below) revalidate every 60s, and dynamicParams (default
@@ -76,26 +78,13 @@ export default async function PortfolioItemPage({
   const config = getSection(section);
   if (!config) notFound();
 
-  const breadcrumbBase = (title: string, url: string) => ({
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Portfolio',
-        item: `${siteConfig.url}/portfolio`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: config.name,
-        item: `${siteConfig.url}/portfolio/${config.slug}`,
-      },
-      { '@type': 'ListItem', position: 4, name: title, item: url },
-    ],
-  });
+  const breadcrumbFor = (title: string, path: string) =>
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Portfolio', path: '/portfolio' },
+      { name: config.name, path: `/portfolio/${config.slug}` },
+      { name: title, path },
+    ]);
 
   // Photography: scrollable gallery + lightbox.
   if (config.type === 'gallery') {
@@ -118,7 +107,12 @@ export default async function PortfolioItemPage({
     return (
       <>
         <JsonLd data={galleryJsonLd} />
-        <JsonLd data={breadcrumbBase(gallery.title, url)} />
+        <JsonLd
+          data={breadcrumbFor(
+            gallery.title,
+            `/portfolio/${config.slug}/${gallery.slug}`,
+          )}
+        />
         <GalleryView gallery={gallery} backHref={`/portfolio/${config.slug}`} />
       </>
     );
@@ -142,7 +136,12 @@ export default async function PortfolioItemPage({
   return (
     <>
       <JsonLd data={projectJsonLd} />
-      <JsonLd data={breadcrumbBase(project.title, url)} />
+      <JsonLd
+        data={breadcrumbFor(
+          project.title,
+          `/portfolio/${config.slug}/${project.slug}`,
+        )}
+      />
       <Container size="lg">
         <BackButton
           href={`/portfolio/${config.slug}`}
@@ -152,7 +151,7 @@ export default async function PortfolioItemPage({
         <ProjectDetailClient project={project} sectionName={config.name} />
 
         {project.content && project.content.trim() && (
-          <div className="surface p-8 md:p-12 mt-16 prose prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-headings:tracking-tight prose-h2:mt-12 prose-a:font-medium prose-a:underline-offset-4 prose-img:rounded-2xl">
+          <div className={`surface p-8 md:p-12 mt-16 ${PROSE}`}>
             <MDXRemote source={project.content} components={mdxComponents} />
           </div>
         )}

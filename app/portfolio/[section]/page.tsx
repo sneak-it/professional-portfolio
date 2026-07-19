@@ -6,7 +6,7 @@ import {
   getProjectItems,
   getPhotographyGalleries,
 } from '@/lib/portfolio';
-import { siteConfig } from '@/lib/site';
+import { breadcrumbJsonLd } from '@/lib/jsonld';
 import JsonLd from '@/components/JsonLd';
 import SectionGalleryList from './SectionGalleryList';
 import SectionProjectList from './SectionProjectList';
@@ -51,29 +51,15 @@ export default async function PortfolioSectionPage({
   const config = getSection(section);
   if (!config) notFound();
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.url },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Portfolio',
-        item: `${siteConfig.url}/portfolio`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: config.name,
-        item: `${siteConfig.url}/portfolio/${config.slug}`,
-      },
-    ],
-  };
-
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'Portfolio', path: '/portfolio' },
+          { name: config.name, path: `/portfolio/${config.slug}` },
+        ])}
+      />
       {config.type === 'gallery' ? (
         <SectionGalleryList
           title={config.name}
