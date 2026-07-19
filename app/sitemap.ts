@@ -7,91 +7,76 @@ import {
 } from '@/lib/portfolio';
 import { siteConfig } from '@/lib/site';
 
-// Re-read posts/portfolio every 60s so the sitemap tracks content edits rather
-// than freezing at build-time content.
-export const revalidate = 60;
+// Re-read posts/portfolio every 12h, sitemap tracks content edits without rebuild
+export const revalidate = 43200;
 
-/**
- * Parses an ISO `YYYY-MM-DD` frontmatter date, falling back to the build time
- * if it's missing or unparseable so `lastModified` is always a valid Date.
- */
-function toDate(value: string | undefined): Date {
-  if (value) {
-    const parsed = new Date(value);
-    if (!Number.isNaN(parsed.getTime())) return parsed;
-  }
-  return new Date();
+type Entry = MetadataRoute.Sitemap[number];
+
+/** Parses an ISO frontmatter date, or `undefined` if missing/unparseable. */
+function toDate(value: string | undefined): Date | undefined {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+}
+
+/** Most-recent of the given dates, ignoring `undefined`; `undefined` if none. */
+function latest(dates: Array<Date | undefined>): Date | undefined {
+  const valid = dates.filter((d): d is Date => d !== undefined);
+  return valid.length ? valid.reduce((max, d) => (d > max ? d : max)) : undefined;
+}
+
+/** Builds a sitemap entry, omitting `lastModified` when there's no real date. */
+function entry(url: string, lastModified?: Date): Entry {
+  return { url, ...(lastModified && { lastModified }) };
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url;
-  const now = new Date();
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${base}/`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 1,
-    },
-    {
-      url: `${base}/about`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${base}/portfolio`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    ...PORTFOLIO_SECTIONS.map((section) => ({
-      url: `${base}/portfolio/${section.slug}`,
-      lastModified: now,
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    })),
-    {
-      url: `${base}/blog`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${base}/contact`,
-      lastModified: now,
-      changeFrequency: 'yearly',
-      priority: 0.5,
-    },
-  ];
-
-  const posts: MetadataRoute.Sitemap = getAllPosts().map((post) => ({
+  const postItems = getAllPosts().map((post) => ({
     url: `${base}/blog/${post.slug}`,
-    lastModified: toDate(post.meta.date),
-    changeFrequency: 'monthly',
-    priority: 0.6,
+    date: toDate(post.meta.date),
   }));
 
-  const photography: MetadataRoute.Sitemap = getPhotographyGalleries().map(
-    (gallery) => ({
-      url: `${base}/portfolio/photography/${gallery.slug}`,
-      lastModified: toDate(gallery.date),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    }),
+  const photographyItems = getPhotographyGalleries().map((gallery) => ({
+    url: `${base}/portfolio/photography/${gallery.slug}`,
+    date: toDate(gallery.date),
+  }));
+
+  const projectItems = PORTFOLIO_SECTIONS.filter((s) => s.type === 'project').flatMap(
+    (section) =>
+      getProjectItems(section.slug).map((item) => ({
+        url: `${base}/portfolio/${section.slug}/${item.slug}`,
+        date: toDate(item.date),
+        section: section.slug,
+      })),
   );
 
-  const projects: MetadataRoute.Sitemap = PORTFOLIO_SECTIONS.filter(
-    (s) => s.type === 'project',
-  ).flatMap((section) =>
-    getProjectItems(section.slug).map((item) => ({
-      url: `${base}/portfolio/${section.slug}/${item.slug}`,
-      lastModified: toDate(item.date),
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    })),
-  );
+  const posts = postItems.map((i) => entry(i.url, i.date));
+  const photography = photographyItems.map((i) => entry(i.url, i.date));
+  const projects = projectItems.map((i) => entry(i.url, i.date));
 
-  return [...staticRoutes, ...posts, ...photography, ...projects];
+  // Index/hub pages change when their content changes, so their lastModified
+  // tracks the newest child date (omitted entirely when a section is empty).
+  const sectionRoutes: MetadataRoute.Sitemap = PORTFOLIO_SECTIONS.map((section) => {
+    const childDates = (
+      section.type === 'gallery'
+        ? photographyItems
+        : projectItems.filter((i) => i.section === section.slug)
+    ).map((i) => i.date);
+    return entry(`${base}/portfolio/${section.slug}`, latest(childDates));
+  });
+
+  const staticRoutes: MetadataRoute.Sitemap = [
+    // No meaningful runtime change-date, so lastModified is omitted; these change
+    // on code deploys, not on content edits.
+    entry(`${base}/`),
+    entry(`${base}/about`),
+    entry(`${base}/contact`),
+    // Index pages track their newest content.
+    entry(`${base}/portfolio`, latest([...photographyItems, ...projectItems].map((i) => i.date))),
+    entry(`${base}/blog`, latest(postItems.map((i) => i.date))),
+  ];
+
+  return [...staticRoutes, ...sectionRoutes, ...posts, ...photography, ...projects];
 }
