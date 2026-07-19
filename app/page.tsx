@@ -3,6 +3,13 @@ import { ArrowRight } from 'lucide-react';
 import Typewriter from './Typewriter';
 import styles from './page.module.css';
 
+// Rendered per request so the layout's metadataBase / Open Graph URL / Person
+// JSON-LD resolve against the runtime `SITE_URL` (see lib/site.ts). Without
+// this the origin would be frozen into the static prerender at build time,
+// breaking canonical/OG tags for anyone running the prebuilt image under their
+// own domain. The markup is otherwise static, so the render cost is trivial.
+export const dynamic = 'force-dynamic';
+
 // Server component: the hero markup is rendered on the server and painted
 // immediately (no opacity:0 / hydration gate). Entrance animations are CSS-only
 // (see page.module.css) so they run on first paint without waiting on ~245 KB

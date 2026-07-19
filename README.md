@@ -37,13 +37,14 @@ Docker is the recommended way to run this site. The build uses Next.js standalon
 
 `content/` and `public/portfolio/` are mounted read-only into the container (see `docker-compose.yml`), so you can add or edit blog posts, projects, and photos on the host and they are served immediately — no rebuild required. The compose file also sets a healthcheck (`/api/health`), resource limits, and hardened security options.
 
-To set the canonical production URL (used for Open Graph cards, the sitemap, robots.txt, and JSON-LD), pass `NEXT_PUBLIC_SITE_URL` (no trailing slash) as an environment variable.
+To set the canonical production URL (used for Open Graph cards, the sitemap, robots.txt, and JSON-LD), set `SITE_URL` (no trailing slash) as a **runtime** environment variable. It is read when the container starts, so the same prebuilt image works under any domain — no rebuild required. In `docker-compose.yml` it is set under `environment:`; edit it to your own domain (unset falls back to `http://localhost:3000`).
 
 ### Building manually
 
 ```bash
 docker build -t portfolio-app .
 docker run -p 3000:3000 \
+  -e SITE_URL=https://your-domain \
   -v "$(pwd)/content:/app/content:ro" \
   -v "$(pwd)/public/portfolio:/app/public/portfolio:ro" \
   portfolio-app

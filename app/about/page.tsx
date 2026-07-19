@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import AboutClient from './AboutClient';
 
+// Rendered per request so the canonical/OG URLs (resolved against the layout's
+// metadataBase) reflect the runtime `SITE_URL` rather than a build-time value.
+// See lib/site.ts and app/page.tsx.
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'About',
   description:
