@@ -26,7 +26,7 @@ export const siteConfig = {
   location: 'Litchfield County, CT',
   // Social profiles, rendered in the footer.
   social: {
-    github: 'https://github.com/sneak_it',
+    github: 'https://github.com/sneak-it',
     linkedin: 'https://linkedin.com/in/your-profile',
   },
 } as const;
