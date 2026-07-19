@@ -7,7 +7,8 @@ import BlogList from '@/components/BlogList';
 // 60s) so edits appear without a rebuild. See lib/mdx.ts.
 export const revalidate = 60;
 
-const DESCRIPTION = 'Musings on web development, design, and modern technologies.';
+const DESCRIPTION =
+  'Musings on web development, design, and modern technologies.';
 
 const POSTS_PER_PAGE = 3;
 
