@@ -32,7 +32,9 @@ function toDate(value: string | undefined): Date | undefined {
 /** Most-recent of the given dates, ignoring `undefined`; `undefined` if none. */
 function latest(dates: Array<Date | undefined>): Date | undefined {
   const valid = dates.filter((d): d is Date => d !== undefined);
-  return valid.length ? valid.reduce((max, d) => (d > max ? d : max)) : undefined;
+  return valid.length
+    ? valid.reduce((max, d) => (d > max ? d : max))
+    : undefined;
 }
 
 /** Builds a sitemap entry, omitting `lastModified` when there's no real date. */
@@ -58,16 +60,20 @@ function buildRoutes(): Route[] {
     date: toDate(gallery.date),
   }));
 
-  const projectItems = PORTFOLIO_SECTIONS.filter((s) => s.type === 'project').flatMap(
-    (section) =>
-      getProjectItems(section.slug).map((item) => ({
-        path: `/portfolio/${section.slug}/${item.slug}`,
-        date: toDate(item.date),
-        section: section.slug,
-      })),
+  const projectItems = PORTFOLIO_SECTIONS.filter(
+    (s) => s.type === 'project',
+  ).flatMap((section) =>
+    getProjectItems(section.slug).map((item) => ({
+      path: `/portfolio/${section.slug}/${item.slug}`,
+      date: toDate(item.date),
+      section: section.slug,
+    })),
   );
 
-  const posts: Route[] = postItems.map((i) => ({ path: i.path, lastModified: i.date }));
+  const posts: Route[] = postItems.map((i) => ({
+    path: i.path,
+    lastModified: i.date,
+  }));
   const photography: Route[] = photographyItems.map((i) => ({
     path: i.path,
     lastModified: i.date,
@@ -85,7 +91,10 @@ function buildRoutes(): Route[] {
         ? photographyItems
         : projectItems.filter((i) => i.section === section.slug)
     ).map((i) => i.date);
-    return { path: `/portfolio/${section.slug}`, lastModified: latest(childDates) };
+    return {
+      path: `/portfolio/${section.slug}`,
+      lastModified: latest(childDates),
+    };
   });
 
   const staticRoutes: Route[] = [
@@ -97,12 +106,20 @@ function buildRoutes(): Route[] {
     // Index pages track their newest content.
     {
       path: '/portfolio',
-      lastModified: latest([...photographyItems, ...projectItems].map((i) => i.date)),
+      lastModified: latest(
+        [...photographyItems, ...projectItems].map((i) => i.date),
+      ),
     },
     { path: '/blog', lastModified: latest(postItems.map((i) => i.date)) },
   ];
 
-  return [...staticRoutes, ...sectionRoutes, ...posts, ...photography, ...projects];
+  return [
+    ...staticRoutes,
+    ...sectionRoutes,
+    ...posts,
+    ...photography,
+    ...projects,
+  ];
 }
 
 // How long a scanned route list is reused before the next request rebuilds it.
@@ -118,7 +135,8 @@ let routeCache: { at: number; routes: Route[] } | null = null;
 /** Cached `buildRoutes()` — one filesystem scan per TTL, per container. */
 function getRoutes(): Route[] {
   const now = Date.now();
-  if (routeCache && now - routeCache.at < CACHE_TTL_MS) return routeCache.routes;
+  if (routeCache && now - routeCache.at < CACHE_TTL_MS)
+    return routeCache.routes;
   const routes = buildRoutes();
   routeCache = { at: now, routes };
   return routes;

@@ -36,9 +36,11 @@ export function getPostBySlug(slug: string): BlogPost | null {
 }
 
 export function getAllPosts() {
-  return getPostSlugs()
-    .map((slug) => getPostBySlug(slug))
-    .filter((post): post is NonNullable<typeof post> => post !== null)
-    // sort posts by date in descending order
-    .sort((post1, post2) => byDateDesc(post1.meta, post2.meta));
+  return (
+    getPostSlugs()
+      .map((slug) => getPostBySlug(slug))
+      .filter((post): post is NonNullable<typeof post> => post !== null)
+      // sort posts by date in descending order
+      .sort((post1, post2) => byDateDesc(post1.meta, post2.meta))
+  );
 }

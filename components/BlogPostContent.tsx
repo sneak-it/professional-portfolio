@@ -46,9 +46,7 @@ export default function BlogPostContent({
           </div>
         </header>
 
-        <div className={`${PROSE} ${PROSE_CODE}`}>
-          {children}
-        </div>
+        <div className={`${PROSE} ${PROSE_CODE}`}>{children}</div>
 
         <footer className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center">
           <div className="flex items-center gap-4">

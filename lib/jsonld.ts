@@ -6,7 +6,9 @@ import { siteConfig } from './site';
  * the canonical origin, so callers never hand-build the absolute URLs or the
  * repetitive `position`/`@type` boilerplate.
  */
-export function breadcrumbJsonLd(crumbs: Array<{ name: string; path: string }>) {
+export function breadcrumbJsonLd(
+  crumbs: Array<{ name: string; path: string }>,
+) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
