@@ -7,8 +7,13 @@ import {
 } from '@/lib/portfolio';
 import { siteConfig } from '@/lib/site';
 
-// Re-read posts/portfolio every 12h, sitemap tracks content edits without rebuild
-export const revalidate = 43200;
+// Rendered at request time. Sitemaps are crawled infrequently, so re-reading
+// content per request is cheap; in exchange the emitted origin always reflects
+// the runtime `SITE_URL` (see lib/site.ts) instead of a build-time value, which
+// matters for anyone running the prebuilt image under their own domain. The
+// entries themselves derive `lastModified` from stable frontmatter dates, so
+// repeated regenerations produce identical output (no crawler-noise concern).
+export const dynamic = 'force-dynamic';
 
 type Entry = MetadataRoute.Sitemap[number];
 
