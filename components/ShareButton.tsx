@@ -24,7 +24,9 @@ export default function ShareButton({ title }: { title: string }) {
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      setTimeout(() => { setCopied(false); }, 2000);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
     } catch {
       // Clipboard unavailable — nothing more we can do gracefully.
     }

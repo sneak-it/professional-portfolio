@@ -25,7 +25,9 @@ export default function Navbar() {
       });
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => { window.removeEventListener('scroll', handleScroll); };
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   // Close the mobile menu on Escape.
@@ -35,7 +37,9 @@ export default function Navbar() {
       if (e.key === 'Escape') setIsOpen(false);
     };
     window.addEventListener('keydown', onKeyDown);
-    return () => { window.removeEventListener('keydown', onKeyDown); };
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
   }, [isOpen]);
 
   return (
@@ -58,7 +62,9 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <nav
             className="hidden md:flex items-center space-x-2"
-            onMouseLeave={() => { setHoveredPath(null); }}
+            onMouseLeave={() => {
+              setHoveredPath(null);
+            }}
           >
             {links.map((link) => {
               const isActive = pathname === link.href;
@@ -68,7 +74,9 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  onMouseEnter={() => { setHoveredPath(link.href); }}
+                  onMouseEnter={() => {
+                    setHoveredPath(link.href);
+                  }}
                   className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full ${
                     isActive
                       ? 'text-accent'
@@ -121,7 +129,9 @@ export default function Navbar() {
             <ThemeToggle />
             <button
               className="p-2 text-gray-600 dark:text-gray-300"
-              onClick={() => { setIsOpen(!isOpen); }}
+              onClick={() => {
+                setIsOpen(!isOpen);
+              }}
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
@@ -147,7 +157,9 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  onClick={() => { setIsOpen(false); }}
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
                   className={`block px-3 py-3 text-base font-medium rounded-md ${
                     pathname === link.href
                       ? 'text-accent bg-accent/10 dark:bg-accent/10'
