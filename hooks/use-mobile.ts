@@ -11,7 +11,9 @@ export function useIsMobile() {
     (onChange) => {
       const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
       mql.addEventListener('change', onChange);
-      return () => { mql.removeEventListener('change', onChange); };
+      return () => {
+        mql.removeEventListener('change', onChange);
+      };
     },
     getIsMobile,
     getIsMobile, // SSR fallback

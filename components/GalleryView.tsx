@@ -22,23 +22,17 @@ export default function GalleryView({
   const isOpen = selectedIndex !== null;
   const dialogRef = useFocusTrap<HTMLDivElement>(isOpen);
 
-  const close = useCallback(() => { setSelectedIndex(null); }, []);
-  const showPrev = useCallback(
-    () =>
-      { setSelectedIndex((i) =>
-        i === null
-          ? i
-          : (i - 1 + gallery.images.length) % gallery.images.length,
-      ); },
-    [gallery.images.length],
-  );
-  const showNext = useCallback(
-    () =>
-      { setSelectedIndex((i) =>
-        i === null ? i : (i + 1) % gallery.images.length,
-      ); },
-    [gallery.images.length],
-  );
+  const close = useCallback(() => {
+    setSelectedIndex(null);
+  }, []);
+  const showPrev = useCallback(() => {
+    setSelectedIndex((i) =>
+      i === null ? i : (i - 1 + gallery.images.length) % gallery.images.length,
+    );
+  }, [gallery.images.length]);
+  const showNext = useCallback(() => {
+    setSelectedIndex((i) => (i === null ? i : (i + 1) % gallery.images.length));
+  }, [gallery.images.length]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -48,7 +42,9 @@ export default function GalleryView({
       else if (e.key === 'ArrowRight') showNext();
     };
     window.addEventListener('keydown', onKeyDown);
-    return () => { window.removeEventListener('keydown', onKeyDown); };
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
   }, [isOpen, close, showPrev, showNext]);
 
   const selected =
@@ -78,7 +74,9 @@ export default function GalleryView({
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: (index % 5) * 0.1 }}
             className="block w-full break-inside-avoid relative group cursor-pointer rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-900"
-            onClick={() => { setSelectedIndex(index); }}
+            onClick={() => {
+              setSelectedIndex(index);
+            }}
             aria-label={`View image: ${image.alt}`}
             aria-haspopup="dialog"
           >
@@ -154,7 +152,9 @@ export default function GalleryView({
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="relative max-w-5xl max-h-[90vh] w-full h-full"
-              onClick={(e) => { e.stopPropagation(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
             >
               <Image
                 src={selected.src}
