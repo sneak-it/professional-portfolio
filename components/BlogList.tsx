@@ -8,7 +8,7 @@ import Container from '@/components/Container';
 import PageHeader from '@/components/PageHeader';
 import PostMeta from '@/components/PostMeta';
 import { fadeInUpOnView } from '@/lib/motion';
-import type { BlogPost } from '@/lib/mdx';
+import type { BlogPostSummary } from '@/lib/mdx';
 
 const pageHref = (page: number) => (page <= 1 ? '/blog' : `/blog?page=${page}`);
 
@@ -17,7 +17,7 @@ export default function BlogList({
   currentPage = 1,
   totalPages = 1,
 }: {
-  posts: BlogPost[];
+  posts: BlogPostSummary[];
   currentPage?: number;
   totalPages?: number;
 }) {

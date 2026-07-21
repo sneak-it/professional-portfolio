@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAllPosts } from '@/lib/mdx';
+import { getAllPostMeta } from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
 
 // Re-read MDX content at request time (cached, refreshed in the background every
@@ -28,7 +28,7 @@ function resolvePage(
 }
 
 function totalPageCount(): number {
-  return Math.max(1, Math.ceil(getAllPosts().length / POSTS_PER_PAGE));
+  return Math.max(1, Math.ceil(getAllPostMeta().length / POSTS_PER_PAGE));
 }
 
 export async function generateMetadata({
@@ -60,7 +60,7 @@ export default async function Blog({
   searchParams: Promise<{ page?: string }>;
 }) {
   const { page } = await searchParams;
-  const posts = getAllPosts();
+  const posts = getAllPostMeta();
   const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
 
   const currentPage = resolvePage(page, totalPages);

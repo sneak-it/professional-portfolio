@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getAllPosts } from '@/lib/mdx';
+import { getAllPostMeta } from '@/lib/mdx';
 import {
   PORTFOLIO_SECTIONS,
   getProjectItems,
@@ -50,7 +50,7 @@ function entry(url: string, lastModified?: Date): Entry {
  * from this cache.
  */
 function buildRoutes(): Route[] {
-  const postItems = getAllPosts().map((post) => ({
+  const postItems = getAllPostMeta().map((post) => ({
     path: `/blog/${post.slug}`,
     date: toDate(post.meta.date),
   }));
