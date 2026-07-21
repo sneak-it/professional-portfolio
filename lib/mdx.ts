@@ -14,9 +14,12 @@ export interface BlogPostMeta {
   [key: string]: unknown;
 }
 
-export interface BlogPost {
+export interface BlogPostSummary {
   slug: string;
   meta: BlogPostMeta;
+}
+
+export interface BlogPost extends BlogPostSummary {
   content: string;
 }
 
@@ -37,12 +40,12 @@ export function getPostBySlug(slug: string): BlogPost | null {
   };
 }
 
-export function getAllPosts() {
-  return (
-    getPostSlugs()
-      .map((slug) => getPostBySlug(slug))
-      .filter((post): post is NonNullable<typeof post> => post !== null)
-      // sort posts by date in descending order
-      .sort((post1, post2) => byDateDesc(post1.meta, post2.meta))
-  );
+// List views (/blog, sitemap) only need metadata — carrying `content` would
+// ship every full post body into the client payload for nothing.
+export function getAllPostMeta(): BlogPostSummary[] {
+  return getPostSlugs()
+    .map((slug) => getPostBySlug(slug))
+    .filter((post): post is BlogPost => post !== null)
+    .map(({ slug, meta }) => ({ slug, meta }))
+    .sort((a, b) => byDateDesc(a.meta, b.meta));
 }
