@@ -25,7 +25,9 @@ export function getPostSlugs() {
 }
 
 export function getPostBySlug(slug: string): BlogPost | null {
-  const file = readMdxFile(postsDirectory, slug);
+  const file = readMdxFile(postsDirectory, slug, {
+    required: ['title', 'date'],
+  });
   if (file === null) return null;
 
   return {

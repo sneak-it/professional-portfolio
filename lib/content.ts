@@ -16,6 +16,17 @@ export interface MdxFile {
   content: string;
 }
 
+export interface ReadMdxOptions {
+  /**
+   * Frontmatter keys that must be present as non-empty strings. A file missing
+   * any of them is logged and skipped (`readMdxFile` returns `null`), so a post
+   * with e.g. no `title`/`date` can't silently render blank alt text, an
+   * `undefined` JSON-LD headline, or break date sorting. The frontmatter is
+   * cast, not schema-checked, elsewhere — this is the one guard that runs.
+   */
+  required?: string[];
+}
+
 /**
  * Lists the `.mdx` filenames in a content directory, or `[]` if it doesn't
  * exist. Filtering to `.mdx` keeps editor backups, `drafts/` folders, and other
@@ -31,8 +42,14 @@ export function listMdxSlugs(dir: string): string[] {
  * (path-traversal guard), returns `null` if the slug is unsafe or the file is
  * missing, and swallows read/parse errors (e.g. malformed YAML frontmatter) so
  * one bad file can't take down a whole listing — callers filter out the null.
+ * Pass `required` to additionally skip files whose frontmatter is missing those
+ * fields.
  */
-export function readMdxFile(dir: string, slug: string): MdxFile | null {
+export function readMdxFile(
+  dir: string,
+  slug: string,
+  options: ReadMdxOptions = {},
+): MdxFile | null {
   const realSlug = safeSlug(slug);
   if (realSlug === null) return null;
 
@@ -42,6 +59,18 @@ export function readMdxFile(dir: string, slug: string): MdxFile | null {
   try {
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = parseFrontmatter(fileContents);
+
+    const missing = (options.required ?? []).filter((key) => {
+      const value = data[key];
+      return typeof value !== 'string' || value.trim() === '';
+    });
+    if (missing.length > 0) {
+      console.error(
+        `Skipping MDX file "${fullPath}": missing/invalid frontmatter field(s): ${missing.join(', ')}`,
+      );
+      return null;
+    }
+
     return { slug: realSlug, data, content };
   } catch (e) {
     console.error(`Failed to load MDX file "${fullPath}"`, e);
