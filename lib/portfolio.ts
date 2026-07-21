@@ -139,29 +139,74 @@ export function getProjectItems(section: SectionSlug): ProjectItem[] {
 
 // -- Photography (gallery) section ------------------------------------------
 
+const IMAGE_FILE_RE = /\.(jpe?g|png|webp|gif)$/i;
+
+// Read only the header (image-size's own bound); memoize by (path, mtime).
+const HEADER_BYTES = 512 * 1024;
+const dimensionCache = new Map<
+  string,
+  { mtimeMs: number; width: number; height: number }
+>();
+
+function imageDimensions(imagePath: string): { width: number; height: number } {
+  const { mtimeMs } = fs.statSync(imagePath);
+  const cached = dimensionCache.get(imagePath);
+  if (cached && cached.mtimeMs === mtimeMs) {
+    return { width: cached.width, height: cached.height };
+  }
+
+  const fd = fs.openSync(imagePath, 'r');
+  let dimensions;
+  try {
+    const size = fs.fstatSync(fd).size;
+    const length = Math.min(size, HEADER_BYTES);
+    const header = Buffer.alloc(length);
+    fs.readSync(fd, header, 0, length, 0);
+    dimensions = sizeOf(header);
+  } finally {
+    fs.closeSync(fd);
+  }
+
+  const result = {
+    width: dimensions.width || 800,
+    height: dimensions.height || 600,
+  };
+  dimensionCache.set(imagePath, { mtimeMs, ...result });
+  return result;
+}
+
+/** Image filenames in a gallery's folder. */
+function listGalleryImageFiles(slug: string): string[] {
+  const imagesDir = path.join(publicPhotographyDirectory, slug);
+  if (!fs.existsSync(imagesDir)) return [];
+  return fs.readdirSync(imagesDir).filter((file) => IMAGE_FILE_RE.test(file));
+}
+
+/** Cover src without dimension reads: frontmatter, else first image, else picsum. */
+function galleryCoverSrc(slug: string, coverImage: unknown): string {
+  if (typeof coverImage === 'string' && coverImage) return coverImage;
+  const first = listGalleryImageFiles(slug)[0];
+  if (first) return `/portfolio/photography/${slug}/${first}`;
+  return `https://picsum.photos/seed/${slug}1/800/1200`;
+}
+
 function scanImages(slug: string): PortfolioImage[] {
   const imagesDir = path.join(publicPhotographyDirectory, slug);
   const images: PortfolioImage[] = [];
 
-  if (fs.existsSync(imagesDir)) {
-    const files = fs.readdirSync(imagesDir);
-    for (const file of files) {
-      if (file.match(/\.(jpe?g|png|webp|gif)$/i)) {
-        const imagePath = path.join(imagesDir, file);
-        try {
-          const buffer = fs.readFileSync(imagePath);
-          const dimensions = sizeOf(buffer);
-          images.push({
-            id: file,
-            src: `/portfolio/photography/${slug}/${file}`,
-            alt: file.replace(/\.[^/.]+$/, ''), // Remove extension for alt text
-            width: dimensions.width || 800,
-            height: dimensions.height || 600,
-          });
-        } catch (e) {
-          console.error(`Error reading image dimensions for ${imagePath}`, e);
-        }
-      }
+  for (const file of listGalleryImageFiles(slug)) {
+    const imagePath = path.join(imagesDir, file);
+    try {
+      const { width, height } = imageDimensions(imagePath);
+      images.push({
+        id: file,
+        src: `/portfolio/photography/${slug}/${file}`,
+        alt: file.replace(/\.[^/.]+$/, ''), // Remove extension for alt text
+        width,
+        height,
+      });
+    } catch (e) {
+      console.error(`Error reading image dimensions for ${imagePath}`, e);
     }
   }
 
@@ -231,12 +276,37 @@ export function getPhotographyGalleries(): GalleryItem[] {
 
 // -- Hub ---------------------------------------------------------------------
 
+/** Hub listing: gallery date + cover, no dimension reads. */
+function getPhotographyCovers(): Array<{ date?: string; coverImage: string }> {
+  const dir = sectionDir('photography');
+  return listMdxSlugs(dir)
+    .map((file) => {
+      const mdx = readMdxFile(dir, file);
+      if (mdx === null) return null;
+      return {
+        date: (mdx.data.date as string) || '',
+        coverImage: galleryCoverSrc(mdx.slug, mdx.data.coverImage),
+      };
+    })
+    .filter((c): c is { date: string; coverImage: string } => c !== null)
+    .sort(byDateDesc);
+}
+
 export function getSectionSummaries(): SectionSummary[] {
   return PORTFOLIO_SECTIONS.map((section) => {
-    const items =
-      section.type === 'gallery'
-        ? getPhotographyGalleries()
-        : getProjectItems(section.slug);
+    if (section.type === 'gallery') {
+      const covers = getPhotographyCovers();
+      return {
+        slug: section.slug,
+        name: section.name,
+        description: section.description,
+        type: section.type,
+        count: covers.length,
+        coverImage: covers[0]?.coverImage ?? null,
+      };
+    }
+
+    const items = getProjectItems(section.slug);
     return {
       slug: section.slug,
       name: section.name,
