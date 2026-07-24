@@ -18,7 +18,19 @@ jobs:
   build:
     name: Build and Push Image
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Root (default) — unsuffixed tags: latest / <version> / dev
+          - variant: root
+            target: production
+            suffix: ""
+          # Non-root — "-nonroot" suffixed tags: latest-nonroot / <version>-nonroot / dev-nonroot
+          - variant: nonroot
+            target: production-nonroot
+            suffix: "-nonroot"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -41,21 +53,58 @@ jobs:
         uses: docker/metadata-action@v6.2.0
         with:
           images: ghcr.io/sneak-it/professional-portfolio
+          flavor: |
+            latest=false
+            suffix=${{ matrix.suffix }}
           tags: |
             type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
             type=raw,value=dev,enable=${{ github.event_name == 'push' }}
 
-      - name: Build and push Docker image
+      - name: Build and push image by digest
+        id: build
         uses: docker/build-push-action@v7.3.0
         with:
           context: .
-          push: true
-          target: production
+          target: ${{ matrix.target }}
           platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
+          outputs: type=image,name=ghcr.io/sneak-it/professional-portfolio,push-by-digest=true,name-canonical=true,push=true
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.variant }}
           provenance: true
           sbom: true
+
+      - name: Run Trivy vulnerability scanner
+        id: trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        timeout-minutes: 10
+        with:
+          scan-type: image
+          image-ref: ghcr.io/sneak-it/professional-portfolio@${{ steps.build.outputs.digest }}
+          scanners: vuln,secret
+          format: table
+          output: trivy-report.txt
+          exit-code: '1'
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          vuln-type: os,library
+        env:
+          TRIVY_USERNAME: ${{ github.actor }}
+          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trivy report to job summary
+        if: always()
+        run: |
+          {
+            echo "### 🛡️ Trivy image scan (${{ matrix.variant }})"
+            echo '```'
+            cat trivy-report.txt 2>/dev/null || echo 'No report produced.'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Apply tags to the scanned image
+        run: |
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            ghcr.io/sneak-it/professional-portfolio@${{ steps.build.outputs.digest }}
