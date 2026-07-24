@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { fadeInUp } from '@/lib/motion';
 
 /**
@@ -22,14 +22,14 @@ export default function PageHeader({
   const centered = align === 'center';
   return (
     <div className={`${centered ? 'text-center' : ''} mb-16 ${className}`}>
-      <motion.h1
+      <m.h1
         {...fadeInUp}
         className="heading-legible text-4xl md:text-5xl font-display font-bold tracking-tight mb-4"
       >
         {title}
-      </motion.h1>
+      </m.h1>
       {description && (
-        <motion.p
+        <m.p
           {...fadeInUp}
           transition={{ delay: 0.1 }}
           className={`heading-legible text-lg text-gray-600 dark:text-gray-400 max-w-2xl ${
@@ -37,7 +37,7 @@ export default function PageHeader({
           }`}
         >
           {description}
-        </motion.p>
+        </m.p>
       )}
     </div>
   );

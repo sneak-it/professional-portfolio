@@ -1,18 +1,95 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'motion/react';
+import { m, AnimatePresence } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { navLinks as links } from '@/lib/site';
+
+// useLayoutEffect warns during SSR; fall back to useEffect on the server.
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+// Horizontal inset of the active underline, matching the links' px-4.
+const UNDERLINE_INSET = 16;
+
+interface Indicator {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
   const pathname = usePathname();
+
+  // Sliding-indicator geometry, measured from the live link elements. A single
+  // pill + underline translate between links (CSS transform) instead of a
+  // Framer layoutId animation, which would require the larger domMax bundle.
+  const navRef = useRef<HTMLDivElement>(null);
+  const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
+  const [pill, setPill] = useState<Indicator | null>(null);
+  const [underline, setUnderline] = useState<Indicator | null>(null);
+  const activeExists = links.some((link) => link.href === pathname);
+
+  const measure = useCallback((href: string | null): Indicator | null => {
+    const el = href ? linkRefs.current.get(href) : null;
+    if (!el) return null;
+    return {
+      left: el.offsetLeft,
+      top: el.offsetTop,
+      width: el.offsetWidth,
+      height: el.offsetHeight,
+    };
+  }, []);
+
+  // Keep last geometry when the target is gone (pointer left / no active link)
+  // so the indicator fades in place rather than sliding to origin.
+  const applyMeasurements = useCallback(() => {
+    const hovered = measure(hoveredPath);
+    if (hovered) setPill(hovered);
+    const active = measure(pathname);
+    if (active) setUnderline(active);
+  }, [measure, hoveredPath, pathname]);
+
+  // Latest measurement, so the mount-only resize listener always calls current
+  // hover/route state without re-subscribing.
+  const applyRef = useRef(applyMeasurements);
+  useEffect(() => {
+    applyRef.current = applyMeasurements;
+  });
+
+  // Layout effect: positions land before paint, so indicators never animate in
+  // from origin on first render. Re-runs on hover/route change to drive slides.
+  useIsomorphicLayoutEffect(() => {
+    applyMeasurements();
+  }, [applyMeasurements]);
+
+  // Re-measure when the nav resizes or web fonts settle (link widths shift).
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const recalc = () => {
+      applyRef.current();
+    };
+    const observer = new ResizeObserver(recalc);
+    observer.observe(nav);
+    void document.fonts.ready.then(recalc);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -61,64 +138,67 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <nav
-            className="hidden md:flex items-center space-x-2"
+            className="hidden md:flex items-center"
             onMouseLeave={() => {
               setHoveredPath(null);
             }}
           >
-            {links.map((link) => {
-              const isActive = pathname === link.href;
-              const isHovered = hoveredPath === link.href;
+            <div ref={navRef} className="relative flex items-center">
+              {/* Sliding hover pill: translates between links, fades out when
+                  the pointer leaves the nav. */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute left-0 rounded-full bg-gray-200/50 dark:bg-white/10 transition-[transform,width,opacity] duration-300 ease-out"
+                style={{
+                  transform: `translateX(${pill?.left ?? 0}px)`,
+                  top: pill?.top ?? 0,
+                  width: pill?.width ?? 0,
+                  height: pill?.height ?? 0,
+                  opacity: hoveredPath ? 1 : 0,
+                }}
+              />
+              {/* Sliding active underline: tracks the current route's link. */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute left-0 bottom-1 h-[2px] bg-accent transition-[transform,width,opacity] duration-300 ease-out"
+                style={{
+                  transform: `translateX(${(underline?.left ?? 0) + UNDERLINE_INSET}px)`,
+                  width: Math.max(
+                    (underline?.width ?? 0) - UNDERLINE_INSET * 2,
+                    0,
+                  ),
+                  opacity: activeExists ? 1 : 0,
+                }}
+              />
 
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onMouseEnter={() => {
-                    setHoveredPath(link.href);
-                  }}
-                  className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full ${
-                    isActive
-                      ? 'text-accent'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-                  }`}
-                >
-                  <motion.span
-                    className="relative z-10 block"
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    {link.name}
-                  </motion.span>
-
-                  {isHovered && (
-                    <motion.div
-                      layoutId="navbar-hover"
-                      className="absolute inset-0 bg-gray-200/50 dark:bg-white/10 rounded-full"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{
-                        type: 'spring',
-                        bounce: 0.2,
-                        duration: 0.6,
+              <div className="relative z-10 flex items-center space-x-2">
+                {links.map((link) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <Link
+                      key={link.name}
+                      href={link.href}
+                      ref={(el) => {
+                        if (el) linkRefs.current.set(link.href, el);
+                        else linkRefs.current.delete(link.href);
                       }}
-                    />
-                  )}
-
-                  {isActive && (
-                    <motion.div
-                      layoutId="navbar-active"
-                      className="absolute bottom-1 left-4 right-4 h-[2px] bg-accent"
-                      transition={{
-                        type: 'spring',
-                        bounce: 0.2,
-                        duration: 0.6,
+                      onMouseEnter={() => {
+                        setHoveredPath(link.href);
                       }}
-                    />
-                  )}
-                </Link>
-              );
-            })}
+                      className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full ${
+                        isActive
+                          ? 'text-accent'
+                          : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <m.span className="block" whileTap={{ scale: 0.9 }}>
+                        {link.name}
+                      </m.span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
             <div className="pl-4">
               <ThemeToggle />
             </div>
@@ -145,7 +225,7 @@ export default function Navbar() {
       {/* Mobile Navigation */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <m.div
             id="mobile-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -170,7 +250,7 @@ export default function Navbar() {
                 </Link>
               ))}
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </header>

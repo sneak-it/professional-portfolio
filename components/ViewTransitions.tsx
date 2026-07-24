@@ -34,8 +34,9 @@ export default function ViewTransitions() {
 
   useEffect(() => {
     const doc = document as DocWithVT;
-    const startViewTransition = doc.startViewTransition;
-    if (typeof startViewTransition !== 'function') return;
+    // Bind to doc so the extracted method keeps its `this`.
+    const startViewTransition = doc.startViewTransition?.bind(doc);
+    if (!startViewTransition) return;
 
     const onClick = (e: MouseEvent) => {
       if (
@@ -70,8 +71,7 @@ export default function ViewTransitions() {
       }
 
       e.preventDefault();
-      startViewTransition.call(
-        doc,
+      startViewTransition(
         () =>
           new Promise<void>((resolve) => {
             finishRef.current = resolve;

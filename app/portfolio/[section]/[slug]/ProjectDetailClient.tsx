@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { ExternalLink, GitFork, CheckCircle2 } from 'lucide-react';
 import { fadeInUp, fadeInUpOnView } from '@/lib/motion';
 import Surface from '@/components/Surface';
@@ -20,7 +20,7 @@ export default function ProjectDetailClient({
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
-        <motion.div {...fadeInUp}>
+        <m.div {...fadeInUp}>
           <Surface padding="lg">
             <span className="text-accent font-medium font-mono uppercase tracking-wider text-sm mb-4 block">
               {sectionName}
@@ -75,10 +75,10 @@ export default function ProjectDetailClient({
               </div>
             )}
           </Surface>
-        </motion.div>
+        </m.div>
 
         {project.coverImage && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
@@ -93,14 +93,14 @@ export default function ProjectDetailClient({
               className="object-cover"
               referrerPolicy="no-referrer"
             />
-          </motion.div>
+          </m.div>
         )}
       </div>
 
       {(features.length > 0 || project.challenges) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
           {features.length > 0 && (
-            <motion.div {...fadeInUpOnView}>
+            <m.div {...fadeInUpOnView}>
               <Surface padding="md">
                 <h2 className="text-2xl font-bold mb-6">Key Features</h2>
                 <ul className="space-y-4">
@@ -118,11 +118,11 @@ export default function ProjectDetailClient({
                   ))}
                 </ul>
               </Surface>
-            </motion.div>
+            </m.div>
           )}
 
           {project.challenges && (
-            <motion.div {...fadeInUpOnView} transition={{ delay: 0.2 }}>
+            <m.div {...fadeInUpOnView} transition={{ delay: 0.2 }}>
               <Surface padding="md">
                 <h2 className="text-2xl font-bold mb-6">
                   Challenges & Solutions
@@ -131,7 +131,7 @@ export default function ProjectDetailClient({
                   {project.challenges}
                 </p>
               </Surface>
-            </motion.div>
+            </m.div>
           )}
         </div>
       )}

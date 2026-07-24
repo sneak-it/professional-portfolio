@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
-import { MotionConfig } from 'motion/react';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BackgroundCanvas from '@/components/BackgroundCanvas';
+import MotionProvider from '@/components/MotionProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import JsonLd from '@/components/JsonLd';
 import ViewTransitions from '@/components/ViewTransitions';
@@ -90,7 +90,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <MotionConfig reducedMotion="user">
+          <MotionProvider>
             {/* Suspense: ViewTransitions reads useSearchParams (keeps static
                 pages static). Renders null, so no visible fallback. */}
             <Suspense fallback={null}>
@@ -102,7 +102,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
-          </MotionConfig>
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

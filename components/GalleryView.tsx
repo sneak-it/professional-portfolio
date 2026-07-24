@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'motion/react';
+import { m, AnimatePresence } from 'motion/react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
@@ -66,7 +66,7 @@ export default function GalleryView({
 
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
         {gallery.images.map((image, index) => (
-          <motion.button
+          <m.button
             type="button"
             key={image.id}
             initial={{ opacity: 0, y: 20 }}
@@ -90,14 +90,14 @@ export default function GalleryView({
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </motion.button>
+          </m.button>
         ))}
       </div>
 
       {/* Lightbox */}
       <AnimatePresence>
         {selected && (
-          <motion.div
+          <m.div
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
@@ -145,7 +145,7 @@ export default function GalleryView({
               </>
             )}
 
-            <motion.div
+            <m.div
               key={selected.id}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -164,8 +164,8 @@ export default function GalleryView({
                 className="object-contain"
                 referrerPolicy="no-referrer"
               />
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </Container>

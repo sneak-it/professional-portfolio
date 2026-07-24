@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { ImageIcon } from 'lucide-react';
 import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
@@ -32,7 +32,7 @@ export default function SectionGalleryList({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {galleries.map((gallery, index) => (
-            <motion.div
+            <m.div
               key={gallery.slug}
               {...fadeInUpOnView}
               transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -58,7 +58,7 @@ export default function SectionGalleryList({
                   </div>
                 }
               />
-            </motion.div>
+            </m.div>
           ))}
         </div>
       )}

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { ExternalLink } from 'lucide-react';
 import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
@@ -36,7 +36,7 @@ export default function SectionProjectList({
           {projects.map((project, index) => {
             const tech = project.tech ?? [];
             return (
-              <motion.div
+              <m.div
                 key={project.slug}
                 {...scaleIn}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
@@ -112,7 +112,7 @@ export default function SectionProjectList({
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </m.div>
             );
           })}
         </div>
