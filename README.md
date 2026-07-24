@@ -54,7 +54,7 @@ docker run -p 3000:3000 \
 
 ### Prerequisites
 
-- Node.js 24.x
+- Node.js 26.x
 - npm
 
 ### Setup
