@@ -55,15 +55,6 @@ jobs:
     permissions:
       contents: read
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - variant: root
-            target: production
-          - variant: nonroot
-            target: production-nonroot
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -71,62 +62,25 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4.2.0
 
-      - name: Build Docker image (${{ matrix.target }} stage)
+      # Building `production` builds `production-nonroot` as its parent stage, so
+      # one build validates both published variants. They differ only by USER, so
+      # their filesystems are identical and a single scan below covers both.
+      - name: Build Docker image
         uses: docker/build-push-action@v7.3.0
         with:
           context: .
           push: false
           load: true
-          target: ${{ matrix.target }}
-          tags: professional-portfolio:test-${{ matrix.variant }}
-          cache-from: type=gha,scope=${{ matrix.variant }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.variant }}
+          target: production
+          tags: professional-portfolio:test
+          cache-from: type=gha,scope=image
+          cache-to: type=gha,mode=max,scope=image
 
-      - name: Run Trivy vulnerability scanner
-        id: trivy
-        uses: aquasecurity/trivy-action@v0.36.0
-        timeout-minutes: 10
+      - name: Scan image
+        uses: ./.github/actions/trivy-scan
         with:
-          scan-type: image
-          image-ref: professional-portfolio:test-${{ matrix.variant }}
-          scanners: vuln,secret
-          format: table
-          output: trivy-report.txt
-          exit-code: '1'
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          vuln-type: os,library
-        env:
-          TRIVY_USERNAME: ${{ github.actor }}
-          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-
-      # Report is written to a file above, so surface it. Both steps run even when
-      # the scan fails (exit 1), so the report is always visible; the job still fails.
-      - name: Trivy report to job summary
-        if: always()
-        run: |
-          {
-            echo "### 🛡️ Trivy image scan (${{ matrix.variant }})"
-            echo '```'
-            cat trivy-report.txt 2>/dev/null || echo 'No report produced.'
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      # Hand the report to trivy-pr-comment workflow via artifact
-      - name: Stage Trivy PR artifact
-        if: always() && github.event_name == 'pull_request'
-        run: |
-          echo "${{ github.event.pull_request.number }}" > pr-number.txt
-          echo "${{ steps.trivy.outcome }}" > trivy-outcome.txt
-
-      - name: Upload Trivy PR artifact
-        if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-pr-report-${{ matrix.variant }}
-          path: |
-            trivy-report.txt
-            pr-number.txt
-            trivy-outcome.txt
-          if-no-files-found: warn
-          retention-days: 1
+          image-ref: professional-portfolio:test
+          registry-username: ${{ github.actor }}
+          registry-password: ${{ secrets.GITHUB_TOKEN }}
+          upload-artifact: ${{ github.event_name == 'pull_request' }}
+          pr-number: ${{ github.event.pull_request.number }}

@@ -28,7 +28,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true   # CI may not have produced any (e.g. build failed early)
         with:
-          pattern: trivy-pr-report-*   # one artifact per image variant (root, nonroot)
+          pattern: trivy-pr-report*   # a single report covering both image variants
           path: trivy-artifact
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +42,8 @@ jobs:
             const path = require('path');
             const base = 'trivy-artifact';
 
-            // Each variant lands in its own subdir: trivy-artifact/trivy-pr-report-<variant>/
+            // The report lands in its own subdir: trivy-artifact/trivy-pr-report/
+            // The loop below stays multi-dir tolerant in case variants ever diverge.
             let dirs = [];
             try {
               dirs = fs.readdirSync(base, { withFileTypes: true })
@@ -74,8 +75,11 @@ jobs:
 
             const LIMIT = 55000;
             const variants = dirs
-              .map(d => ({ name: d.replace(/^trivy-pr-report-/, ''), dir: d }))
+              .map(d => ({ name: d.replace(/^trivy-pr-report-?/, ''), dir: d }))
               .sort((a, b) => a.name.localeCompare(b.name));
+            // With one report there is no variant name to show; only label sections
+            // when more than one artifact turns up.
+            const multi = variants.length > 1;
 
             let anyFailure = false;
             const sections = variants.map(v => {
@@ -92,7 +96,10 @@ jobs:
               const body = report
                 ? `<details><summary>Full report</summary>\n\n\`\`\`\n${block}\n\`\`\`\n\n</details>`
                 : block;
-              return `#### \`${v.name}\` image — ${status}\n\n${body}`;
+              const heading = multi
+                ? `#### \`${v.name}\` image — ${status}`
+                : `#### ${status}\n\nCovers both the root and \`-nonroot\` variants. They share identical layers, so one scan covers both.`;
+              return `${heading}\n\n${body}`;
             });
 
             const marker = '<!-- trivy-image-scan -->';
