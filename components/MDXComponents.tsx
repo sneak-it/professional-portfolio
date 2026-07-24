@@ -1,4 +1,6 @@
+import path from 'path';
 import type { ComponentPropsWithoutRef } from 'react';
+import { imageDimensions } from '@/lib/image';
 
 /**
  * Defense-in-depth allowlist for MDX rendering.
@@ -54,20 +56,48 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   );
 }
 
+// Root-relative local image whose bytes live under public/. Excludes
+// protocol-relative ('//host'), remote ('http(s)://'), and data: sources.
+const LOCAL_IMAGE_RE = /\.(jpe?g|png|webp|gif|avif|svg)$/i;
+
+/**
+ * Intrinsic width/height for a local (public/) image, read on the server so the
+ * browser can reserve layout space (no CLS). Returns null for remote/data:
+ * sources or if the file can't be read, in which case the <img> renders without
+ * dimensions as before.
+ */
+function localImageDimensions(
+  src: unknown,
+): { width: number; height: number } | null {
+  if (typeof src !== 'string') return null;
+  if (!src.startsWith('/') || src.startsWith('//')) return null;
+  if (!LOCAL_IMAGE_RE.test(src)) return null;
+  try {
+    return imageDimensions(path.join(process.cwd(), 'public', src));
+  } catch {
+    return null;
+  }
+}
+
 function SafeImage({
   src,
   alt = '',
   ...rest
 }: ComponentPropsWithoutRef<'img'>) {
-  // Plain <img> (not next/image) because MDX content has no build-time
-  // dimensions; loading + referrer policy kept consistent with the rest of the site.
+  // Plain <img> (not next/image). MDX has no build-time dimensions, so for local
+  // images we read them from disk at render time (server-only) to avoid layout
+  // shift; remote/data: sources fall back to a dimensionless <img>. Any explicit
+  // width/height in `rest` wins.
+  const dims = localImageDimensions(src);
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={alt}
       loading="lazy"
+      decoding="async"
       referrerPolicy="no-referrer"
+      {...dims}
       {...rest}
     />
   );
