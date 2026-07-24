@@ -1,0 +1,44 @@
+---
+title: 'Inserting Images in MDX Posts'
+date: '2026-07-23'
+readTime: '3 min read'
+image: 'https://picsum.photos/seed/images/1200/600'
+category: 'Development'
+excerpt: 'A reference post showing how to add a cover image via frontmatter and inline images in the body of an MDX blog post.'
+---
+
+Every post has two distinct kinds of images: the cover shown in the header, and inline images placed within the body.
+
+## The cover image
+
+The large image at the top of this page is not written in the body. It comes from the `image` field in the frontmatter above, and is rendered through `next/image`. A remote cover URL must match `images.remotePatterns` in `next.config.ts` (currently `https://picsum.photos/seed/**`); a local path such as `/images/blog/cover.jpg` always works.
+
+## Inline images
+
+Inline images use plain Markdown syntax and render through the `SafeImage` component. The recommended approach is a local file under `public/`, referenced with a root-relative path:
+
+![Placeholder diagram served from the public directory](/images/blog/inline-demo.svg)
+
+The file above lives at `public/images/blog/inline-demo.svg` and is served at `/images/blog/inline-demo.svg`. Local paths satisfy the `img-src 'self'` rule in the Content Security Policy, so they need no configuration changes.
+
+## Captions
+
+Bare Markdown images have no caption. For that, use the `Figure` component, which wraps the same hardened image in a semantic `<figure>`/`<figcaption>`:
+
+<Figure
+  src="/images/blog/inline-demo.svg"
+  alt="Placeholder diagram served from the public directory"
+  caption="Figure 1. A local image with a caption, rendered via the Figure component."
+/>
+
+The `caption` is optional, so `Figure` also works as a plain block-level image when you omit it.
+
+## Allowed sources, and a redirect gotcha
+
+Because inline images render as a plain `<img>`, `remotePatterns` does not apply to them; the CSP `img-src` directive does. The browser checks CSP against the image's *final resolved URL*, so a remote host that redirects can be blocked even if the URL you typed looks allowlisted.
+
+That is exactly why `https://picsum.photos/seed/...` fails inline: picsum redirects to `fastly.picsum.photos`, which is not in `img-src`. The cover image escapes this only because `next/image` proxies the fetch through `/_next/image` on this origin (`'self'`), so the browser never sees the fastly host.
+
+The practical rule: for inline images, prefer local files under `public/` (`'self'`) or `data:` URIs. To use a remote host, add the host it *actually serves from* (following redirects) to `img-src` in `next.config.ts`.
+
+Always write meaningful alt text; it is passed straight through to the rendered image.

@@ -73,8 +73,34 @@ function SafeImage({
   );
 }
 
+/**
+ * Captioned image for MDX bodies. Used as `<Figure src alt caption />`.
+ *
+ * Renders through the same hardened <img> as bare Markdown images, wrapped in a
+ * semantic <figure>/<figcaption>. Prefer this over raw Markdown when the image
+ * needs a visible caption. `caption` is optional so it can also stand in as a
+ * block-level image (bare Markdown images render inside a <p>, which is invalid
+ * markup around a <figure>).
+ */
+function Figure({
+  caption,
+  ...img
+}: ComponentPropsWithoutRef<'img'> & { caption?: React.ReactNode }) {
+  return (
+    <figure className="my-8">
+      <SafeImage {...img} />
+      {caption ? (
+        <figcaption className="mt-3 text-center text-sm text-gray-500 dark:text-gray-400">
+          {caption}
+        </figcaption>
+      ) : null}
+    </figure>
+  );
+}
+
 export const mdxComponents = {
   a: SafeLink,
   img: SafeImage,
+  Figure,
   ...Object.fromEntries(BLOCKED_TAGS.map((tag) => [tag, Blocked])),
 } as const;
