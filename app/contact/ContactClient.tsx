@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { MapPin } from 'lucide-react';
 import Container from '@/components/Container';
 import IconBadge from '@/components/IconBadge';
@@ -11,7 +11,7 @@ import { siteConfig } from '@/lib/site';
 export default function ContactClient() {
   return (
     <Container size="sm" className="text-center">
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -29,7 +29,7 @@ export default function ContactClient() {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-          <motion.div
+          <m.div
             {...fadeInUp}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
@@ -46,9 +46,9 @@ export default function ContactClient() {
             >
               Connect with me
             </a>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             {...fadeInUp}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
@@ -60,9 +60,9 @@ export default function ContactClient() {
             <p className="text-gray-600 dark:text-gray-400">
               {siteConfig.location}
             </p>
-          </motion.div>
+          </m.div>
         </div>
-      </motion.div>
+      </m.div>
     </Container>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
 import Container from '@/components/Container';
 import PageHeader from '@/components/PageHeader';
@@ -34,7 +34,7 @@ export default function PortfolioHub({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {sections.map((section, index) => (
-          <motion.div
+          <m.div
             key={section.slug}
             {...fadeInUpOnView}
             transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -54,7 +54,7 @@ export default function PortfolioHub({
                 </p>
               }
             />
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </Container>

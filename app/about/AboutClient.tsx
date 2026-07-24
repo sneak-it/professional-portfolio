@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import {
   Code2,
   Palette,
@@ -73,7 +73,7 @@ export default function AboutClient() {
   return (
     <Container>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
@@ -90,9 +90,9 @@ export default function AboutClient() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           </div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -124,12 +124,12 @@ export default function AboutClient() {
               </a>
             </div>
           </Surface>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* Skills Section */}
       <div className="mt-32">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -142,11 +142,11 @@ export default function AboutClient() {
           <p className="heading-legible mt-4 text-gray-600 dark:text-gray-400">
             The tools I reach for - at work and at home.
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {skills.map((skillGroup, index) => (
-            <motion.div
+            <m.div
               key={skillGroup.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -171,14 +171,14 @@ export default function AboutClient() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>
 
       {/* Off the Clock — personal interests */}
       <div className="mt-32">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -193,11 +193,11 @@ export default function AboutClient() {
             thinking about technology - plus a few things that keep me away from
             a screen.
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {INTERESTS.map((interest, index) => (
-            <motion.div
+            <m.div
               key={interest.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -214,7 +214,7 @@ export default function AboutClient() {
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                 {interest.blurb}
               </p>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>

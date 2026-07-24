@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '@/components/Container';
 import PageHeader from '@/components/PageHeader';
@@ -30,7 +30,7 @@ export default function BlogList({
 
       <div className="space-y-12">
         {posts.map((post, index) => (
-          <motion.article
+          <m.article
             key={post.slug}
             {...fadeInUpOnView}
             transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -75,7 +75,7 @@ export default function BlogList({
                 />
               </div>
             </div>
-          </motion.article>
+          </m.article>
         ))}
       </div>
 

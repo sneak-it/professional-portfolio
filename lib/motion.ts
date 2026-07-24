@@ -1,11 +1,10 @@
 /**
- * Shared motion presets. Spread into a `motion.*` element to apply a recurring
+ * Shared motion presets. Spread into an `m.*` element to apply a recurring
  * entrance without re-declaring the variant inline:
  *
- *   <motion.div {...fadeInUp} transition={{ delay: 0.1 }} />
+ *   <m.div {...fadeInUp} transition={{ delay: 0.1 }} />
  *
- * Keeps the `motion` dependency but shrinks its repeated surface area. Add a
- * `transition` prop at the call site for per-element timing/stagger.
+ * Add a `transition` prop at the call site for per-element timing/stagger.
  */
 export const fadeInUp = {
   initial: { opacity: 0, y: 20 },

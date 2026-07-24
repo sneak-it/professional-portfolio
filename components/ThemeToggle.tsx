@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Moon, Sun, Laptop } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { motion, AnimatePresence } from 'motion/react';
+import { m, AnimatePresence } from 'motion/react';
 
 const OPTIONS = [
   { value: 'light', label: 'Light', Icon: Sun },
@@ -65,7 +65,7 @@ export function ThemeToggle() {
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <m.div
             ref={menuRef}
             role="menu"
             aria-label="Theme"
@@ -98,7 +98,7 @@ export function ThemeToggle() {
                 {label}
               </button>
             ))}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>
