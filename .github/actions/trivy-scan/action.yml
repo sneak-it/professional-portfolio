@@ -42,7 +42,7 @@ runs:
       run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
 
     - name: Restore Trivy DB cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ${{ runner.temp }}/trivy-cache
         key: trivy-db-${{ steps.db-key.outputs.day }}
@@ -99,7 +99,7 @@ runs:
 
     - name: Upload Trivy PR artifact
       if: always() && inputs.upload-artifact == 'true'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ inputs.artifact-name }}
         path: |
