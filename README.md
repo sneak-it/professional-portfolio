@@ -14,11 +14,18 @@ A modern, highly polished personal portfolio website.
 
 ## Deployment (Docker)
 
-Docker is the recommended way to run this site. The build uses Next.js standalone output, so the runtime image is small and self-contained.
+Docker is the recommended way to run this site. The build uses Next.js standalone output on a distroless base (no shell, no package manager), so the runtime image is small and self-contained.
+
+Two image variants are published from the same layers:
+
+| Tag | User | Notes |
+| --- | --- | --- |
+| `:latest`, `:<version>`, `:dev` | root (uid 0) | Default. What a plain `docker build .` produces. |
+| `:latest-nonroot`, `:<version>-nonroot`, `:dev-nonroot` | `nonroot` (uid 65532) | Hardened variant used by `docker-compose.yml`. |
 
 ### Using Docker Compose (recommended)
 
-1. Create the content/image directories and make them traversable by the container user (uid `1001`):
+1. Create the content/image directories and make them traversable by the container user (uid `65532`). Skip this if you switch the compose file to the root `:latest` image:
 
    ```bash
    mkdir -p public/portfolio/photography
@@ -40,6 +47,8 @@ Docker is the recommended way to run this site. The build uses Next.js standalon
 To set the canonical production URL (used for Open Graph cards, the sitemap, robots.txt, and JSON-LD), set `SITE_URL` (no trailing slash) as a **runtime** environment variable. It is read when the container starts, so the same prebuilt image works under any domain — no rebuild required. In `docker-compose.yml` it is set under `environment:`; edit it to your own domain (unset falls back to `http://localhost:3000`).
 
 ### Building manually
+
+The default target is the root image; pass `--target production-nonroot` for the uid 65532 variant.
 
 ```bash
 docker build -t portfolio-app .

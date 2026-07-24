@@ -6,7 +6,9 @@ services:
     environment:
       - NODE_ENV=production
       - SITE_URL=https://yourdomaind.tld
-    # Host dirs must exist and be traversable by the container user (uid 1001):
+    # Host dirs must exist and be traversable by the container user (uid 65532,
+    # the `nonroot` user from the distroless base image). Not needed if you
+    # you are using the standard root :latest image
     #   mkdir -p public/portfolio/photography
     #   chmod o+rx content content/blog content/portfolio public/portfolio public/portfolio/photography
     volumes:
