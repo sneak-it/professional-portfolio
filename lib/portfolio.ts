@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import sizeOf from 'image-size';
+import { imageDimensions } from './image';
 import { listMdxSlugs, readMdxFile } from './content';
 import { byDateDesc } from './sort';
 
@@ -140,40 +140,6 @@ export function getProjectItems(section: SectionSlug): ProjectItem[] {
 // -- Photography (gallery) section ------------------------------------------
 
 const IMAGE_FILE_RE = /\.(jpe?g|png|webp|gif)$/i;
-
-// Read only the header (image-size's own bound); memoize by (path, mtime).
-const HEADER_BYTES = 512 * 1024;
-const dimensionCache = new Map<
-  string,
-  { mtimeMs: number; width: number; height: number }
->();
-
-function imageDimensions(imagePath: string): { width: number; height: number } {
-  const { mtimeMs } = fs.statSync(imagePath);
-  const cached = dimensionCache.get(imagePath);
-  if (cached && cached.mtimeMs === mtimeMs) {
-    return { width: cached.width, height: cached.height };
-  }
-
-  const fd = fs.openSync(imagePath, 'r');
-  let dimensions;
-  try {
-    const size = fs.fstatSync(fd).size;
-    const length = Math.min(size, HEADER_BYTES);
-    const header = Buffer.alloc(length);
-    fs.readSync(fd, header, 0, length, 0);
-    dimensions = sizeOf(header);
-  } finally {
-    fs.closeSync(fd);
-  }
-
-  const result = {
-    width: dimensions.width || 800,
-    height: dimensions.height || 600,
-  };
-  dimensionCache.set(imagePath, { mtimeMs, ...result });
-  return result;
-}
 
 /** Image filenames in a gallery's folder. */
 function listGalleryImageFiles(slug: string): string[] {
