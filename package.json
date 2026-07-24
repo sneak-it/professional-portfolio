@@ -41,7 +41,8 @@
     "typescript-eslint": "8.65.0"
   },
   "overrides": {
-    "sharp": "0.35.3"
+    "sharp": "^0.35.3",
+    "postcss": "^8.5.23"
   },
   "allowScripts": {
     "unrs-resolver@1.12.2": true
