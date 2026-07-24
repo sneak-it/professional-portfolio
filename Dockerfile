@@ -4,26 +4,28 @@ FROM node:26-trixie-slim AS base
 FROM base AS deps
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
+# Install dependencies based on the preferred package manager.
+# --no-audit: CI's quality job already runs `npm audit` against this lockfile.
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
-
-RUN npm run build
-
 # Pre-create the writable cache tree here rather than in a runtime stage:
 # distroless has no shell, so mkdir/chown must happen in a stage that has one.
+# Kept above `COPY . .` so a source change doesn't re-run it and re-export the layer.
 RUN mkdir -p /empty-cache/images
+
+COPY . .
+
+RUN npm run build
 
 # Stage 3: Non-root production image (distroless)
 

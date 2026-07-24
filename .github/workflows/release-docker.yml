@@ -14,23 +14,14 @@ permissions:
   contents: read
   packages: write
 
+env:
+  IMAGE: ghcr.io/sneak-it/professional-portfolio
+
 jobs:
   build:
     name: Build and Push Image
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Root (default) — unsuffixed tags: latest / <version> / dev
-          - variant: root
-            target: production
-            suffix: ""
-          # Non-root — "-nonroot" suffixed tags: latest-nonroot / <version>-nonroot / dev-nonroot
-          - variant: nonroot
-            target: production-nonroot
-            suffix: "-nonroot"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -48,63 +39,93 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set image metadata
-        id: meta
+      # Non-root, "-nonroot" suffixed tags: latest-nonroot / <version>-nonroot / dev-nonroot
+      - name: Set image metadata (nonroot)
+        id: meta-nonroot
         uses: docker/metadata-action@v6.2.0
         with:
-          images: ghcr.io/sneak-it/professional-portfolio
+          images: ${{ env.IMAGE }}
           flavor: |
             latest=false
-            suffix=${{ matrix.suffix }}
+            suffix=-nonroot
           tags: |
             type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
             type=raw,value=dev,enable=${{ github.event_name == 'push' }}
 
-      - name: Build and push image by digest
-        id: build
+      # Root (default), unsuffixed tags: latest / <version> / dev
+      - name: Set image metadata (root)
+        id: meta-root
+        uses: docker/metadata-action@v6.2.0
+        with:
+          images: ${{ env.IMAGE }}
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
+            type=semver,pattern={{version}},enable=${{ github.event_name == 'release' }}
+            type=raw,value=dev,enable=${{ github.event_name == 'push' }}
+
+      # `production` is `production-nonroot` + `USER root`, so the two variants share
+      # every filesystem layer. Building nonroot first populates the local BuildKit
+      # state; the root build below is then a config-only delta rather than a second
+      # `npm ci` + `next build` per platform. Both builds share one cache scope, which
+      # also halves what is written to the 10 GB GitHub Actions cache budget.
+      - name: Build and push nonroot image by digest
+        id: build-nonroot
         uses: docker/build-push-action@v7.3.0
         with:
           context: .
-          target: ${{ matrix.target }}
+          target: production-nonroot
           platforms: linux/amd64,linux/arm64
-          outputs: type=image,name=ghcr.io/sneak-it/professional-portfolio,push-by-digest=true,name-canonical=true,push=true
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=${{ matrix.variant }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.variant }}
+          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          labels: ${{ steps.meta-nonroot.outputs.labels }}
+          cache-from: type=gha,scope=image
+          cache-to: type=gha,mode=max,scope=image
           provenance: true
           sbom: true
 
-      - name: Run Trivy vulnerability scanner
-        id: trivy
-        uses: aquasecurity/trivy-action@v0.36.0
-        timeout-minutes: 10
+      # No cache-to here: every layer is already in the local BuildKit state from the
+      # build above, so exporting the same multi-GB cache a second time is pure waste.
+      - name: Build and push root image by digest
+        id: build-root
+        uses: docker/build-push-action@v7.3.0
         with:
-          scan-type: image
-          image-ref: ghcr.io/sneak-it/professional-portfolio@${{ steps.build.outputs.digest }}
-          scanners: vuln,secret
-          format: table
-          output: trivy-report.txt
-          exit-code: '1'
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          vuln-type: os,library
+          context: .
+          target: production
+          platforms: linux/amd64,linux/arm64
+          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          labels: ${{ steps.meta-root.outputs.labels }}
+          cache-from: type=gha,scope=image
+          provenance: true
+          sbom: true
+
+      # One scan for both digests (see the comment on the nonroot build). This gates
+      # tagging: the scan exits 1 on HIGH/CRITICAL findings, and the steps below have
+      # no `if:`, so both digests stay pushed-but-untagged when it fails.
+      - name: Scan image
+        uses: ./.github/actions/trivy-scan
+        with:
+          image-ref: ${{ env.IMAGE }}@${{ steps.build-nonroot.outputs.digest }}
+          registry-username: ${{ github.actor }}
+          registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Read each metadata step's `json` output rather than $DOCKER_METADATA_OUTPUT_JSON:
+      # with two metadata-action calls in one job, the env var only holds the last one.
+      - name: Apply nonroot tags to the scanned image
         env:
-          TRIVY_USERNAME: ${{ github.actor }}
-          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Trivy report to job summary
-        if: always()
-        run: |
-          {
-            echo "### 🛡️ Trivy image scan (${{ matrix.variant }})"
-            echo '```'
-            cat trivy-report.txt 2>/dev/null || echo 'No report produced.'
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Apply tags to the scanned image
+          META_JSON: ${{ steps.meta-nonroot.outputs.json }}
+          DIGEST: ${{ steps.build-nonroot.outputs.digest }}
         run: |
           docker buildx imagetools create \
-            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            ghcr.io/sneak-it/professional-portfolio@${{ steps.build.outputs.digest }}
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$META_JSON") \
+            "$IMAGE@$DIGEST"
+
+      - name: Apply root tags to the scanned image
+        env:
+          META_JSON: ${{ steps.meta-root.outputs.json }}
+          DIGEST: ${{ steps.build-root.outputs.digest }}
+        run: |
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$META_JSON") \
+            "$IMAGE@$DIGEST"

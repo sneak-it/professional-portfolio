@@ -1,0 +1,110 @@
+name: 'Trivy image scan'
+description: 'Scan a container image for HIGH/CRITICAL vulns and secrets, publish the report to the job summary, and optionally stage it for the PR comment workflow.'
+
+inputs:
+  image-ref:
+    description: 'Image to scan. A locally loaded tag on PRs, a registry digest on main.'
+    required: true
+  covers:
+    description: 'Human-readable note about which published variants this scan applies to.'
+    required: false
+    default: 'both the root and nonroot variants. They share identical layers, so one scan covers both.'
+  registry-username:
+    description: 'Registry user for pulling the scanned image and the Trivy DB.'
+    required: false
+    default: ''
+  registry-password:
+    description: 'Registry token for pulling the scanned image and the Trivy DB.'
+    required: false
+    default: ''
+  upload-artifact:
+    description: 'Set to "true" to upload the report for the Trivy PR Comment workflow.'
+    required: false
+    default: 'false'
+  artifact-name:
+    description: 'Artifact name. Must stay within the pattern trivy-pr-comment.yml downloads.'
+    required: false
+    default: 'trivy-pr-report'
+  pr-number:
+    description: 'PR number to write into the artifact. Required when upload-artifact is true.'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    # The vuln DB is ~50 MB and is pulled from GHCR on every run. Keying by day
+    # keeps one entry alive at a time (upstream refreshes it every 6h anyway) and
+    # avoids burning anonymous GHCR pulls.
+    - name: Trivy DB cache key
+      id: db-key
+      shell: bash
+      run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+    - name: Restore Trivy DB cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.temp }}/trivy-cache
+        key: trivy-db-${{ steps.db-key.outputs.day }}
+        restore-keys: |
+          trivy-db-
+
+    - name: Run Trivy vulnerability scanner
+      id: trivy
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        scan-type: image
+        image-ref: ${{ inputs.image-ref }}
+        scanners: vuln,secret
+        format: table
+        output: trivy-report.txt
+        exit-code: '1'
+        severity: HIGH,CRITICAL
+        ignore-unfixed: true
+        vuln-type: os,library
+      env:
+        TRIVY_USERNAME: ${{ inputs.registry-username }}
+        TRIVY_PASSWORD: ${{ inputs.registry-password }}
+        TRIVY_CACHE_DIR: ${{ runner.temp }}/trivy-cache
+        # Composite action steps do not support `timeout-minutes`, so bound the
+        # scan through Trivy itself. The job-level timeout is the outer backstop.
+        TRIVY_TIMEOUT: 10m
+
+    # Report is written to a file above, so surface it. This step runs even when
+    # the scan fails (exit 1), so the report is always visible; the job still fails.
+    - name: Trivy report to job summary
+      if: always()
+      shell: bash
+      run: |
+        {
+          echo "### 🛡️ Trivy image scan"
+          echo ""
+          echo "Covers ${{ inputs.covers }}"
+          echo ""
+          echo '```'
+          cat trivy-report.txt 2>/dev/null || echo 'No report produced.'
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+
+    # Hand the report to the trivy-pr-comment workflow via artifact
+    - name: Stage Trivy PR artifact
+      if: always() && inputs.upload-artifact == 'true'
+      shell: bash
+      env:
+        PR_NUMBER: ${{ inputs.pr-number }}
+        TRIVY_OUTCOME: ${{ steps.trivy.outcome }}
+      run: |
+        printf '%s\n' "$PR_NUMBER" > pr-number.txt
+        printf '%s\n' "$TRIVY_OUTCOME" > trivy-outcome.txt
+
+    - name: Upload Trivy PR artifact
+      if: always() && inputs.upload-artifact == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: |
+          trivy-report.txt
+          pr-number.txt
+          trivy-outcome.txt
+        if-no-files-found: warn
+        retention-days: 1
