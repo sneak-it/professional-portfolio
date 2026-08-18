@@ -20,15 +20,20 @@ Two image variants are published from the same layers:
 
 | Tag | User | Notes |
 | --- | --- | --- |
-| `:latest`, `:<version>`, `:dev` | root (uid 0) | Default. What a plain `docker build .` produces. |
-| `:latest-nonroot`, `:<version>-nonroot`, `:dev-nonroot` | `nonroot` (uid 65532) | Hardened variant used by `docker-compose.yml`. |
+| `:latest`, `:<version>`, `:dev` | root (uid 0) | Default. What `docker-compose.yml` runs and what a plain `docker build .` produces. |
+| `:latest-nonroot`, `:<version>-nonroot`, `:dev-nonroot` | `nonroot` (uid 65532) | Hardened variant. Opt in per the note in step 1 below. |
 
 ### Using Docker Compose (recommended)
 
-1. Create the content/image directories and make them traversable by the container user (uid `65532`). Skip this if you switch the compose file to the root `:latest` image:
+1. Create the directories that get mounted into the container:
 
    ```bash
    mkdir -p public/portfolio/photography
+   ```
+
+   The compose file runs the root `:latest` image, which can read them as-is. To run the hardened `:latest-nonroot` variant instead, switch the `image:` tag, uncomment the `user: "65532:65532"` line, and make those directories traversable by that uid:
+
+   ```bash
    chmod o+rx content content/blog content/portfolio public/portfolio public/portfolio/photography
    ```
 
@@ -42,7 +47,7 @@ Two image variants are published from the same layers:
 
 4. The app will be available at `http://localhost:3000`.
 
-`content/` and `public/portfolio/` are mounted read-only into the container (see `docker-compose.yml`), so you can add or edit blog posts, projects, and photos on the host and they are served immediately — no rebuild required. The compose file also sets a healthcheck (`/api/health`), resource limits, and hardened security options.
+`content/` and `public/portfolio/` are mounted read-only into the container (see `docker-compose.yml`), so you can add or edit blog posts, projects, and photos on the host and they are served immediately — no rebuild required. The image ships a healthcheck (`/api/health`); the compose file adds resource limits and hardened security options.
 
 To set the canonical production URL (used for Open Graph cards, the sitemap, robots.txt, and JSON-LD), set `SITE_URL` (no trailing slash) as a **runtime** environment variable. It is read when the container starts, so the same prebuilt image works under any domain — no rebuild required. In `docker-compose.yml` it is set under `environment:`; edit it to your own domain (unset falls back to `http://localhost:3000`).
 

@@ -1,16 +1,17 @@
 services:
   portfolio:
     image: ghcr.io/sneak-it/professional-portfolio:latest
+    # For the hardened variant, switch to :latest-nonroot, uncomment `user`,
+    # and make the mounted host dirs traversable by uid 65532:
+    #   chmod o+rx content content/blog content/portfolio public/portfolio public/portfolio/photography
+    # user: "65532:65532"
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
       - SITE_URL=https://yourdomaind.tld
-    # Host dirs must exist and be traversable by the container user (uid 65532,
-    # the `nonroot` user from the distroless base image). Not needed if you
-    # you are using the standard root :latest image
+    # The mounted host dirs must exist before starting:
     #   mkdir -p public/portfolio/photography
-    #   chmod o+rx content content/blog content/portfolio public/portfolio public/portfolio/photography
     volumes:
       - ./content:/app/content:ro
       - ./public/portfolio:/app/public/portfolio:ro
