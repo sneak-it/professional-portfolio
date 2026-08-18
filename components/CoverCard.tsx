@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import CoverImage from '@/components/CoverImage';
 
 /**
  * Overlay cover card: a full-bleed image (or accent-gradient fallback when the
@@ -34,19 +34,13 @@ export default function CoverCard({
       href={href}
       className={`group block relative rounded-3xl overflow-hidden ${aspect} bg-gray-100 dark:bg-gray-900`}
     >
-      {coverImage ? (
-        <Image
-          src={coverImage}
-          alt={title}
-          fill
-          priority={priority}
-          sizes={sizes}
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
-          referrerPolicy="no-referrer"
-        />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-accent-2/30" />
-      )}
+      <CoverImage
+        src={coverImage}
+        alt={title}
+        priority={priority}
+        sizes={sizes}
+        className="transition-transform duration-700 group-hover:scale-105"
+      />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
 
       {badge && (

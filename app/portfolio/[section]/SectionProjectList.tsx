@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import CoverImage from '@/components/CoverImage';
 import { m } from 'motion/react';
 import { ExternalLink } from 'lucide-react';
 import Container from '@/components/Container';
@@ -46,19 +46,13 @@ export default function SectionProjectList({
                   href={`/portfolio/${project.section}/${project.slug}`}
                   className="relative aspect-[4/3] overflow-hidden block"
                 >
-                  {project.coverImage ? (
-                    <Image
-                      src={project.coverImage}
-                      alt={project.title}
-                      fill
-                      priority={index === 0}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-accent-2/30" />
-                  )}
+                  <CoverImage
+                    src={project.coverImage}
+                    alt={project.title}
+                    priority={index === 0}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="transition-transform duration-700 group-hover:scale-105"
+                  />
                 </Link>
                 {(project.link || project.github) && (
                   <div className="relative -mt-12 px-6 flex justify-end gap-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

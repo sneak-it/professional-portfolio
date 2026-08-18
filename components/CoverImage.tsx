@@ -1,0 +1,37 @@
+import Image from 'next/image';
+
+/**
+ * Cover image with an accent-gradient block as the fallback when no cover is
+ * available. Shared by the blog list/post pages, CoverCard, and the portfolio
+ * section list so the two paths cannot drift.
+ */
+export default function CoverImage({
+  src,
+  alt,
+  sizes,
+  priority = false,
+  className = '',
+}: {
+  src: string | null | undefined;
+  alt: string;
+  sizes: string;
+  priority?: boolean;
+  className?: string;
+}) {
+  if (!src) {
+    return (
+      <div className="absolute inset-0 bg-gradient-to-br from-accent/30 to-accent-2/30" />
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      priority={priority}
+      sizes={sizes}
+      className={`object-cover ${className}`.trim()}
+      referrerPolicy="no-referrer"
+    />
+  );
+}

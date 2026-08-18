@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import CoverImage from '@/components/CoverImage';
 import { m } from 'motion/react';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '@/components/Container';
@@ -37,14 +37,12 @@ export default function BlogList({
             className="group relative flex flex-col md:flex-row gap-8 items-start bg-white dark:bg-[#111] p-6 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-accent/50 transition-colors"
           >
             <div className="w-full md:w-2/5 aspect-video md:aspect-square lg:aspect-[4/3] relative rounded-2xl overflow-hidden shrink-0">
-              <Image
-                src={post.meta.image ?? '/default-post.jpg'}
+              <CoverImage
+                src={post.meta.image}
                 alt={post.meta.title}
-                fill
                 priority={index === 0}
                 sizes="(max-width: 768px) 100vw, 40vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                referrerPolicy="no-referrer"
+                className="transition-transform duration-700 group-hover:scale-105"
               />
             </div>
 

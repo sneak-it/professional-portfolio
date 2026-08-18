@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Container from '@/components/Container';
+import CoverImage from '@/components/CoverImage';
 import Surface from '@/components/Surface';
 import BackButton from '@/components/BackButton';
 import ShareButton from '@/components/ShareButton';
@@ -32,14 +33,11 @@ export default function BlogPostContent({
           </h1>
 
           <div className="relative aspect-video rounded-3xl overflow-hidden mb-10">
-            <Image
-              src={post.meta.image ?? '/default-post.jpg'}
+            <CoverImage
+              src={post.meta.image}
               alt={post.meta.title}
-              fill
               priority
               sizes="(max-width: 768px) 100vw, 768px"
-              className="object-cover"
-              referrerPolicy="no-referrer"
             />
           </div>
         </header>
