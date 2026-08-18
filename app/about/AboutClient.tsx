@@ -18,7 +18,6 @@ import Container from '@/components/Container';
 import Surface from '@/components/Surface';
 import IconBadge from '@/components/IconBadge';
 import { LinkedInIcon } from '@/components/icons/BrandIcons';
-import { siteConfig } from '@/lib/site';
 import { skills, type SkillIcon } from '@/lib/about';
 
 const SKILL_ICONS: Record<SkillIcon, React.ReactNode> = {
@@ -69,7 +68,7 @@ const INTERESTS: Array<{ name: string; icon: React.ReactNode; blurb: string }> =
     },
   ];
 
-export default function AboutClient() {
+export default function AboutClient({ linkedin }: { linkedin: string }) {
   return (
     <Container>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -115,7 +114,7 @@ export default function AboutClient() {
 
             <div className="mt-8 flex gap-4">
               <a
-                href={siteConfig.social.linkedin}
+                href={linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-medium hover:bg-accent transition-colors"

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import ContactClient from './ContactClient';
+import { siteConfig } from '@/lib/site';
 
 // Rendered per request so the canonical/OG URLs (resolved against the layout's
 // metadataBase) reflect the runtime `SITE_URL` rather than a build-time value.
@@ -20,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
-  return <ContactClient />;
+  return (
+    <ContactClient
+      linkedin={siteConfig.social.linkedin}
+      location={siteConfig.location}
+    />
+  );
 }

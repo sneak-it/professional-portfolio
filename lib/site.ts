@@ -1,3 +1,5 @@
+import 'server-only';
+
 /**
  * Central site metadata config.
  *
@@ -7,7 +9,9 @@
  * container start. It is intentionally NOT `NEXT_PUBLIC_`-prefixed: `.url` is
  * consumed only in server code, so the prefix would needlessly inline it into
  * the client bundle at build time and freeze the value — the opposite of what
- * a portable prebuilt image needs. The routes that emit it render at runtime
+ * a portable prebuilt image needs. The `server-only` import enforces that:
+ * importing this module from a client component is a build error. Client
+ * components take what they need as props from their server parent. The routes that emit it render at runtime
  * (robots/sitemap/static pages are `force-dynamic`; blog/portfolio are ISR),
  * so a runtime `SITE_URL` flows through everywhere. The localhost fallback
  * keeps dev/preview and unconfigured runs working without configuration.
@@ -37,12 +41,3 @@ export const siteConfig = {
     linkedin: 'https://linkedin.com/in/your-profile',
   },
 } as const;
-
-/** Primary navigation, shared by the navbar (desktop + mobile menus). */
-export const navLinks = [
-  { name: 'Home', href: '/' },
-  { name: 'About', href: '/about' },
-  { name: 'Portfolio', href: '/portfolio' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Contact', href: '/contact' },
-] as const;

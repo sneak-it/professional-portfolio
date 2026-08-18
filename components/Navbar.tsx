@@ -12,7 +12,7 @@ import { usePathname } from 'next/navigation';
 import { m, AnimatePresence } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { navLinks as links } from '@/lib/site';
+import { navLinks as links } from '@/lib/nav';
 
 // useLayoutEffect warns during SSR; fall back to useEffect on the server.
 const useIsomorphicLayoutEffect =

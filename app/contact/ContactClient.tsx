@@ -6,9 +6,14 @@ import Container from '@/components/Container';
 import IconBadge from '@/components/IconBadge';
 import { LinkedInIcon } from '@/components/icons/BrandIcons';
 import { fadeInUp } from '@/lib/motion';
-import { siteConfig } from '@/lib/site';
 
-export default function ContactClient() {
+export default function ContactClient({
+  linkedin,
+  location,
+}: {
+  linkedin: string;
+  location: string;
+}) {
   return (
     <Container size="sm" className="text-center">
       <m.div
@@ -39,7 +44,7 @@ export default function ContactClient() {
             </IconBadge>
             <h3 className="text-xl font-bold mb-2">LinkedIn</h3>
             <a
-              href={siteConfig.social.linkedin}
+              href={linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-600 dark:text-gray-400 hover:text-accent transition-colors"
@@ -57,9 +62,7 @@ export default function ContactClient() {
               <MapPin size={32} />
             </IconBadge>
             <h3 className="text-xl font-bold mb-2">Location</h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              {siteConfig.location}
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">{location}</p>
           </m.div>
         </div>
       </m.div>
