@@ -58,7 +58,7 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
 
 // Root-relative local image whose bytes live under public/. Excludes
 // protocol-relative ('//host'), remote ('http(s)://'), and data: sources.
-const LOCAL_IMAGE_RE = /\.(jpe?g|png|webp|gif|avif|svg)$/i;
+const LOCAL_IMAGE_RE = /\.(jpe?g|png|webp|gif|svg)$/i;
 
 /**
  * Intrinsic width/height for a local (public/) image, read on the server so the
