@@ -22,11 +22,7 @@ export default function ContactClient({
         transition={{ duration: 0.6 }}
       >
         <h1 className="heading-legible text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
-          Say{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-2">
-            hello
-          </span>
-          !
+          Say <span className="gradient-text">hello</span>!
         </h1>
         <p className="heading-legible text-lg text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
           Looking to collaborate, chat, or just say hi? I’m always open to new

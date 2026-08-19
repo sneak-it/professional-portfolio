@@ -34,7 +34,7 @@ export default function BlogList({
             key={post.slug}
             {...fadeInUpOnView}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="group relative flex flex-col md:flex-row gap-8 items-start bg-white dark:bg-[#111] p-6 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-accent/50 transition-colors"
+            className="group relative flex flex-col md:flex-row gap-8 items-start card-surface p-6 hover:border-accent/50 transition-colors"
           >
             <div className="w-full md:w-2/5 aspect-video md:aspect-square lg:aspect-[4/3] relative rounded-2xl overflow-hidden shrink-0">
               <CoverImage

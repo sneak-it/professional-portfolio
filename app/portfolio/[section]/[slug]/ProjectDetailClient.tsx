@@ -49,7 +49,7 @@ export default function ProjectDetailClient({
                     href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 border border-gray-200 dark:border-white/20 rounded-full font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                    className="pill-outline"
                   >
                     Source Code <GitFork size={18} />
                   </a>

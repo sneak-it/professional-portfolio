@@ -1,25 +1,18 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import MessagePage from '@/components/MessagePage';
 
 export default function NotFound() {
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 text-center">
-      <p className="font-display font-bold text-7xl md:text-9xl text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-2">
-        404
-      </p>
-      <h1 className="heading-legible mt-6 text-3xl md:text-4xl font-display font-bold tracking-tight">
-        These aren't the droids you're looking for.
-      </h1>
-      <p className="heading-legible mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
-        The page you're looking for doesn't exist or may have been moved.
-      </p>
-      <Link
-        href="/"
-        className="mt-10 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium hover:opacity-90 transition-opacity"
-      >
+    <MessagePage
+      display="404"
+      title="These aren't the droids you're looking for."
+      message="The page you're looking for doesn't exist or may have been moved."
+    >
+      <Link href="/" className="pill-solid">
         <ArrowLeft size={18} />
         Back home
       </Link>
-    </div>
+    </MessagePage>
   );
 }
