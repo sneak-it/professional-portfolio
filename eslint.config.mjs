@@ -48,14 +48,14 @@ export default defineConfig(
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "error",
 
-      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/consistent-type-imports": "warn",
 
       "@typescript-eslint/array-type": ["warn", { default: "array-simple" }],
       "@typescript-eslint/consistent-indexed-object-style": "warn",
 
       "@typescript-eslint/require-await": "warn",
-      "@typescript-eslint/no-floating-promises": "warn",
+      "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/await-thenable": "warn",
 
       "@typescript-eslint/restrict-template-expressions": [
@@ -63,7 +63,7 @@ export default defineConfig(
         { allowNumber: true },
       ],
 
-      "@typescript-eslint/no-non-null-assertion": "warn",
+      "@typescript-eslint/no-non-null-assertion": "error",
       "@typescript-eslint/no-inferrable-types": "warn",
       "@typescript-eslint/no-unnecessary-type-assertion": "warn",
       "@typescript-eslint/no-unnecessary-type-parameters": "warn",
@@ -86,11 +86,11 @@ export default defineConfig(
       "jsx-a11y/aria-props": "warn",
       "react/no-unescaped-entities": "off",
 
-      "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/exhaustive-deps": "error",
       "react-hooks/rules-of-hooks": "error",
-      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/set-state-in-effect": "error",
       "react-hooks/static-components": "warn",
-      "react-hooks/immutability": "warn",
+      "react-hooks/immutability": "error",
 
       "no-console": ["warn", { allow: ["warn", "error", "debug"] }],
 
