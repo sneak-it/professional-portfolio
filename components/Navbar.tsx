@@ -13,6 +13,7 @@ import { m, AnimatePresence } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { navLinks as links } from '@/lib/nav';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
 
 // useLayoutEffect warns during SSR; fall back to useEffect on the server.
 const useIsomorphicLayoutEffect =
@@ -106,6 +107,10 @@ export default function Navbar({ monogram }: { monogram: string }) {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // Moves focus into the panel on open and back to the trigger on close, and
+  // keeps Tab inside it while open.
+  const mobileMenuRef = useFocusTrap<HTMLDivElement>(isOpen);
 
   // Close the mobile menu on Escape.
   useEffect(() => {
@@ -227,6 +232,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
       <AnimatePresence>
         {isOpen && (
           <m.div
+            ref={mobileMenuRef}
             id="mobile-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}

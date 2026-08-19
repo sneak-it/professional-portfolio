@@ -1,4 +1,5 @@
 import { Calendar, Clock } from 'lucide-react';
+import { formatDate } from '@/lib/date';
 
 /**
  * The category · date · read-time meta row shown above a blog post, on both the
@@ -24,7 +25,7 @@ export default function PostMeta({
         {category}
       </span>
       <span className="flex items-center gap-1">
-        <Calendar size={14} /> {date}
+        <Calendar size={14} /> <time dateTime={date}>{formatDate(date)}</time>
       </span>
       {readTime && (
         <span className="flex items-center gap-1">

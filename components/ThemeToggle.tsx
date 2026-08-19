@@ -34,12 +34,16 @@ export function ThemeToggle() {
     };
   }, []);
 
-  // Move focus into the menu when it opens.
+  // A plain group of toggle buttons, not role="menu": the ARIA menu pattern
+  // requires arrow keys, Home/End, and a roving tabindex, and declaring the role
+  // without them promises a keyboard model that is not there. Buttons are
+  // Tab-navigable with no special model, and aria-pressed carries which theme is
+  // active. Escape and focus restore below are kept.
+
+  // Move focus into the popover when it opens.
   React.useEffect(() => {
     if (!isOpen) return;
-    menuRef.current
-      ?.querySelector<HTMLButtonElement>('[role="menuitemradio"]')
-      ?.focus();
+    menuRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
   }, [isOpen]);
 
   const close = (restoreFocus = true) => {
@@ -56,7 +60,6 @@ export function ThemeToggle() {
         }}
         className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 bg-background text-gray-600 transition-colors hover:bg-gray-200 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/10"
         aria-label="Toggle theme"
-        aria-haspopup="menu"
         aria-expanded={isOpen}
       >
         <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -67,9 +70,8 @@ export function ThemeToggle() {
         {isOpen && (
           <m.div
             ref={menuRef}
-            role="menu"
+            role="group"
             aria-label="Theme"
-            aria-orientation="vertical"
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -82,8 +84,8 @@ export function ThemeToggle() {
             {OPTIONS.map(({ value, label, Icon }) => (
               <button
                 key={value}
-                role="menuitemradio"
-                aria-checked={theme === value}
+                type="button"
+                aria-pressed={theme === value}
                 onClick={() => {
                   setTheme(value);
                   close();

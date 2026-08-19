@@ -196,7 +196,28 @@ function placeholderImages(slug: string): PortfolioImage[] {
   }));
 }
 
-function scanImages(slug: string): PortfolioImage[] {
+/**
+ * Per-image alt text from gallery frontmatter, keyed by filename:
+ *
+ *   alt:
+ *     dsc_0142.jpg: 'Fog lifting off the ridge at sunrise'
+ *
+ * Only string values are kept; anything else is ignored rather than coerced,
+ * since a bad value would be announced verbatim to a screen reader.
+ */
+function altMap(value: unknown): Record<string, string> {
+  if (typeof value !== 'object' || value === null) return {};
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).filter(
+      (entry): entry is [string, string] => typeof entry[1] === 'string',
+    ),
+  );
+}
+
+function scanImages(
+  slug: string,
+  alt: Record<string, string>,
+): PortfolioImage[] {
   const imagesDir = path.join(publicPhotographyDirectory, slug);
   const images: PortfolioImage[] = [];
 
@@ -207,7 +228,9 @@ function scanImages(slug: string): PortfolioImage[] {
       images.push({
         id: file,
         src: `/portfolio/photography/${slug}/${file}`,
-        alt: file.replace(/\.[^/.]+$/, ''), // Remove extension for alt text
+        // Filled in by the caller when frontmatter has nothing: a filename is
+        // worse than useless read aloud.
+        alt: alt[file] ?? '',
         width,
         height,
       });
@@ -227,13 +250,19 @@ export function getPhotographyGallery(slug: string): GalleryItem | null {
   if (file === null) return null;
 
   const { data } = file;
-  const images = scanImages(file.slug);
+  const title = (data.title as string) || file.slug;
+  const images = scanImages(file.slug, altMap(data.alt)).map(
+    (image, i, all) => ({
+      ...image,
+      alt: image.alt || `${title}, photo ${i + 1} of ${all.length}`,
+    }),
+  );
   const coverImage = (data.coverImage as string) || images[0]?.src || '';
 
   return {
     section: 'photography',
     slug: file.slug,
-    title: (data.title as string) || file.slug,
+    title,
     description: (data.description as string) || '',
     coverImage,
     date: (data.date as string) || '',

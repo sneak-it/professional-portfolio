@@ -192,8 +192,13 @@ Placeholder entries (`example-engagement.mdx`, `example-project.mdx`) are includ
    title: 'My Trip'
    description: 'Gallery description.'
    coverImage: 'https://example.com/cover.jpg' # optional; falls back to the first image
+   alt: # optional; screen-reader description per image file
+     dsc_0142.jpg: 'Fog lifting off the ridge at sunrise'
    ---
    ```
+
+   Any image without an `alt:` entry falls back to "<gallery title>, photo N of M". That is a
+   position, not a description, so write real `alt` text for photos that carry meaning.
 
 3. Create a folder in `public/portfolio/photography/` with the **exact same name** as the `.mdx` file (e.g. `public/portfolio/photography/my-trip/`).
 4. Drop your images (`.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`) inside that folder. Dimensions are read automatically and the images are rendered in the gallery with a lightbox. If the folder is empty, placeholder images are shown.

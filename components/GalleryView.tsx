@@ -36,6 +36,12 @@ export default function GalleryView({
 
   useEffect(() => {
     if (!isOpen) return;
+
+    // Lock the page behind the dialog. Restores the previous value rather than
+    // clearing, so an already-locked body (nested overlay) is left as found.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
       else if (e.key === 'ArrowLeft') showPrev();
@@ -44,6 +50,7 @@ export default function GalleryView({
     window.addEventListener('keydown', onKeyDown);
     return () => {
       window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
     };
   }, [isOpen, close, showPrev, showNext]);
 

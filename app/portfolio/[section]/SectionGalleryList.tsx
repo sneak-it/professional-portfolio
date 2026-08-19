@@ -8,6 +8,7 @@ import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import CoverCard from '@/components/CoverCard';
 import { fadeInUpOnView } from '@/lib/motion';
+import { formatDate } from '@/lib/date';
 import type { GallerySummary } from '@/lib/portfolio';
 
 // Dedicated Photography page: a grid of sub-category collections (Landscape,
@@ -52,7 +53,9 @@ export default function SectionGalleryList({
                     {gallery.date && (
                       <>
                         <span className="mx-2">•</span>
-                        <span>{gallery.date}</span>
+                        <time dateTime={gallery.date}>
+                          {formatDate(gallery.date)}
+                        </time>
                       </>
                     )}
                   </div>

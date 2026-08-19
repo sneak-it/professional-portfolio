@@ -55,7 +55,7 @@ export default function SectionProjectList({
                   />
                 </Link>
                 {(project.link || project.github) && (
-                  <div className="relative -mt-12 px-6 flex justify-end gap-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="relative -mt-12 px-6 flex justify-end gap-3 z-10 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
                     {project.link && (
                       <a
                         href={project.link}
