@@ -9,6 +9,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "types": [
       "node"
     ],
@@ -21,7 +22,6 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "removeComments": true,
     "plugins": [
       {
         "name": "next",

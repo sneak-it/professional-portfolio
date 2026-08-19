@@ -21,8 +21,8 @@ export function useFocusTrap<T extends HTMLElement>(active: boolean) {
     const previouslyFocused = document.activeElement as HTMLElement | null;
 
     const focusFirst = () => {
-      const focusables = container.querySelectorAll<HTMLElement>(FOCUSABLE);
-      if (focusables.length > 0) focusables[0].focus();
+      const first = container.querySelectorAll<HTMLElement>(FOCUSABLE)[0];
+      if (first) first.focus();
       else container.focus();
     };
     focusFirst();
@@ -42,10 +42,10 @@ export function useFocusTrap<T extends HTMLElement>(active: boolean) {
 
       if (e.shiftKey && activeEl === first) {
         e.preventDefault();
-        last.focus();
+        last?.focus();
       } else if (!e.shiftKey && activeEl === last) {
         e.preventDefault();
-        first.focus();
+        first?.focus();
       }
     };
 

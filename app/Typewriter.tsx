@@ -3,7 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 
-const WORDS = ['Experiences', 'Opportunities', 'Connections', 'Solutions'];
+// Non-empty tuple type: guarantees WORDS[0] exists, which both the initial
+// state and the wordIndex fallback below rely on.
+const WORDS: [string, ...string[]] = [
+  'Experiences',
+  'Opportunities',
+  'Connections',
+  'Solutions',
+];
 const TYPE_MS = 1000; // time to type a full word
 const DELETE_MS = 500; // time to delete a full word
 const HOLD_MS = 2000; // pause on a completed word before deleting
@@ -21,7 +28,9 @@ export default function Typewriter() {
     // page.module.css; this is the JS half of the same preference.
     if (tier === 'none') return;
 
-    const word = WORDS[wordIndex];
+    // wordIndex is always in range (set via % WORDS.length); the fallback is
+    // for the compiler, not a reachable state.
+    const word = WORDS[wordIndex] ?? WORDS[0];
     let timer: ReturnType<typeof setTimeout>;
 
     if (!deleting) {

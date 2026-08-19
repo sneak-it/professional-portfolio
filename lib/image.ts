@@ -49,7 +49,9 @@ function svgSize(b: Buffer): Size | null {
   if (w && h) return { width: Math.ceil(+w), height: Math.ceil(+h) };
 
   const box = SVG_VIEWBOX_RE.exec(tag);
-  if (box) return { width: Math.ceil(+box[1]), height: Math.ceil(+box[2]) };
+  const bw = box?.[1];
+  const bh = box?.[2];
+  if (bw && bh) return { width: Math.ceil(+bw), height: Math.ceil(+bh) };
   return null;
 }
 
@@ -84,6 +86,7 @@ function jpegSize(b: Buffer): Size {
   while (off + 9 <= b.length) {
     if (b[off] !== 0xff) throw new Error('malformed JPEG segment');
     const marker = b[off + 1];
+    if (marker === undefined) throw new Error('malformed JPEG segment');
 
     // SOF0-SOF15, minus DHT (c4), JPG (c8) and DAC (cc).
     if (
