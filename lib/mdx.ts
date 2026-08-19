@@ -7,7 +7,9 @@ const postsDirectory = path.join(process.cwd(), 'content/blog');
 export interface BlogPostMeta {
   title: string;
   date: string;
-  category: string;
+  // Optional, and guarded at every use: a post without one is still publishable,
+  // so it is not in `required` below. Only title and date are structural.
+  category?: string;
   readTime?: string;
   excerpt?: string;
   image?: string;

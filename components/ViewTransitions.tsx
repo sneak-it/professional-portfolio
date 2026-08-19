@@ -62,6 +62,13 @@ export default function ViewTransitions() {
 
       const url = new URL(href, window.location.href);
       if (url.origin !== window.location.origin) return;
+      // Not every same-origin path is an app route. A link to a file under
+      // public/ (/resume.pdf, /images/x.png) or to /api/* would be pushed
+      // through the router and land on the 404 page instead of the resource.
+      // Slugs are [A-Za-z0-9_-]+ (see lib/slug.ts), so no real route has a dot.
+      if (/\.[^/]+$/.test(url.pathname) || url.pathname.startsWith('/api/')) {
+        return;
+      }
       // Same page (in-page anchor or no-op) — let the browser handle it.
       if (
         url.pathname === window.location.pathname &&

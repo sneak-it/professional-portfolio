@@ -12,7 +12,7 @@ export default function PostMeta({
   readTime,
   className = '',
 }: {
-  category: string;
+  category?: string;
   date: string;
   readTime?: string;
   className?: string;
@@ -21,9 +21,11 @@ export default function PostMeta({
     <div
       className={`flex items-center gap-4 text-sm font-mono text-gray-500 dark:text-gray-400 ${className}`}
     >
-      <span className="text-accent font-medium font-mono uppercase tracking-wider">
-        {category}
-      </span>
+      {category && (
+        <span className="text-accent font-medium font-mono uppercase tracking-wider">
+          {category}
+        </span>
+      )}
       <span className="flex items-center gap-1">
         <Calendar size={14} /> <time dateTime={date}>{formatDate(date)}</time>
       </span>
