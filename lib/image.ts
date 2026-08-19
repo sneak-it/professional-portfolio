@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { IMAGE_DIMENSION_CACHE_MAX } from './config.ts';
 
 /**
  * Shared, server-only image dimension reader.
@@ -149,6 +150,12 @@ export function imageDimensions(imagePath: string): Size {
     fs.closeSync(fd);
   }
 
+  // Insertion-ordered eviction: a long-lived container serving a bind-mounted,
+  // editable tree would otherwise grow this Map for every path ever requested.
+  if (dimensionCache.size >= IMAGE_DIMENSION_CACHE_MAX) {
+    const oldest = dimensionCache.keys().next().value;
+    if (oldest !== undefined) dimensionCache.delete(oldest);
+  }
   dimensionCache.set(imagePath, { mtimeMs, ...result });
   return result;
 }

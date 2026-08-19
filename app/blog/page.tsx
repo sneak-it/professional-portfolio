@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { BLOG_POSTS_PER_PAGE as POSTS_PER_PAGE } from '@/lib/config';
 import { getAllPostMeta } from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
 
@@ -10,8 +11,6 @@ export const dynamic = 'force-dynamic';
 
 const DESCRIPTION =
   'Musings on web development, design, and modern technologies.';
-
-const POSTS_PER_PAGE = 3;
 
 // Resolve the requested page to a valid 1-based index, or null when the param is
 // present but out of range / malformed (so callers can 404 instead of clamping,

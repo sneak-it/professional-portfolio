@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { SITEMAP_CACHE_TTL_MS } from '@/lib/config';
 import { getAllPostMeta } from '@/lib/mdx';
 import {
   PORTFOLIO_SECTIONS,
@@ -122,20 +123,18 @@ function buildRoutes(): Route[] {
   ];
 }
 
-// How long a scanned route list is reused before the next request rebuilds it.
-// This is purely a cost knob: it bounds how often the content tree is walked,
-// and (like the previous ISR window) how quickly a newly uploaded file appears
-// in the sitemap. It does NOT affect the origin, which is applied per request.
-// Crawlers fetch sitemap.xml infrequently, so even a long TTL collapses any
-// burst to a single scan.
-const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12h
+// SITEMAP_CACHE_TTL_MS is purely a cost knob: it bounds how often the content
+// tree is walked, and how quickly a newly uploaded file appears in the sitemap.
+// It does NOT affect the pages themselves, which render per request. Crawlers
+// fetch sitemap.xml infrequently, so even a long TTL collapses any burst to a
+// single scan.
 
 let routeCache: { at: number; routes: Route[] } | null = null;
 
 /** Cached `buildRoutes()` — one filesystem scan per TTL, per container. */
 function getRoutes(): Route[] {
   const now = Date.now();
-  if (routeCache && now - routeCache.at < CACHE_TTL_MS)
+  if (routeCache && now - routeCache.at < SITEMAP_CACHE_TTL_MS)
     return routeCache.routes;
   const routes = buildRoutes();
   routeCache = { at: now, routes };
