@@ -15,7 +15,7 @@ export default function Icon() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        // keep in sync with --accent-* in app/globals.css
+        // Flat black, not an accent: the 32px favicon needs contrast, not a gradient.
         background: '#000000',
         borderRadius: 7,
       }}

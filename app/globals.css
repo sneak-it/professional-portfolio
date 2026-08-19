@@ -16,9 +16,9 @@
   /* ===== EDIT HERE TO RESKIN THE WHOLE SITE ===========================
      Dual green→blue accent system (welcoming, not corporate). Every link,
      CTA, gradient, focus ring and the animated background reads from these.
-     Swap a scheme by changing the five hexes below — then mirror --accent-*
-     into app/icon.tsx, app/apple-icon.tsx, app/opengraph-image.tsx (next/og
-     can't read CSS variables). */
+     Swap a scheme by changing the five hexes below — then mirror
+     --accent-from/via/to into lib/brand.ts, which the next/og routes read
+     (next/og can't read CSS variables). */
   --accent: #ff4d6d; /* primary   — coral-rose (vivid, warm)      */
   --accent-2: #ffb400; /* secondary — amber-gold                   */
   /* Gradient stops (text/CTAs) — "Solar Flare" warm sunset, amber→coral→rose. */

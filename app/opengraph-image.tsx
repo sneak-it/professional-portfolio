@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { ACCENT_BAR, ACCENT_DIAGONAL } from '@/lib/brand';
 import { siteConfig } from '@/lib/site';
 
 // Default share card, inherited by every route that doesn't define its own.
@@ -45,8 +46,7 @@ export default function OpengraphImage() {
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 20,
-            // keep in sync with --accent-* in app/globals.css
-            background: 'linear-gradient(135deg, #ffb400 0%, #ff1e78 100%)',
+            background: ACCENT_DIAGONAL,
           }}
         >
           {/* Serif capital "I" drawn as three bars so it reads as a letter, not
@@ -85,8 +85,7 @@ export default function OpengraphImage() {
           marginTop: 'auto',
           height: 12,
           width: '100%',
-          // keep in sync with --accent-* in app/globals.css
-          background: 'linear-gradient(90deg, #ffb400, #ff6b3d, #ff1e78)',
+          background: ACCENT_BAR,
           borderRadius: 999,
         }}
       />

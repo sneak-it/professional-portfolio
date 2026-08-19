@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { ACCENT_DIAGONAL } from '@/lib/brand';
 
 export const size = { width: 180, height: 180 };
 export const contentType = 'image/png';
@@ -13,8 +14,7 @@ export default function AppleIcon() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        // keep in sync with --accent-* in app/globals.css
-        background: 'linear-gradient(135deg, #ffb400 0%, #ff1e78 100%)',
+        background: ACCENT_DIAGONAL,
       }}
     >
       {/* Serif capital "I" drawn as three bars so it reads as a letter, not a
