@@ -14,12 +14,12 @@ const pageHref = (page: number) => (page <= 1 ? '/blog' : `/blog?page=${page}`);
 
 export default function BlogList({
   posts,
-  currentPage = 1,
-  totalPages = 1,
+  currentPage,
+  totalPages,
 }: {
   posts: BlogPostSummary[];
-  currentPage?: number;
-  totalPages?: number;
+  currentPage: number;
+  totalPages: number;
 }) {
   return (
     <Container size="md">

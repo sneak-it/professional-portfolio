@@ -7,7 +7,6 @@ import type { ReactNode } from 'react';
  * inner padding and forwards `className` / `as`, mirroring Container's shape.
  */
 const PADDING = {
-  sm: 'p-6 md:p-8',
   md: 'p-8 md:p-10',
   lg: 'p-8 md:p-12',
 } as const;

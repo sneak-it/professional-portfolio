@@ -12,16 +12,14 @@ export default function PageHeader({
   title,
   description,
   align = 'center',
-  className = '',
 }: {
   title: ReactNode;
   description?: ReactNode;
   align?: 'center' | 'left';
-  className?: string;
 }) {
   const centered = align === 'center';
   return (
-    <div className={`${centered ? 'text-center' : ''} mb-16 ${className}`}>
+    <div className={`${centered ? 'text-center' : ''} mb-16`}>
       <m.h1
         {...fadeInUp}
         className="heading-legible text-4xl md:text-5xl font-display font-bold tracking-tight mb-4"

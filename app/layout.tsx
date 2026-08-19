@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BackgroundCanvas from '@/components/BackgroundCanvas';
 import MotionProvider from '@/components/MotionProvider';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
 import ViewTransitions from '@/components/ViewTransitions';
 import { siteConfig } from '@/lib/site';

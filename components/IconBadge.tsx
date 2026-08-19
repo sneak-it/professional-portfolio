@@ -11,14 +11,13 @@ const COLORS = {
 } as const;
 
 const SIZES = {
-  sm: 'w-10 h-10',
   md: 'w-12 h-12',
   lg: 'w-16 h-16',
 } as const;
 
 export default function IconBadge({
   color = 'primary',
-  size = 'sm',
+  size = 'md',
   shape = 'full',
   className = '',
   children,

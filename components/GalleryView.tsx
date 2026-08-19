@@ -13,10 +13,10 @@ import type { GalleryItem } from '@/lib/portfolio';
 
 export default function GalleryView({
   gallery,
-  backHref = '/portfolio/photography',
+  backHref,
 }: {
   gallery: GalleryItem;
-  backHref?: string;
+  backHref: string;
 }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const isOpen = selectedIndex !== null;
