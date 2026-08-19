@@ -7,15 +7,15 @@ import { siteConfig } from '@/lib/site';
 // See lib/site.ts and app/page.tsx.
 export const dynamic = 'force-dynamic';
 
+const DESCRIPTION = `Get in touch with ${siteConfig.name} - open to new projects and opportunities.`;
+
 export const metadata: Metadata = {
   title: 'Contact',
-  description:
-    'Get in touch with Your Name - open to new projects and opportunities.',
+  description: DESCRIPTION,
   alternates: { canonical: '/contact' },
   openGraph: {
     title: 'Contact',
-    description:
-      'Get in touch with Your Name - open to new projects and opportunities.',
+    description: DESCRIPTION,
     url: '/contact',
   },
 };

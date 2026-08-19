@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import {
-  PORTFOLIO_SECTIONS,
   getSection,
   getProjectItems,
   getPhotographyGalleries,
@@ -11,13 +10,9 @@ import JsonLd from '@/components/JsonLd';
 import SectionGalleryList from './SectionGalleryList';
 import SectionProjectList from './SectionProjectList';
 
-// Prerendered sections (below) revalidate every 60s, and dynamicParams (default
-// true) renders newly-added content on demand — both without a rebuild.
-export const revalidate = 60;
-
-export function generateStaticParams() {
-  return PORTFOLIO_SECTIONS.map((s) => ({ section: s.slug }));
-}
+// Rendered per request so content added, edited, or removed in the bind-mounted
+// content/ dir is served immediately, and so the runtime site config applies.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,

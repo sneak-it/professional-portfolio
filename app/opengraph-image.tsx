@@ -3,6 +3,12 @@ import { siteConfig } from '@/lib/site';
 
 // Default share card, inherited by every route that doesn't define its own.
 // Next also wires this up as the twitter:image for the summary_large_image card.
+//
+// Rendered per request: it draws the env-driven name, title, and description,
+// and a statically generated card would bake the build-time values in with no
+// revalidation to correct them. Same reasoning as the force-dynamic pages.
+export const dynamic = 'force-dynamic';
+
 export const alt = siteConfig.title;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';

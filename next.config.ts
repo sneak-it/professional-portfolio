@@ -24,6 +24,24 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
+      // Content pages render per request (see the route `dynamic` exports), so
+      // Next sends them `no-store`, which forbids any shared cache. These are
+      // anonymous, cookie-free, identical-for-everyone documents, so let a CDN
+      // or reverse proxy absorb repeat traffic and burst load. `s-maxage` is
+      // shared-cache only: browsers still revalidate, and the origin stays
+      // authoritative. Cloudflare additionally needs a Cache Rule marking HTML
+      // eligible for cache, since it caches by file extension by default and
+      // never caches HTML on its own.
+      {
+        source:
+          '/:path(|about|contact|blog|portfolio|opengraph-image|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 's-maxage=60, stale-while-revalidate=120',
+          },
+        ],
+      },
       {
         source: '/(.*)',
         headers: [

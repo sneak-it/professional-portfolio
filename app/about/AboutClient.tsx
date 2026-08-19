@@ -68,7 +68,13 @@ const INTERESTS: Array<{ name: string; icon: React.ReactNode; blurb: string }> =
     },
   ];
 
-export default function AboutClient({ linkedin }: { linkedin: string }) {
+export default function AboutClient({
+  linkedin,
+  avatarUrl,
+}: {
+  linkedin?: string;
+  avatarUrl: string;
+}) {
   return (
     <Container>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -79,7 +85,7 @@ export default function AboutClient({ linkedin }: { linkedin: string }) {
         >
           <div className="relative aspect-square max-w-md mx-auto lg:mx-0 rounded-3xl overflow-hidden shadow-2xl">
             <Image
-              src="https://picsum.photos/seed/portrait/800/800"
+              src={avatarUrl}
               alt="Portrait"
               fill
               priority
@@ -112,16 +118,18 @@ export default function AboutClient({ linkedin }: { linkedin: string }) {
               <p>Paragraph three.</p>
             </div>
 
-            <div className="mt-8 flex gap-4">
-              <a
-                href={linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-medium hover:bg-accent transition-colors"
-              >
-                <LinkedInIcon size={18} /> View LinkedIn
-              </a>
-            </div>
+            {linkedin && (
+              <div className="mt-8 flex gap-4">
+                <a
+                  href={linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-medium hover:bg-accent transition-colors"
+                >
+                  <LinkedInIcon size={18} /> View LinkedIn
+                </a>
+              </div>
+            )}
           </Surface>
         </m.div>
       </div>

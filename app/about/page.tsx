@@ -7,19 +7,24 @@ import { siteConfig } from '@/lib/site';
 // See lib/site.ts and app/page.tsx.
 export const dynamic = 'force-dynamic';
 
+const DESCRIPTION = `Get to know ${siteConfig.name} - the technologist, tinkerer, photographer, and gearhead behind the work.`;
+
 export const metadata: Metadata = {
   title: 'About',
-  description:
-    'Get to know Your Name - the technologist, tinkerer, photographer, and gearhead behind the work.',
+  description: DESCRIPTION,
   alternates: { canonical: '/about' },
   openGraph: {
     title: 'About',
-    description:
-      'Get to know Your Name - the technologist, tinkerer, photographer, and gearhead behind the work.',
+    description: DESCRIPTION,
     url: '/about',
   },
 };
 
 export default function AboutPage() {
-  return <AboutClient linkedin={siteConfig.social.linkedin} />;
+  return (
+    <AboutClient
+      linkedin={siteConfig.social.linkedin}
+      avatarUrl={siteConfig.avatarUrl}
+    />
+  );
 }

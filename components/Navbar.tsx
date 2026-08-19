@@ -28,7 +28,7 @@ interface Indicator {
   height: number;
 }
 
-export default function Navbar() {
+export default function Navbar({ monogram }: { monogram: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
@@ -133,7 +133,8 @@ export default function Navbar() {
             href="/"
             className="text-xl font-mono font-bold tracking-tight uppercase"
           >
-            YN<span className="text-accent">.</span>
+            {monogram}
+            <span className="text-accent">.</span>
           </Link>
 
           {/* Desktop Navigation */}

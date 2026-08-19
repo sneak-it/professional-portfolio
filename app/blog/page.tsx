@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation';
 import { getAllPostMeta } from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
 
-// Re-read MDX content at request time (cached, refreshed in the background every
-// 60s) so edits appear without a rebuild. See lib/mdx.ts.
-export const revalidate = 60;
+// Rendered per request so content added, edited, or removed in the bind-mounted
+// content/ dir is served immediately, and so the runtime site config applies.
+// See lib/mdx.ts and lib/site.ts.
+export const dynamic = 'force-dynamic';
 
 const DESCRIPTION =
   'Musings on web development, design, and modern technologies.';

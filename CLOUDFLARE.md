@@ -1,0 +1,145 @@
+# Caching this site behind Cloudflare
+
+Every content route renders per request (`export const dynamic = 'force-dynamic'`
+in the page files), so content edits and runtime `SITE_*` configuration take
+effect immediately with no rebuild and no revalidation window. The cost is that
+each document request reaches the Node process. A shared cache in front of the
+origin removes that cost for repeat traffic without giving up the per-request
+rendering.
+
+This guide sets that up on Cloudflare. It takes one Cache Rule and about five
+minutes. Everything on the origin side is already done.
+
+## What the repo already sends
+
+`next.config.ts` sets this header on the pages worth caching:
+
+```
+Cache-Control: s-maxage=60, stale-while-revalidate=120
+```
+
+covering `/`, `/about`, `/contact`, `/blog`, `/blog/<slug>`, `/portfolio`,
+`/portfolio/<section>`, `/portfolio/<section>/<slug>`, and `/opengraph-image`.
+
+Three things to note about that header:
+
+- `s-maxage` applies to shared caches only. Browsers ignore it and keep
+  revalidating, so a visitor never sees a stale page from their own cache.
+- Without it, Next sends `private, no-cache, no-store` on these routes, which
+  forbids caching anywhere.
+- `/api/health` is deliberately excluded so the container healthcheck is never
+  answered from a cache. `robots.txt` and `sitemap.xml` keep Next's defaults.
+
+Hashed assets under `/_next/static/` are immutable and are already cached by
+Cloudflare with no configuration.
+
+## Why a Cache Rule is required
+
+Cloudflare decides what to cache by file extension by default, and HTML is not
+on that list. It will ignore the `s-maxage` header on a page response until you
+explicitly mark HTML as eligible for cache. The header is necessary but not
+sufficient; the rule below is the other half.
+
+## Step by step
+
+1. **Proxy the hostname.** In **DNS**, confirm the record for your domain has
+   the orange cloud enabled (Proxied, not DNS only). Traffic that bypasses the
+   proxy cannot be cached.
+
+2. **Open Cache Rules.** Dashboard, then **Caching** and **Cache Rules**, then
+   **Create rule**. Cache Rules are available on the free plan.
+
+3. **Name it** something you will recognize later, for example
+   `Cache HTML documents`.
+
+4. **Set the match expression.** Use the expression editor and paste:
+
+   ```
+   not (http.request.uri.path starts_with "/api/")
+   ```
+
+   The site has no cookies, no authentication, and no forms, so every other
+   response is identical for every visitor and safe to share. Excluding `/api/`
+   keeps the health endpoint and any future API route uncached.
+
+5. **Set cache eligibility** to **Eligible for cache**.
+
+6. **Set Edge TTL** to **Use cache-control header if present**. This is the
+   important one: it makes Cloudflare honor the 60 seconds the origin sends
+   instead of applying a default of its own. Do not pick "Ignore cache-control
+   header and use this TTL" unless you intend to override the origin.
+
+7. **Set Browser TTL** to **Respect origin TTL**.
+
+8. **Deploy the rule** and wait a few seconds for it to propagate.
+
+## Verify
+
+Request the same page twice and watch the `cf-cache-status` header:
+
+```bash
+curl -sI https://yourdomain.tld/blog/<slug> | grep -i 'cf-cache-status\|cache-control'
+curl -sI https://yourdomain.tld/blog/<slug> | grep -i 'cf-cache-status'
+```
+
+The first should report `MISS` and the second `HIT`. Confirm the origin header
+is present too:
+
+```
+cache-control: s-maxage=60, stale-while-revalidate=120
+```
+
+Check that the exclusion works as well. This one must never be cached:
+
+```bash
+curl -sI https://yourdomain.tld/api/health | grep -i cf-cache-status
+```
+
+### Reading `cf-cache-status`
+
+| Value | Meaning |
+| --- | --- |
+| `HIT` | Served from the edge. The origin was not touched. |
+| `MISS` | Not in the edge cache; fetched from the origin and stored. |
+| `EXPIRED` | Was cached, TTL elapsed, refetched from the origin. |
+| `STALE` | Served stale while revalidating in the background. Expected inside the `stale-while-revalidate` window. |
+| `DYNAMIC` | Cloudflare considered the response ineligible. If you see this on an HTML page, the Cache Rule is not matching. |
+| `BYPASS` | Something explicitly told Cloudflare not to cache, usually a `no-store` from the origin. |
+
+## What this changes
+
+With the rule live, a burst on one URL collapses to roughly one origin request
+per minute per URL, so the container's CPU stops being the limit on how much
+traffic the site can absorb. Measured without a cache, the origin saturates
+around 370 requests per second on a developer machine and roughly 145 under the
+`cpus: '0.5'` limit in `docker-compose.yml`, degrading by queueing rather than
+by erroring.
+
+The trade-off is staleness at the edge. After a content edit, a cached page can
+be up to 60 seconds behind, plus up to 120 seconds more if
+`stale-while-revalidate` serves a stale copy while refreshing. Pages nobody has
+requested are unaffected, and the origin itself is always current.
+
+## Adjusting the freshness window
+
+Edit the `Cache-Control` value in the `headers()` block of `next.config.ts` and
+redeploy. Lower `s-maxage` (for example `s-maxage=10`) for fresher content and
+less burst protection; raise it for the opposite. No Cloudflare change is needed
+when you do, because the rule defers to the origin header.
+
+To publish a change immediately, purge the affected URL in **Caching** and
+**Configuration**, using **Custom Purge** by URL, or **Purge Everything** for a
+content-wide update.
+
+## Notes
+
+- Cloudflare ignores `Vary` other than `Accept-Encoding`, and these responses
+  carry `Vary: rsc, next-router-state-tree, ...`. Next works around this by
+  putting an `_rsc` query parameter in the URL of React Server Component
+  requests, so document responses and payload responses land on separate cache
+  keys. No configuration is needed, but it is worth knowing if you ever debug a
+  page that renders as raw payload text.
+- Any caching reverse proxy works here, not just Cloudflare. nginx
+  (`proxy_cache` with `proxy_cache_use_stale updating`), Varnish, and Caddy all
+  honor `s-maxage` and `stale-while-revalidate`. Only the dashboard steps above
+  are Cloudflare-specific.

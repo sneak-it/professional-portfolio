@@ -7,30 +7,18 @@ import GalleryView from '@/components/GalleryView';
 import JsonLd from '@/components/JsonLd';
 import { mdxComponents } from '@/components/MDXComponents';
 import {
-  PORTFOLIO_SECTIONS,
   getSection,
   getProjectItem,
-  getProjectItems,
   getPhotographyGallery,
-  getPhotographyGalleries,
 } from '@/lib/portfolio';
 import { siteConfig } from '@/lib/site';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
 import { PROSE } from '@/lib/prose';
 import ProjectDetailClient from './ProjectDetailClient';
 
-// Prerendered slugs (below) revalidate every 60s, and dynamicParams (default
-// true) renders newly-added items on demand — both without a rebuild.
-export const revalidate = 60;
-
-export function generateStaticParams() {
-  return PORTFOLIO_SECTIONS.flatMap((s) =>
-    (s.type === 'gallery'
-      ? getPhotographyGalleries()
-      : getProjectItems(s.slug)
-    ).map((item) => ({ section: s.slug, slug: item.slug })),
-  );
-}
+// Rendered per request so items added, edited, or removed in the bind-mounted
+// content/ dir are served immediately, and so the runtime site config applies.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getPostBySlug, getPostSlugs } from '@/lib/mdx';
+import { getPostBySlug } from '@/lib/mdx';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import BlogPostContent from '@/components/BlogPostContent';
 import { mdxComponents } from '@/components/MDXComponents';
@@ -8,16 +8,9 @@ import { siteConfig } from '@/lib/site';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
 import { notFound } from 'next/navigation';
 
-// Prerendered slugs (below) revalidate every 60s, and dynamicParams (default
-// true) renders newly-added posts on demand — both without a rebuild.
-export const revalidate = 60;
-
-export function generateStaticParams() {
-  const slugs = getPostSlugs();
-  return slugs.map((slug) => ({
-    slug: slug.replace(/\.mdx$/, ''),
-  }));
-}
+// Rendered per request so posts added, edited, or removed in the bind-mounted
+// content/ dir are served immediately, and so the runtime site config applies.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,

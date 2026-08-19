@@ -97,7 +97,7 @@ export default function RootLayout({
               <ViewTransitions />
             </Suspense>
             <BackgroundCanvas />
-            <Navbar />
+            <Navbar monogram={siteConfig.monogram} />
             <main id="main-content" className="flex-grow pt-20">
               {children}
             </main>

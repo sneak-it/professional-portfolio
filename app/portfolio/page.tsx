@@ -4,9 +4,10 @@ import { breadcrumbJsonLd } from '@/lib/jsonld';
 import JsonLd from '@/components/JsonLd';
 import PortfolioHub from './PortfolioHub';
 
-// Re-read MDX content at request time (cached, refreshed in the background every
-// 60s) so edits appear without a rebuild. See lib/portfolio.ts.
-export const revalidate = 60;
+// Rendered per request so content added, edited, or removed in the bind-mounted
+// content/ dir is served immediately, and so the runtime site config applies.
+// See lib/portfolio.ts and lib/site.ts.
+export const dynamic = 'force-dynamic';
 
 const description =
   'Selected work across technology consulting, photography, and open source.';

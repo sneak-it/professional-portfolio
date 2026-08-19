@@ -37,7 +37,7 @@ Two image variants are published from the same layers:
    chmod o+rx content content/blog content/portfolio public/portfolio public/portfolio/photography
    ```
 
-2. Copy the docker-compose.yml available in the root of the repository.
+2. Copy `docker-compose.yml` and `.env.example` from the root of the repository, then `cp .env.example .env` and edit the values you care about. Every variable is optional and falls back to the default shown in the file.
 
 3. Start the container:
 
@@ -49,7 +49,7 @@ Two image variants are published from the same layers:
 
 `content/` and `public/portfolio/` are mounted read-only into the container (see `docker-compose.yml`), so you can add or edit blog posts, projects, and photos on the host and they are served immediately — no rebuild required. The image ships a healthcheck (`/api/health`); the compose file adds resource limits and hardened security options.
 
-To set the canonical production URL (used for Open Graph cards, the sitemap, robots.txt, and JSON-LD), set `SITE_URL` (no trailing slash) as a **runtime** environment variable. It is read when the container starts, so the same prebuilt image works under any domain — no rebuild required. In `docker-compose.yml` it is set under `environment:`; edit it to your own domain (unset falls back to `http://localhost:3000`).
+Site identity (name, description, monogram, avatar, social links) and the canonical production URL are **runtime** environment variables, documented with their defaults in `.env.example`. They are read when the container starts, so the same prebuilt image serves any identity under any domain — no rebuild required. The compose file loads them from `.env` via `env_file`; the file is optional and each variable falls back to a placeholder default. `SITE_URL` (no trailing slash) is the one worth setting first: it drives Open Graph cards, the sitemap, robots.txt, and JSON-LD, and falls back to `http://localhost:3000`.
 
 ### Building manually
 

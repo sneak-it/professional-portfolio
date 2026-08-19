@@ -9,7 +9,11 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - SITE_URL=https://yourdomaind.tld
+    # Site identity and canonical URL: copy .env.example to .env and edit.
+    # Optional — every variable falls back to the default in .env.example.
+    env_file:
+      - path: .env
+        required: false
     # The mounted host dirs must exist before starting:
     #   mkdir -p public/portfolio/photography
     volumes:

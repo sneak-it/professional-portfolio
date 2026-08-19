@@ -11,7 +11,7 @@ export default function ContactClient({
   linkedin,
   location,
 }: {
-  linkedin: string;
+  linkedin?: string;
   location: string;
 }) {
   return (
@@ -34,24 +34,26 @@ export default function ContactClient({
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-          <m.div
-            {...fadeInUp}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
-          >
-            <IconBadge color="primary" size="lg" className="mb-6">
-              <LinkedInIcon size={32} />
-            </IconBadge>
-            <h3 className="text-xl font-bold mb-2">LinkedIn</h3>
-            <a
-              href={linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-600 dark:text-gray-400 hover:text-accent transition-colors"
+          {linkedin && (
+            <m.div
+              {...fadeInUp}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
             >
-              Connect with me
-            </a>
-          </m.div>
+              <IconBadge color="primary" size="lg" className="mb-6">
+                <LinkedInIcon size={32} />
+              </IconBadge>
+              <h3 className="text-xl font-bold mb-2">LinkedIn</h3>
+              <a
+                href={linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 dark:text-gray-400 hover:text-accent transition-colors"
+              >
+                Connect with me
+              </a>
+            </m.div>
+          )}
 
           <m.div
             {...fadeInUp}

@@ -6,6 +6,7 @@ import BackButton from '@/components/BackButton';
 import ShareButton from '@/components/ShareButton';
 import PostMeta from '@/components/PostMeta';
 import { PROSE, PROSE_CODE } from '@/lib/prose';
+import { siteConfig } from '@/lib/site';
 import type { BlogPost } from '@/lib/mdx';
 
 export default function BlogPostContent({
@@ -47,15 +48,15 @@ export default function BlogPostContent({
         <footer className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Image
-              src="https://picsum.photos/seed/portrait/100/100"
-              alt="Author"
+              src={siteConfig.avatarUrl}
+              alt={siteConfig.author}
               width={48}
               height={48}
               className="rounded-full"
               referrerPolicy="no-referrer"
             />
             <div>
-              <p className="font-bold">Your Name</p>
+              <p className="font-bold">{siteConfig.author}</p>
             </div>
           </div>
 
