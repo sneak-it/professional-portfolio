@@ -119,12 +119,19 @@
   border-radius: 3px;
 }
 
-/* Native View Transitions cross-fade for route changes (see components/
-   ViewTransitions.tsx). Gated by reduced-motion below. */
-::view-transition-old(root),
-::view-transition-new(root) {
+/* Route cross-fade timing. `page-crossfade` is the view-transition-class set by
+   the <ViewTransition> wrapping {children} in app/layout.tsx; React drives the
+   transition, this only sets its feel. Gated by reduced-motion below. */
+::view-transition-old(.page-crossfade),
+::view-transition-new(.page-crossfade) {
   animation-duration: 0.35s;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The transition overlay swallows clicks mid-animation; let them reach the live
+   page instead of being lost for the duration. */
+::view-transition {
+  pointer-events: none;
 }
 
 /* Reduced-motion backstop: neutralize any residual CSS animation/transition

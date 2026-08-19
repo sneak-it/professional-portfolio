@@ -1,5 +1,10 @@
+// Type-only: ViewTransition lives in React's canary channel, which is what the
+// App Router runs (its bundled React exports it) while node_modules/react does
+// not. A reference rather than `import {} from 'react/canary'` because that
+// module has no runtime counterpart and the bundler fails to resolve it.
+/// <reference types="react/canary" />
 import type { Metadata, Viewport } from 'next';
-import { Suspense } from 'react';
+import { ViewTransition } from 'react';
 import { Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
@@ -8,7 +13,6 @@ import BackgroundCanvas from '@/components/BackgroundCanvas';
 import MotionProvider from '@/components/MotionProvider';
 import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
-import ViewTransitions from '@/components/ViewTransitions';
 import { siteConfig } from '@/lib/site';
 import { BACKGROUND } from '@/lib/brand';
 
@@ -101,15 +105,16 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <MotionProvider>
-            {/* Suspense: ViewTransitions reads useSearchParams (keeps static
-                pages static). Renders null, so no visible fallback. */}
-            <Suspense fallback={null}>
-              <ViewTransitions />
-            </Suspense>
             <BackgroundCanvas />
             <Navbar monogram={siteConfig.monogram} />
             <main id="main-content" className="flex-grow pt-20">
-              {children}
+              {/* Route crossfade. The layout persists while `children` swaps,
+                  which React treats as an update and animates; the class is
+                  styled in globals.css. Replaces a hand-rolled click
+                  interceptor + document.startViewTransition. */}
+              <ViewTransition default="page-crossfade">
+                {children}
+              </ViewTransition>
             </main>
             <Footer />
           </MotionProvider>
