@@ -7,7 +7,7 @@ A modern, highly polished personal portfolio website.
 - **MDX Blog**: Write blog posts using Markdown and React components.
 - **Unified Portfolio**: A single Portfolio hub with three sections — Technology Consulting, Open Source, and Photography — all driven by MDX.
 - **Auto-discovered Galleries**: Photography galleries build their image lists automatically from the filesystem, with a scrollable layout and lightbox.
-- **Incremental content**: New content is picked up via ISR — drop in a file and it appears without a rebuild.
+- **Incremental content**: Content routes render per request, so a dropped-in file appears with no rebuild and no revalidation window.
 - **Fully Responsive**: Optimized for all screen sizes.
 - **Light/Dark/System Mode Support**: Color scheme adapts to user preference, ability to switch to light and dark mode.
 - **Docker Ready**: Ships a hardened multi-stage `Dockerfile` and `docker-compose.yml` for the preferred deployment path.
@@ -50,6 +50,33 @@ Two image variants are published from the same layers:
 `content/` and `public/portfolio/` are mounted read-only into the container (see `docker-compose.yml`), so you can add or edit blog posts, projects, and photos on the host and they are served immediately — no rebuild required. The image ships a healthcheck (`/api/health`); the compose file adds resource limits and hardened security options.
 
 Site identity (name, description, monogram, avatar, social links) and the canonical production URL are **runtime** environment variables, documented with their defaults in `.env.example`. They are read when the container starts, so the same prebuilt image serves any identity under any domain — no rebuild required. The compose file loads them from `.env` via `env_file`; the file is optional and each variable falls back to a placeholder default. `SITE_URL` (no trailing slash) is the one worth setting first: it drives Open Graph cards, the sitemap, robots.txt, and JSON-LD, and falls back to `http://localhost:3000`.
+
+#### What can and cannot be set at runtime
+
+Everything in `.env.example` is read when the process starts, so an `env_file` entry or a `-e` flag is
+enough. Two things are not, because Next serializes them into the build output:
+
+- **Response headers, including the CSP.** `next.config.ts` `headers()` is baked into
+  `.next/routes-manifest.json` at build time.
+- **Allowed remote image hosts.** `images.remotePatterns` is baked into
+  `.next/required-server-files.json`.
+
+Changing either requires rebuilding the image, using a Docker build `ARG` if the value has to vary per
+deployment. "`SITE_URL` is a runtime variable" does not generalize to "everything is".
+
+This matters for one variable in particular. `SITE_AVATAR_URL` is a runtime value pointing at a host
+governed by build-time policy, so if you point it off `picsum.photos`, the page still returns 200 while
+the optimizer returns 400 and the portrait is silently blank. Keep it on an allowed host, or rebuild
+with your host added to both `images.remotePatterns` and the CSP `img-src`.
+
+### Caching
+
+Every content route renders per request, so content edits and `SITE_*` changes take effect
+immediately, and every document request reaches the Node process. `next.config.ts` already sends
+`Cache-Control: s-maxage=60, stale-while-revalidate=120` on the pages worth caching, which lets a
+shared cache absorb repeat traffic without giving up per-request rendering. Cloudflare ignores that
+header for HTML until a Cache Rule marks it eligible; see [CLOUDFLARE.md](CLOUDFLARE.md) for the
+dashboard side, which is not optional if you run behind Cloudflare.
 
 ### Building manually
 
