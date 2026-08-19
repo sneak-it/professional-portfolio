@@ -8,7 +8,7 @@ import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import CoverCard from '@/components/CoverCard';
 import { fadeInUpOnView } from '@/lib/motion';
-import type { GalleryItem } from '@/lib/portfolio';
+import type { GallerySummary } from '@/lib/portfolio';
 
 // Dedicated Photography page: a grid of sub-category collections (Landscape,
 // Automotive, ...). Each links to its scrollable gallery.
@@ -19,7 +19,7 @@ export default function SectionGalleryList({
 }: {
   title: string;
   description: string;
-  galleries: GalleryItem[];
+  galleries: GallerySummary[];
 }) {
   return (
     <Container>
@@ -48,7 +48,7 @@ export default function SectionGalleryList({
                 meta={
                   <div className="flex items-center gap-2 text-white/80 mb-2 text-sm font-medium">
                     <ImageIcon size={16} />
-                    <span>{gallery.images.length} Photos</span>
+                    <span>{gallery.imageCount} Photos</span>
                     {gallery.date && (
                       <>
                         <span className="mx-2">•</span>

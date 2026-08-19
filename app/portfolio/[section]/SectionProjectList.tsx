@@ -10,7 +10,7 @@ import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import { GitHubIcon } from '@/components/icons/BrandIcons';
 import { scaleIn } from '@/lib/motion';
-import type { ProjectItem } from '@/lib/portfolio';
+import type { ProjectSummary } from '@/lib/portfolio';
 
 // Project-style listing (Technology Consulting, Open Source). Cards link to the
 // per-item detail page; external links are only shown when present.
@@ -21,7 +21,7 @@ export default function SectionProjectList({
 }: {
   title: string;
   description: string;
-  projects: ProjectItem[];
+  projects: ProjectSummary[];
 }) {
   return (
     <Container>

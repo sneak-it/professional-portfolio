@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { imageDimensions } from './image';
-import { listMdxSlugs, readMdxFile } from './content';
+import { listMdxSlugs, readMdxFile, type MdxFile } from './content';
 import { byDateDesc } from './sort';
 
 /**
@@ -67,7 +67,12 @@ export interface ProjectItem {
   challenges?: string;
 }
 
-/** Gallery-style item (photography). Structural superset of the old `Gallery`. */
+/**
+ * Gallery-style item (photography). Structural superset of the old `Gallery`.
+ *
+ * No `content`: nothing renders a photography MDX body, so carrying it only
+ * serialized dead prose into the client payload.
+ */
 export interface GalleryItem {
   section: 'photography';
   slug: string;
@@ -75,9 +80,20 @@ export interface GalleryItem {
   description: string;
   coverImage: string;
   date: string;
-  content?: string;
   images: PortfolioImage[];
 }
+
+/**
+ * Listing shapes. The section listings render covers, titles, and a photo
+ * count, so the full MDX body and the per-image dimension array would be
+ * serialized into the RSC payload of a page that never reads them. Mirrors what
+ * `getAllPostMeta` already does for the blog (see lib/mdx.ts).
+ */
+export type ProjectSummary = Omit<ProjectItem, 'content'>;
+
+export type GallerySummary = Omit<GalleryItem, 'images'> & {
+  imageCount: number;
+};
 
 /** Hub-card summary for the /portfolio index. */
 export interface SectionSummary {
@@ -106,13 +122,7 @@ function sectionDir(section: SectionSlug): string {
 
 // -- Project sections --------------------------------------------------------
 
-export function getProjectItem(
-  section: SectionSlug,
-  slug: string,
-): ProjectItem | null {
-  const file = readMdxFile(sectionDir(section), slug);
-  if (file === null) return null;
-
+function projectSummary(section: SectionSlug, file: MdxFile): ProjectSummary {
   const { data } = file;
   return {
     section,
@@ -121,7 +131,6 @@ export function getProjectItem(
     description: (data.description as string) || '',
     coverImage: (data.coverImage as string) || '',
     date: (data.date as string) || '',
-    content: file.content,
     tech: data.tech as string[] | undefined,
     link: (data.link as string) || undefined,
     github: (data.github as string) || undefined,
@@ -130,10 +139,22 @@ export function getProjectItem(
   };
 }
 
-export function getProjectItems(section: SectionSlug): ProjectItem[] {
-  return listMdxSlugs(sectionDir(section))
-    .map((file) => getProjectItem(section, file))
-    .filter((p): p is ProjectItem => p !== null)
+export function getProjectItem(
+  section: SectionSlug,
+  slug: string,
+): ProjectItem | null {
+  const file = readMdxFile(sectionDir(section), slug);
+  if (file === null) return null;
+  return { ...projectSummary(section, file), content: file.content };
+}
+
+/** Listing: the MDX body is never built, so it cannot reach the payload. */
+export function getProjectItems(section: SectionSlug): ProjectSummary[] {
+  const dir = sectionDir(section);
+  return listMdxSlugs(dir)
+    .map((file) => readMdxFile(dir, file))
+    .filter((f): f is MdxFile => f !== null)
+    .map((file) => projectSummary(section, file))
     .sort(byDateDesc);
 }
 
@@ -154,6 +175,25 @@ function galleryCoverSrc(slug: string, coverImage: unknown): string {
   const first = listGalleryImageFiles(slug)[0];
   if (first) return `/portfolio/photography/${slug}/${first}`;
   return `https://picsum.photos/seed/${slug}1/800/1200`;
+}
+
+// Shape of the demo fallback, kept separate so the listing can count it without
+// scanning the (empty) directory.
+const PLACEHOLDER_SIZES = [
+  [800, 1200],
+  [1200, 800],
+  [800, 800],
+  [1200, 1600],
+] as const;
+
+function placeholderImages(slug: string): PortfolioImage[] {
+  return PLACEHOLDER_SIZES.map(([width, height], i) => ({
+    id: `p${i + 1}`,
+    src: `https://picsum.photos/seed/${slug}${i + 1}/${width}/${height}`,
+    alt: `Placeholder ${i + 1}`,
+    width,
+    height,
+  }));
 }
 
 function scanImages(slug: string): PortfolioImage[] {
@@ -177,38 +217,7 @@ function scanImages(slug: string): PortfolioImage[] {
   }
 
   // Fallback to placeholder images if the directory is empty (for demo purposes)
-  if (images.length === 0) {
-    images.push(
-      {
-        id: 'p1',
-        src: `https://picsum.photos/seed/${slug}1/800/1200`,
-        alt: 'Placeholder 1',
-        width: 800,
-        height: 1200,
-      },
-      {
-        id: 'p2',
-        src: `https://picsum.photos/seed/${slug}2/1200/800`,
-        alt: 'Placeholder 2',
-        width: 1200,
-        height: 800,
-      },
-      {
-        id: 'p3',
-        src: `https://picsum.photos/seed/${slug}3/800/800`,
-        alt: 'Placeholder 3',
-        width: 800,
-        height: 800,
-      },
-      {
-        id: 'p4',
-        src: `https://picsum.photos/seed/${slug}4/1200/1600`,
-        alt: 'Placeholder 4',
-        width: 1200,
-        height: 1600,
-      },
-    );
-  }
+  if (images.length === 0) images.push(...placeholderImages(slug));
 
   return images;
 }
@@ -228,40 +237,44 @@ export function getPhotographyGallery(slug: string): GalleryItem | null {
     description: (data.description as string) || '',
     coverImage,
     date: (data.date as string) || '',
-    content: file.content,
     images,
   };
 }
 
-export function getPhotographyGalleries(): GalleryItem[] {
-  return listMdxSlugs(sectionDir('photography'))
-    .map((file) => getPhotographyGallery(file))
-    .filter((g): g is GalleryItem => g !== null)
-    .sort(byDateDesc);
-}
-
-// -- Hub ---------------------------------------------------------------------
-
-/** Hub listing: gallery date + cover, no dimension reads. */
-function getPhotographyCovers(): Array<{ date?: string; coverImage: string }> {
+/**
+ * Gallery listing. Reads no image headers: the cover comes from
+ * `galleryCoverSrc` and the count from the directory listing, so a section with
+ * N galleries costs N readdir calls instead of one `statSync` + header read per
+ * photo. Also feeds the hub via `getSectionSummaries`.
+ */
+export function getPhotographyGalleries(): GallerySummary[] {
   const dir = sectionDir('photography');
   return listMdxSlugs(dir)
     .map((file) => {
       const mdx = readMdxFile(dir, file);
       if (mdx === null) return null;
+      const { data } = mdx;
+      const files = listGalleryImageFiles(mdx.slug);
       return {
-        date: (mdx.data.date as string) || '',
-        coverImage: galleryCoverSrc(mdx.slug, mdx.data.coverImage),
+        section: 'photography' as const,
+        slug: mdx.slug,
+        title: (data.title as string) || mdx.slug,
+        description: (data.description as string) || '',
+        coverImage: galleryCoverSrc(mdx.slug, data.coverImage),
+        date: (data.date as string) || '',
+        imageCount: files.length || PLACEHOLDER_SIZES.length,
       };
     })
-    .filter((c): c is { date: string; coverImage: string } => c !== null)
+    .filter((g): g is GallerySummary => g !== null)
     .sort(byDateDesc);
 }
+
+// -- Hub ---------------------------------------------------------------------
 
 export function getSectionSummaries(): SectionSummary[] {
   return PORTFOLIO_SECTIONS.map((section) => {
     if (section.type === 'gallery') {
-      const covers = getPhotographyCovers();
+      const covers = getPhotographyGalleries();
       return {
         slug: section.slug,
         name: section.name,
