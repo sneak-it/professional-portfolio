@@ -9,13 +9,19 @@ import { imageDimensions } from '@/lib/image';
  * the rendering surface explicit so adding content later can't introduce a
  * foot-gun. next-mdx-remote already strips JavaScript expressions and
  * import/export statements by default (`blockJS`); this layer additionally:
- *   - neutralises raw HTML elements that enable injection or data exfiltration
- *     (script, iframe, object, embed, form controls, link/meta/base/style), and
- *   - hardens any links so cross-origin navigations can't leak the referrer or
- *     grant the opened page access to `window.opener`.
+ *   - hardens links and images so cross-origin navigations can't leak the
+ *     referrer or grant the opened page access to `window.opener`, and
+ *   - refuses any href outside the http/https/mailto allowlist.
  *
- * These mappings override next-mdx-remote's default element renderers, so a
- * `<script>` or `<iframe>` authored in MDX renders nothing instead of the tag.
+ * SCOPE, verified against the compiler output: these mappings apply only to
+ * elements MDX generates from *markdown* syntax. Author-written HTML compiles to
+ * an intrinsic JSX element (`<a>` becomes `_jsx("a", ...)`, not
+ * `_jsx(_components.a, ...)`), so it bypasses this map entirely; only
+ * capitalised names like `Figure` resolve through it. `BLOCKED_TAGS` below is
+ * therefore inert today: markdown cannot emit any of those tags, and raw HTML
+ * does not route through here. Closing that gap needs a remark plugin over the
+ * mdxJsxFlowElement/mdxJsxTextElement nodes; the list is kept so it is ready
+ * when that lands.
  */
 
 const Blocked = () => null;
@@ -41,15 +47,38 @@ const BLOCKED_TAGS = [
   'applet',
 ] as const;
 
-function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
-  const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href);
+/**
+ * Scheme allowlist. Parsed rather than pattern-matched because the URL parser
+ * strips the tabs, newlines, and case tricks that defeat a regex
+ * (`java\nscript:` and `JavaScript:` both normalise to `javascript:`). The base
+ * resolves relative hrefs and fragments to `https:`, so those stay allowed.
+ */
+function isSafeHref(href: unknown): href is string {
+  if (typeof href !== 'string') return false;
+  try {
+    const { protocol } = new URL(href, 'https://relative.invalid');
+    return (
+      protocol === 'http:' || protocol === 'https:' || protocol === 'mailto:'
+    );
+  } catch {
+    return false;
+  }
+}
 
+function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
+  // No anchor at all for a blocked scheme: an <a> with a stripped href is dead
+  // markup, and the text is what the author meant to show either way.
+  if (!isSafeHref(href)) return <>{children}</>;
+
+  const isExternal = /^https?:\/\//i.test(href);
+
+  // `rest` first: authored MDX attributes must not override the hardening below.
   return (
     <a
+      {...rest}
       href={href}
       rel="noopener noreferrer nofollow ugc"
       {...(isExternal ? { target: '_blank' } : {})}
-      {...rest}
     >
       {children}
     </a>
@@ -86,19 +115,20 @@ function SafeImage({
 }: ComponentPropsWithoutRef<'img'>) {
   // Plain <img> (not next/image). MDX has no build-time dimensions, so for local
   // images we read them from disk at render time (server-only) to avoid layout
-  // shift; remote/data: sources fall back to a dimensionless <img>. Any explicit
-  // width/height in `rest` wins.
+  // shift; remote/data: sources fall back to a dimensionless <img>.
   const dims = localImageDimensions(src);
+  // `dims` then `rest` so an explicit width/height in MDX still wins, then the
+  // security attributes last so authored ones cannot override them.
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
+      {...dims}
+      {...rest}
       src={src}
       alt={alt}
       loading="lazy"
       decoding="async"
       referrerPolicy="no-referrer"
-      {...dims}
-      {...rest}
     />
   );
 }
