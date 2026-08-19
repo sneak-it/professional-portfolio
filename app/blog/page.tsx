@@ -21,11 +21,12 @@ function resolvePage(
   totalPages: number,
 ): number | null {
   if (page === undefined) return 1;
+  // Bare positive integers only. `Number()` alone also accepts ' 2 ', '2.0',
+  // '0x2' and '2e0', each of which would render page 2 under a self-referential
+  // canonical and duplicate one page of content across several indexable URLs.
+  if (!/^[1-9]\d*$/.test(page)) return null;
   const parsed = Number(page);
-  if (!Number.isInteger(parsed) || parsed < 1 || parsed > totalPages) {
-    return null;
-  }
-  return parsed;
+  return parsed > totalPages ? null : parsed;
 }
 
 function totalPageCount(): number {

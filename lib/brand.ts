@@ -1,12 +1,12 @@
 /**
- * Accent hexes for the `next/og` routes.
+ * Palette values mirrored out of CSS for consumers that cannot read custom
+ * properties: the `next/og` routes (which render outside the document) and the
+ * `viewport` / manifest metadata exports.
  *
- * `app/globals.css` is the source of truth for the palette; `next/og` renders
- * outside the document and cannot read CSS custom properties, so these three
- * stops are mirrored here. That is one file pair to keep in sync instead of the
- * four copies this replaces. `--accent` and `--accent-2` are deliberately absent:
- * nothing outside CSS consumes them, and an unused copy is one more thing to
- * drift.
+ * `app/globals.css` is the source of truth; this is one file pair to keep in
+ * sync instead of the four copies it replaces. `--accent` and `--accent-2` are
+ * deliberately absent: nothing outside CSS consumes them, and an unused copy is
+ * one more thing to drift.
  */
 export const ACCENT = {
   from: '#ffb400', // --accent-from, amber gold
@@ -19,3 +19,16 @@ export const ACCENT_DIAGONAL = `linear-gradient(135deg, ${ACCENT.from} 0%, ${ACC
 
 /** Full-width rule across the foot of the OG card. */
 export const ACCENT_BAR = `linear-gradient(90deg, ${ACCENT.from}, ${ACCENT.via}, ${ACCENT.to})`;
+
+/**
+ * Page background per theme, mirrored from `--background` in app/globals.css.
+ * Read by the `viewport` themeColor export and the web manifest.
+ *
+ * `--background` rather than `--background-deep`: browser chrome sits against
+ * the body, which is `bg-background` (see app/layout.tsx). In dark mode the deep
+ * token is #050505, which would visibly mismatch the #0f1115 body.
+ */
+export const BACKGROUND = {
+  light: '#f5f5f5', // :root --background
+  dark: '#0f1115', // .dark  --background
+} as const;

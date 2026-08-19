@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
 import { Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
@@ -10,6 +10,7 @@ import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
 import ViewTransitions from '@/components/ViewTransitions';
 import { siteConfig } from '@/lib/site';
+import { BACKGROUND } from '@/lib/brand';
 
 // One characterful neo-grotesque carries both body and display: a single
 // variable-font instance covers every weight we use (incl. the display
@@ -52,6 +53,15 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+};
+
+// Themes the mobile browser chrome to match the page background in each scheme.
+// Static rather than generateViewport: it depends on nothing about the request.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: BACKGROUND.light },
+    { media: '(prefers-color-scheme: dark)', color: BACKGROUND.dark },
+  ],
 };
 
 const personJsonLd = {
