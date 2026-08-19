@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
+import { MDXRemote } from 'next-mdx-remote/rsc';
 import AboutClient from './AboutClient';
+import { mdxComponents } from '@/components/MDXComponents';
+import { getAbout } from '@/lib/about';
 import { siteConfig } from '@/lib/site';
 
 // Rendered per request so the canonical/OG URLs (resolved against the layout's
@@ -21,10 +24,16 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
+  const { skills, interests, content } = getAbout();
+
   return (
     <AboutClient
       linkedin={siteConfig.social.linkedin}
       avatarUrl={siteConfig.avatarUrl}
-    />
+      skills={skills}
+      interests={interests}
+    >
+      <MDXRemote source={content} components={mdxComponents} />
+    </AboutClient>
   );
 }
