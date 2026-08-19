@@ -7,10 +7,10 @@ import { useEffect } from 'react';
 // Styling is kept inline to guarantee a usable fallback even when the layout fails.
 export default function GlobalError({
   error,
-  reset,
+  retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 }) {
   useEffect(() => {
     console.error(error);
@@ -42,7 +42,7 @@ export default function GlobalError({
           A critical error occurred. Please try again.
         </p>
         <button
-          onClick={reset}
+          onClick={retry}
           style={{
             marginTop: '0.5rem',
             padding: '0.75rem 1.5rem',

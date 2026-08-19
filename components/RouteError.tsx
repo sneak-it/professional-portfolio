@@ -10,10 +10,10 @@ import ErrorState from '@/components/ErrorState';
  */
 export default function RouteError({
   error,
-  reset,
+  retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 }) {
   useEffect(() => {
     console.error(error);
@@ -25,7 +25,7 @@ export default function RouteError({
       message="An unexpected error occurred while rendering this page. You can try again or head back home."
       backHref="/"
       backLabel="Back home"
-      reset={reset}
+      retry={retry}
     />
   );
 }
