@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getPostBySlug } from '@/lib/mdx';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import BlogPostContent from '@/components/BlogPostContent';
-import { mdxComponents } from '@/components/MDXComponents';
+import { mdxRenderProps } from '@/components/MDXComponents';
 import JsonLd from '@/components/JsonLd';
 import { siteConfig } from '@/lib/site';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
@@ -86,7 +86,7 @@ export default async function BlogPost({
         ])}
       />
       <BlogPostContent post={post}>
-        <MDXRemote source={post.content} components={mdxComponents} />
+        <MDXRemote source={post.content} {...mdxRenderProps} />
       </BlogPostContent>
     </>
   );

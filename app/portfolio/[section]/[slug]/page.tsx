@@ -5,7 +5,7 @@ import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import GalleryView from '@/components/GalleryView';
 import JsonLd from '@/components/JsonLd';
-import { mdxComponents } from '@/components/MDXComponents';
+import { mdxRenderProps } from '@/components/MDXComponents';
 import {
   getSection,
   getProjectItem,
@@ -140,7 +140,7 @@ export default async function PortfolioItemPage({
 
         {project.content && project.content.trim() && (
           <div className={`surface p-8 md:p-12 mt-16 ${PROSE}`}>
-            <MDXRemote source={project.content} components={mdxComponents} />
+            <MDXRemote source={project.content} {...mdxRenderProps} />
           </div>
         )}
       </Container>
