@@ -7,7 +7,7 @@ import { readMdxFile } from './content';
  * (not JSX) so this stays presentation-free; AboutClient maps the key to a
  * lucide icon.
  */
-export type SkillIcon = 'frontend' | 'backend' | 'database' | 'tools';
+export type SkillIcon = 'ops' | 'network' | 'data' | 'business';
 
 export interface SkillGroup {
   name: string;

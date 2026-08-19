@@ -9,8 +9,9 @@ import BlogList from '@/components/BlogList';
 // See lib/mdx.ts and lib/site.ts.
 export const dynamic = 'force-dynamic';
 
+// Single source for both the metadata description and the visible PageHeader.
 const DESCRIPTION =
-  'Musings on web development, design, and modern technologies.';
+  'Thoughts, tutorials, and insights on web development, design, and technology.';
 
 // Resolve the requested page to a valid 1-based index, or null when the param is
 // present but out of range / malformed (so callers can 404 instead of clamping,
@@ -72,6 +73,7 @@ export default async function Blog({
   return (
     <BlogList
       posts={paginatedPosts}
+      description={DESCRIPTION}
       currentPage={currentPage}
       totalPages={totalPages}
     />

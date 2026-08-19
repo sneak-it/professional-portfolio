@@ -9,6 +9,7 @@ import PortfolioHub from './PortfolioHub';
 // See lib/portfolio.ts and lib/site.ts.
 export const dynamic = 'force-dynamic';
 
+// Single source for both the metadata description and the visible PageHeader.
 const description =
   'Selected work across technology consulting, photography, and open source.';
 
@@ -34,7 +35,7 @@ export default function PortfolioPage() {
           { name: 'Portfolio', path: '/portfolio' },
         ])}
       />
-      <PortfolioHub sections={sections} />
+      <PortfolioHub sections={sections} description={description} />
     </>
   );
 }

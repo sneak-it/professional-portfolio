@@ -25,10 +25,6 @@ export interface BlogPost extends BlogPostSummary {
   content: string;
 }
 
-export function getPostSlugs() {
-  return listMdxSlugs(postsDirectory);
-}
-
 export function getPostBySlug(slug: string): BlogPost | null {
   const file = readMdxFile(postsDirectory, slug, {
     required: ['title', 'date'],
@@ -45,7 +41,7 @@ export function getPostBySlug(slug: string): BlogPost | null {
 // List views (/blog, sitemap) only need metadata — carrying `content` would
 // ship every full post body into the client payload for nothing.
 export function getAllPostMeta(): BlogPostSummary[] {
-  return getPostSlugs()
+  return listMdxSlugs(postsDirectory)
     .map((slug) => getPostBySlug(slug))
     .filter((post): post is BlogPost => post !== null)
     .map(({ slug, meta }) => ({ slug, meta }))

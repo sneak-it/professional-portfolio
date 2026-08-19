@@ -152,7 +152,7 @@ export function getProjectItem(
 export function getProjectItems(section: SectionSlug): ProjectSummary[] {
   const dir = sectionDir(section);
   return listMdxSlugs(dir)
-    .map((file) => readMdxFile(dir, file))
+    .map((slug) => readMdxFile(dir, slug))
     .filter((f): f is MdxFile => f !== null)
     .map((file) => projectSummary(section, file))
     .sort(byDateDesc);
@@ -279,8 +279,8 @@ export function getPhotographyGallery(slug: string): GalleryItem | null {
 export function getPhotographyGalleries(): GallerySummary[] {
   const dir = sectionDir('photography');
   return listMdxSlugs(dir)
-    .map((file) => {
-      const mdx = readMdxFile(dir, file);
+    .map((slug) => {
+      const mdx = readMdxFile(dir, slug);
       if (mdx === null) return null;
       const { data } = mdx;
       const files = listGalleryImageFiles(mdx.slug);

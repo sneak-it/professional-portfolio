@@ -28,13 +28,18 @@ export interface ReadMdxOptions {
 }
 
 /**
- * Lists the `.mdx` filenames in a content directory, or `[]` if it doesn't
- * exist. Filtering to `.mdx` keeps editor backups, `drafts/` folders, and other
- * stray entries out of `generateStaticParams`.
+ * Lists the slugs (filenames minus the `.mdx` extension) in a content
+ * directory, or `[]` if it doesn't exist. Filtering to `.mdx` keeps editor
+ * backups, `drafts/` folders, and other stray entries out of the listings.
+ * Returning slugs rather than filenames means callers can feed the result
+ * straight to `readMdxFile` without stripping the extension themselves.
  */
 export function listMdxSlugs(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter((file) => file.endsWith('.mdx'));
+  return fs
+    .readdirSync(dir)
+    .filter((file) => file.endsWith('.mdx'))
+    .map((file) => path.basename(file, '.mdx'));
 }
 
 /**

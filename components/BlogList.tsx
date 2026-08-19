@@ -14,19 +14,18 @@ const pageHref = (page: number) => (page <= 1 ? '/blog' : `/blog?page=${page}`);
 
 export default function BlogList({
   posts,
+  description,
   currentPage,
   totalPages,
 }: {
   posts: BlogPostSummary[];
+  description: string;
   currentPage: number;
   totalPages: number;
 }) {
   return (
     <Container size="md">
-      <PageHeader
-        title="Blog"
-        description="Thoughts, tutorials, and insights on web development, design, and technology."
-      />
+      <PageHeader title="Blog" description={description} />
 
       <div className="space-y-12">
         {posts.map((post, index) => (

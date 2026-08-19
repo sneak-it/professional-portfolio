@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import { m } from 'motion/react';
 import {
-  Code2,
-  Palette,
-  Terminal,
+  Cloud,
+  Network,
   Database,
+  Briefcase,
   Bot,
   Server,
   Gamepad2,
@@ -26,10 +26,10 @@ import type {
 } from '@/lib/about';
 
 const SKILL_ICONS: Record<SkillIcon, React.ReactNode> = {
-  frontend: <Palette size={24} />,
-  backend: <Terminal size={24} />,
-  database: <Database size={24} />,
-  tools: <Code2 size={24} />,
+  ops: <Cloud size={24} />,
+  network: <Network size={24} />,
+  data: <Database size={24} />,
+  business: <Briefcase size={24} />,
 };
 
 const INTEREST_ICONS: Record<InterestIcon, React.ReactNode> = {
@@ -135,7 +135,9 @@ export default function AboutClient({
                 className="surface p-6 hover:border-accent/50 transition-colors"
               >
                 <IconBadge size="md" shape="xl" className="mb-6">
-                  {SKILL_ICONS[skillGroup.icon]}
+                  {/* about.mdx is hand-edited at runtime, so an unrecognized
+                      key falls back rather than rendering an empty chip. */}
+                  {SKILL_ICONS[skillGroup.icon] ?? <Wrench size={24} />}
                 </IconBadge>
                 <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
                   {skillGroup.name}

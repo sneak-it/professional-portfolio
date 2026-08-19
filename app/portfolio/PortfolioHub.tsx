@@ -22,15 +22,14 @@ function countLabel(slug: string, count: number): string {
 
 export default function PortfolioHub({
   sections,
+  description,
 }: {
   sections: SectionSummary[];
+  description: string;
 }) {
   return (
     <Container>
-      <PageHeader
-        title="Portfolio"
-        description="Selected work across technology consulting, photography, and open source."
-      />
+      <PageHeader title="Portfolio" description={description} />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {sections.map((section, index) => (
