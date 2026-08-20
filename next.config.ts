@@ -32,10 +32,12 @@ const nextConfig: NextConfig = {
       // shared-cache only: browsers still revalidate, and the origin stays
       // authoritative. Cloudflare additionally needs a Cache Rule marking HTML
       // eligible for cache, since it caches by file extension by default and
-      // never caches HTML on its own.
+      // never caches HTML on its own. The metadata routes (robots/sitemap/
+      // manifest) are `force-dynamic` for the same runtime-SITE_URL reason, so
+      // they need the header too or every crawler fetch reaches the origin.
       {
         source:
-          '/:path(|about|contact|blog|portfolio|opengraph-image|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
+          '/:path(|about|contact|blog|portfolio|opengraph-image|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
         headers: [
           {
             key: 'Cache-Control',
