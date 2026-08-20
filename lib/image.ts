@@ -16,6 +16,19 @@ import { IMAGE_DIMENSION_CACHE_MAX } from './config.ts';
  * (this module's predecessor) hang on malformed input.
  */
 
+/**
+ * True for a root-relative path on this origin. Excludes protocol-relative
+ * ('//host'), remote ('http(s)://'), and `data:` sources, matching the
+ * `img-src 'self'` CSP and the absence of `images.remotePatterns` in
+ * next.config.ts. Gates the MDX <img> renderer so an off-origin src fails at
+ * render instead of relying on the browser to enforce the header.
+ */
+export function isLocalSrc(src: unknown): src is string {
+  return (
+    typeof src === 'string' && src.startsWith('/') && !src.startsWith('//')
+  );
+}
+
 // ponytail: 64 KiB header window; raise if a JPEG's SOF ever lands past it.
 const HEADER_BYTES = 64 * 1024;
 

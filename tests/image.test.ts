@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readSize } from '../lib/image.ts';
+import { isLocalSrc, readSize } from '../lib/image.ts';
 
 function png(w: number, h: number) {
   const b = Buffer.alloc(24);
@@ -70,4 +70,29 @@ void test('rejects malformed input instead of hanging or over-reading', () => {
   assert.throws(() => readSize(Buffer.concat([Buffer.from([0xff, 0xd8])])));
   // Unknown magic.
   assert.throws(() => readSize(Buffer.alloc(64)));
+});
+
+void test('isLocalSrc accepts only same-origin paths', () => {
+  for (const src of [
+    '/a.png',
+    '/images/blog/x.webp',
+    '/portfolio/p/1.jpg',
+    '/',
+  ]) {
+    assert.equal(isLocalSrc(src), true, src);
+  }
+  for (const src of [
+    'https://evil.example/x.png',
+    'http://evil.example/x.png',
+    '//evil.example/x.png', // protocol-relative
+    'data:image/svg+xml;base64,PHN2Zy8+',
+    'javascript:alert(1)',
+    'images/blog/x.png', // relative, resolves off the current route
+    '',
+    undefined,
+    null,
+    42,
+  ]) {
+    assert.equal(isLocalSrc(src), false, String(src));
+  }
 });

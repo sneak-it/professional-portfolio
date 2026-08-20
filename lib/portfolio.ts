@@ -169,31 +169,15 @@ function listGalleryImageFiles(slug: string): string[] {
   return fs.readdirSync(imagesDir).filter((file) => IMAGE_FILE_RE.test(file));
 }
 
-/** Cover src without dimension reads: frontmatter, else first image, else picsum. */
+/**
+ * Cover src without dimension reads: frontmatter, else the first image in the
+ * gallery folder, else empty. Empty is a real answer, not a failure: CoverImage
+ * renders its accent-gradient fallback, which is the designed empty state.
+ */
 function galleryCoverSrc(slug: string, coverImage: unknown): string {
   if (typeof coverImage === 'string' && coverImage) return coverImage;
   const first = listGalleryImageFiles(slug)[0];
-  if (first) return `/portfolio/photography/${slug}/${first}`;
-  return `https://picsum.photos/seed/${slug}1/800/1200`;
-}
-
-// Shape of the demo fallback, kept separate so the listing can count it without
-// scanning the (empty) directory.
-const PLACEHOLDER_SIZES = [
-  [800, 1200],
-  [1200, 800],
-  [800, 800],
-  [1200, 1600],
-] as const;
-
-function placeholderImages(slug: string): PortfolioImage[] {
-  return PLACEHOLDER_SIZES.map(([width, height], i) => ({
-    id: `p${i + 1}`,
-    src: `https://picsum.photos/seed/${slug}${i + 1}/${width}/${height}`,
-    alt: `Placeholder ${i + 1}`,
-    width,
-    height,
-  }));
+  return first ? `/portfolio/photography/${slug}/${first}` : '';
 }
 
 /**
@@ -238,9 +222,6 @@ function scanImages(
       console.error(`Error reading image dimensions for ${imagePath}`, e);
     }
   }
-
-  // Fallback to placeholder images if the directory is empty (for demo purposes)
-  if (images.length === 0) images.push(...placeholderImages(slug));
 
   return images;
 }
@@ -291,7 +272,7 @@ export function getPhotographyGalleries(): GallerySummary[] {
         description: (data.description as string) || '',
         coverImage: galleryCoverSrc(mdx.slug, data.coverImage),
         date: (data.date as string) || '',
-        imageCount: files.length || PLACEHOLDER_SIZES.length,
+        imageCount: files.length,
       };
     })
     .filter((g): g is GallerySummary => g !== null)

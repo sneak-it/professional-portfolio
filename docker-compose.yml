@@ -19,6 +19,9 @@ services:
     volumes:
       - ./content:/app/content:ro
       - ./public/portfolio:/app/public/portfolio:ro
+      # Images are same-origin only, so a custom SITE_AVATAR_URL needs its file
+      # here. The tracked avatar-placeholder.png keeps the default working.
+      - ./public/images:/app/public/images:ro
       # Persist the Next.js image optimizer cache
       - images-cache:/app/.next/cache/images
     restart: unless-stopped

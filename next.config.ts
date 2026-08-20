@@ -8,13 +8,18 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/seed/**',
-      },
+    // Images are served from this origin only. No `remotePatterns`, so
+    // `/_next/image` will not fetch an off-origin URL for anyone: it is not a
+    // server-side fetcher, and it cannot be driven to re-encode arbitrary
+    // remote bytes on a half-core container.
+    //
+    // `localPatterns` is the positive half of the same policy: only these two
+    // directories are optimizable, and `search: ''` forbids a query string so
+    // the optimizer cannot be enumerated through `?v=` variants. A cover or
+    // avatar path outside these gets a 400 rather than being optimized.
+    localPatterns: [
+      { pathname: '/images/**', search: '' },
+      { pathname: '/portfolio/**', search: '' },
     ],
     formats: ['image/webp'],
     minimumCacheTTL: 604800,
@@ -87,7 +92,11 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-inline'",
               // 'unsafe-inline' here is additionally required by Tailwind v4 / Next.js.
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' https://picsum.photos data:",
+              // Same-origin only, matching `images.localPatterns` above. `data:`
+              // is deliberately absent: nothing here emits a data URI (no blur
+              // placeholders, no inlined CSS images), so allowing it would only
+              // widen the surface.
+              "img-src 'self'",
               "font-src 'self'",
               "connect-src 'self'",
               "frame-src 'none'",

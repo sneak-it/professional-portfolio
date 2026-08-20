@@ -87,9 +87,9 @@ export default async function PortfolioItemPage({
       description: gallery.description,
       url,
       datePublished: gallery.date || undefined,
-      image: gallery.images.map((img) =>
-        img.src.startsWith('http') ? img.src : `${siteConfig.url}${img.src}`,
-      ),
+      // Gallery srcs are always site-relative (scanned out of public/), so
+      // JSON-LD just needs the origin prepended.
+      image: gallery.images.map((img) => `${siteConfig.url}${img.src}`),
     };
 
     return (

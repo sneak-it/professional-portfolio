@@ -38,12 +38,13 @@ export const siteConfig = {
   location: process.env.SITE_LOCATION?.trim() || 'Your City, ST',
   // Wordmark in the navbar and footer.
   monogram: process.env.SITE_MONOGRAM?.trim() || 'YN',
-  // Portrait on the about page and the blog post byline. Must stay on a host
-  // allowed by `images.remotePatterns` and the CSP in next.config.ts, both of
-  // which are baked at build time.
+  // Portrait on the about page and the blog post byline. Site-relative only:
+  // images are served from this origin (see `images.localPatterns` in
+  // next.config.ts), so point this at a file mounted under public/images/
+  // rather than a remote URL. Unlike the fields above, the path is constrained
+  // by build-time policy, so it must sit inside an allowed directory.
   avatarUrl:
-    process.env.SITE_AVATAR_URL?.trim() ||
-    'https://picsum.photos/seed/portrait/800/800',
+    process.env.SITE_AVATAR_URL?.trim() || '/images/avatar-placeholder.png',
   // Social profiles. `?? ` rather than `|| `: an explicitly empty value blanks
   // the link out (callers hide it), while an unset one keeps the placeholder.
   social: {

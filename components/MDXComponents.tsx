@@ -1,6 +1,6 @@
 import path from 'path';
 import type { ComponentPropsWithoutRef } from 'react';
-import { imageDimensions } from '@/lib/image';
+import { imageDimensions, isLocalSrc } from '@/lib/image';
 
 /**
  * Defense-in-depth allowlist for MDX rendering.
@@ -10,8 +10,9 @@ import { imageDimensions } from '@/lib/image';
  * foot-gun. next-mdx-remote already strips JavaScript expressions and
  * import/export statements by default (`blockJS`); this layer additionally:
  *   - hardens links and images so cross-origin navigations can't leak the
- *     referrer or grant the opened page access to `window.opener`, and
- *   - refuses any href outside the http/https/mailto allowlist.
+ *     referrer or grant the opened page access to `window.opener`,
+ *   - refuses any href outside the http/https/mailto allowlist, and
+ *   - refuses any image src that is not same-origin, matching `img-src 'self'`.
  *
  * SCOPE. A components map alone only governs elements MDX generates from
  * *markdown* syntax: author-written HTML compiles to an intrinsic JSX element
@@ -86,21 +87,18 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   );
 }
 
-// Root-relative local image whose bytes live under public/. Excludes
-// protocol-relative ('//host'), remote ('http(s)://'), and data: sources.
+// Extensions whose headers `imageDimensions` can read.
 const LOCAL_IMAGE_RE = /\.(jpe?g|png|webp|gif|svg)$/i;
 
 /**
  * Intrinsic width/height for a local (public/) image, read on the server so the
- * browser can reserve layout space (no CLS). Returns null for remote/data:
- * sources or if the file can't be read, in which case the <img> renders without
- * dimensions as before.
+ * browser can reserve layout space (no CLS). Returns null for an unreadable file
+ * or an extension we don't parse, in which case the <img> renders without
+ * dimensions.
  */
 function localImageDimensions(
-  src: unknown,
+  src: string,
 ): { width: number; height: number } | null {
-  if (typeof src !== 'string') return null;
-  if (!src.startsWith('/') || src.startsWith('//')) return null;
   if (!LOCAL_IMAGE_RE.test(src)) return null;
   try {
     return imageDimensions(path.join(process.cwd(), 'public', src));
@@ -114,9 +112,15 @@ function SafeImage({
   alt = '',
   ...rest
 }: ComponentPropsWithoutRef<'img'>) {
-  // Plain <img> (not next/image). MDX has no build-time dimensions, so for local
-  // images we read them from disk at render time (server-only) to avoid layout
-  // shift; remote/data: sources fall back to a dimensionless <img>.
+  // Off-origin sources render nothing rather than a broken image. The CSP
+  // (`img-src 'self'`) already blocks them in the browser, but failing here
+  // makes it deterministic and visible while authoring instead of a console
+  // warning in production. Same posture as SafeLink dropping a bad scheme.
+  if (!isLocalSrc(src)) return null;
+
+  // Plain <img> (not next/image), so `images.localPatterns` does not apply and
+  // any same-origin path is fine. MDX has no build-time dimensions, so read them
+  // from disk at render time (server-only) to avoid layout shift.
   const dims = localImageDimensions(src);
   // `dims` then `rest` so an explicit width/height in MDX still wins, then the
   // security attributes last so authored ones cannot override them.
