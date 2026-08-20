@@ -14,6 +14,7 @@ import MotionProvider from '@/components/MotionProvider';
 import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
 import { siteConfig } from '@/lib/site';
+import { cspNonce } from '@/lib/nonce';
 import { BACKGROUND } from '@/lib/brand';
 
 // One characterful neo-grotesque carries both body and display: a single
@@ -76,11 +77,14 @@ const personJsonLd = {
   description: siteConfig.description,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // next-themes writes an inline pre-paint script; Next only nonces its own.
+  const nonce = await cspNonce();
+
   return (
     <html
       lang="en"
@@ -103,6 +107,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
+          nonce={nonce}
         >
           <MotionProvider>
             <BackgroundCanvas />

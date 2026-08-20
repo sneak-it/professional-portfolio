@@ -77,35 +77,7 @@ const nextConfig: NextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
           },
-          {
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              // NOTE: 'unsafe-inline' in script-src is a deliberate trade-off, not an
-              // oversight. A strict nonce/hash CSP would require a per-request nonce
-              // generated in middleware and read via next/headers, which opts every
-              // route into dynamic rendering and disables the static generation the
-              // blog/gallery pages rely on. The XSS surface here is low: no user input,
-              // no forms or backend, and all MDX is author-authored and rendered through
-              // the component allowlist in components/MDXComponents.tsx. The static-
-              // rendering win is preferred. Revisit if untrusted content is introduced.
-              "script-src 'self' 'unsafe-inline'",
-              // 'unsafe-inline' here is additionally required by Tailwind v4 / Next.js.
-              "style-src 'self' 'unsafe-inline'",
-              // Same-origin only, matching `images.localPatterns` above. `data:`
-              // is deliberately absent: nothing here emits a data URI (no blur
-              // placeholders, no inlined CSS images), so allowing it would only
-              // widen the surface.
-              "img-src 'self'",
-              "font-src 'self'",
-              "connect-src 'self'",
-              "frame-src 'none'",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-              "frame-ancestors 'none'",
-            ].join('; '),
-          },
+          // CSP is in proxy.ts: it carries a per-request nonce.
         ],
       },
     ];
