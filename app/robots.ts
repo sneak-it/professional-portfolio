@@ -14,6 +14,8 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ['/api/'],
     },
     sitemap: `${siteConfig.url}/sitemap.xml`,
-    host: siteConfig.url,
+    // No `host`: Next emits it as a `Host:` line, which is a Yandex extension
+    // Yandex itself dropped, and Google lists it as unsupported. The canonical
+    // tags and the sitemap URL above are what actually declare the origin.
   };
 }
