@@ -5,6 +5,7 @@ services:
     # and make the mounted host dirs traversable by uid 65532:
     #   chmod o+rx content content/blog content/portfolio public/portfolio public/portfolio/photography
     # user: "65532:65532"
+    container_name: professional-portfolio
     ports:
       - "3000:3000"
     environment:
