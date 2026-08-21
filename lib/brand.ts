@@ -1,7 +1,7 @@
 /**
  * Palette values mirrored out of CSS for consumers that cannot read custom
- * properties: the `next/og` routes (which render outside the document) and the
- * `viewport` / manifest metadata exports.
+ * properties: the `next/og` routes under app/brand/ (which render outside the
+ * document), the `viewport` metadata export, and the lib/site.ts version token.
  *
  * `app/globals.css` is the source of truth; this is one file pair to keep in
  * sync instead of the four copies it replaces. `--accent` and `--accent-2` are
@@ -22,7 +22,7 @@ export const ACCENT_BAR = `linear-gradient(90deg, ${ACCENT.from}, ${ACCENT.via},
 
 /**
  * Page background per theme, mirrored from `--background` in app/globals.css.
- * Read by the `viewport` themeColor export and the web manifest.
+ * Read by the `viewport` themeColor export.
  *
  * `--background` rather than `--background-deep`: browser chrome sits against
  * the body, which is `bg-background` (see app/layout.tsx). In dark mode the deep
