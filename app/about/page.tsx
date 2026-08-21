@@ -5,26 +5,35 @@ import { mdxRenderProps } from '@/components/MDXComponents';
 import { getAbout } from '@/lib/about';
 import { siteConfig } from '@/lib/site';
 
-// Rendered per request so the canonical/OG URLs (resolved against the layout's
-// metadataBase) reflect the runtime `SITE_URL` rather than a build-time value.
-// See lib/site.ts and app/page.tsx.
+// Per request so canonical/OG URLs reflect the runtime SITE_URL. See app/page.tsx.
 export const dynamic = 'force-dynamic';
 
-const DESCRIPTION = `Get to know ${siteConfig.name} - the technologist, tinkerer, photographer, and gearhead behind the work.`;
+const FALLBACK_DESCRIPTION = `Get to know ${siteConfig.name} and the work behind the site.`;
 
-export const metadata: Metadata = {
-  title: 'About',
-  description: DESCRIPTION,
-  alternates: { canonical: '/about' },
-  openGraph: {
+export function generateMetadata(): Metadata {
+  const { description } = getAbout(FALLBACK_DESCRIPTION);
+  return {
     title: 'About',
-    description: DESCRIPTION,
-    url: '/about',
-  },
-};
+    description,
+    alternates: { canonical: '/about' },
+    openGraph: {
+      title: 'About',
+      description,
+      url: '/about',
+    },
+  };
+}
 
 export default function AboutPage() {
-  const { skills, interests, content } = getAbout();
+  const {
+    skills,
+    interests,
+    skillsHeading,
+    skillsBlurb,
+    interestsHeading,
+    interestsBlurb,
+    content,
+  } = getAbout(FALLBACK_DESCRIPTION);
 
   return (
     <AboutClient
@@ -32,6 +41,10 @@ export default function AboutPage() {
       avatarUrl={siteConfig.avatarUrl}
       skills={skills}
       interests={interests}
+      skillsHeading={skillsHeading}
+      skillsBlurb={skillsBlurb}
+      interestsHeading={interestsHeading}
+      interestsBlurb={interestsBlurb}
     >
       <MDXRemote source={content} {...mdxRenderProps} />
     </AboutClient>

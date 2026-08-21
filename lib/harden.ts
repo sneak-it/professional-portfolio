@@ -1,10 +1,9 @@
 /**
- * Remark-plugin half of the MDX allowlist. The components half lives in
- * components/MDXComponents.tsx; use them together via `mdxRenderProps`.
+ * Remark-plugin half of the MDX allowlist (components half:
+ * components/MDXComponents.tsx). Use both together via `mdxRenderProps`.
  *
- * A components map only governs elements MDX generates from *markdown* syntax.
- * Author-written HTML compiles to an intrinsic JSX element, which the map never
- * sees, so this plugin is the only thing that reaches it:
+ * A components map only sees elements MDX generates from markdown syntax.
+ * Authored HTML becomes an intrinsic JSX element that only this plugin reaches:
  *
  *   <script>alert(1)</script>      -> dropped with its subtree
  *   <div onclick="alert(1)">       -> onclick stripped
@@ -39,9 +38,8 @@ const RAW_HTML_ALIASES: Record<string, string> = {
   img: 'MdxRawImage',
 };
 
-// Attributes the hardened components set themselves. An authored copy survives
-// in `...rest` under its own casing (`referrerpolicy` vs `referrerPolicy`), which
-// React emits as a second copy of the same HTML attribute.
+// Set by the hardened components themselves. An authored copy survives in
+// `...rest` under its own casing, which React emits as a duplicate attribute.
 const OWNED_ATTRS: Record<string, ReadonlySet<string>> = {
   a: new Set(['rel', 'target']),
   img: new Set(['referrerpolicy', 'loading', 'decoding']),
@@ -49,7 +47,7 @@ const OWNED_ATTRS: Record<string, ReadonlySet<string>> = {
 
 const BLOCKED_TAG_SET: ReadonlySet<string> = new Set(BLOCKED_TAGS);
 
-interface MdxJsxNode {
+export interface MdxJsxNode {
   type?: string;
   name?: string | null;
   attributes?: Array<{ type?: string; name?: string }>;
@@ -73,9 +71,8 @@ export function hardenRawHtml() {
               if (attr.type !== 'mdxJsxAttribute') return true;
               if (typeof attr.name !== 'string') return true;
               const lower = attr.name.toLowerCase();
-              // `on*` on any tag, not just the aliased ones: only
-              // 'unsafe-inline' can execute a handler and the CSP has none, but
-              // the sanitizer shouldn't depend on the header holding.
+              // Any tag, not just the aliased ones: the CSP has no
+              // 'unsafe-inline', but don't depend on the header holding.
               return !lower.startsWith('on') && !owned?.has(lower);
             });
           }

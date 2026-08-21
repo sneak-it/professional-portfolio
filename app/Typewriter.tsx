@@ -3,34 +3,28 @@
 import { useEffect, useState } from 'react';
 import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 
-// Non-empty tuple type: guarantees WORDS[0] exists, which both the initial
-// state and the wordIndex fallback below rely on.
-const WORDS: [string, ...string[]] = [
-  'Experiences',
-  'Opportunities',
-  'Connections',
-  'Solutions',
-];
 const TYPE_MS = 1000; // time to type a full word
 const DELETE_MS = 500; // time to delete a full word
 const HOLD_MS = 2000; // pause on a completed word before deleting
 
-export default function Typewriter() {
+// Non-empty tuple: the initial state and the wordIndex fallback both index [0].
+export default function Typewriter({
+  words,
+}: {
+  words: [string, ...string[]];
+}) {
   const { tier } = useMotionEnabled();
   const [wordIndex, setWordIndex] = useState(0);
   // Start with the first word already typed
-  const [text, setText] = useState(WORDS[0]);
+  const [text, setText] = useState(words[0]);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    // Reduced motion: schedule nothing, so `text` stays on its initial full
-    // word. The CSS entrances and the cursor blink are already gated in
-    // page.module.css; this is the JS half of the same preference.
+    // Reduced motion: the JS half of the gating page.module.css already does.
     if (tier === 'none') return;
 
-    // wordIndex is always in range (set via % WORDS.length); the fallback is
-    // for the compiler, not a reachable state.
-    const word = WORDS[wordIndex] ?? WORDS[0];
+    // Always in range (% words.length); the fallback is for the compiler.
+    const word = words[wordIndex] ?? words[0];
     let timer: ReturnType<typeof setTimeout>;
 
     if (!deleting) {
@@ -49,12 +43,10 @@ export default function Typewriter() {
           setText(word.slice(0, text.length - 1));
         }, DELETE_MS / word.length);
       } else {
-        // Advance to the next word from a timer (not synchronously in the
-        // effect body) — gives a brief beat between words and keeps the state
-        // updates inside a callback.
+        // From a timer, not the effect body: gives a beat between words.
         timer = setTimeout(() => {
           setDeleting(false);
-          setWordIndex((i) => (i + 1) % WORDS.length);
+          setWordIndex((i) => (i + 1) % words.length);
         }, 400);
       }
     }
@@ -62,7 +54,7 @@ export default function Typewriter() {
     return () => {
       clearTimeout(timer);
     };
-  }, [text, deleting, wordIndex, tier]);
+  }, [text, deleting, wordIndex, tier, words]);
 
   return <span>{text}</span>;
 }

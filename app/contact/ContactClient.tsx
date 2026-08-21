@@ -1,18 +1,27 @@
 'use client';
 
 import { m } from 'motion/react';
-import { MapPin } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react';
 import Container from '@/components/Container';
 import IconBadge from '@/components/IconBadge';
 import { LinkedInIcon } from '@/components/icons/BrandIcons';
 import { fadeInUp } from '@/lib/motion';
 
 export default function ContactClient({
+  email,
   linkedin,
   location,
+  heading,
+  highlight,
+  children,
 }: {
+  email?: string;
   linkedin?: string;
   location: string;
+  heading: string;
+  highlight: string;
+  /** Intro paragraph from content/contact.mdx. */
+  children: React.ReactNode;
 }) {
   return (
     <Container size="sm" className="text-center">
@@ -22,18 +31,37 @@ export default function ContactClient({
         transition={{ duration: 0.6 }}
       >
         <h1 className="heading-legible text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
-          Say <span className="gradient-text">hello</span>!
+          {heading} <span className="gradient-text">{highlight}</span>!
         </h1>
-        <p className="heading-legible text-lg text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
-          Looking to collaborate, chat, or just say hi? I’m always open to new
-          opportunities and conversations. Reach out and let’s connect!
-        </p>
+        <div className="heading-legible text-lg text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
+          {children}
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-          {linkedin && (
+        {/* One to three cards, depending on which SITE_* values are set. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          {email && (
             <m.div
               {...fadeInUp}
               transition={{ duration: 0.6, delay: 0.1 }}
+              className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
+            >
+              <IconBadge color="primary" size="lg" className="mb-6">
+                <Mail size={32} />
+              </IconBadge>
+              <h3 className="text-xl font-bold mb-2">Email</h3>
+              <a
+                href={`mailto:${email}`}
+                className="text-gray-600 dark:text-gray-400 hover:text-accent transition-colors break-all"
+              >
+                {email}
+              </a>
+            </m.div>
+          )}
+
+          {linkedin && (
+            <m.div
+              {...fadeInUp}
+              transition={{ duration: 0.6, delay: 0.2 }}
               className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
             >
               <IconBadge color="primary" size="lg" className="mb-6">
@@ -53,7 +81,7 @@ export default function ContactClient({
 
           <m.div
             {...fadeInUp}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
           >
             <IconBadge color="secondary" size="lg" className="mb-6">

@@ -47,9 +47,9 @@ Two image variants are published from the same layers:
 
 4. The app will be available at `http://localhost:3000`.
 
-`content/`, `public/portfolio/`, and `public/images/` are mounted read-only into the container (see `docker-compose.yml`), so you can add or edit blog posts, projects, and photos on the host and they are served immediately — no rebuild required. The image ships a healthcheck (`/api/health`); the compose file adds resource limits and hardened security options.
+`content/`, `public/portfolio/`, and `public/images/` are mounted read-only into the container (see `docker-compose.yml`), so you can add or edit blog posts, projects, and photos on the host and they are served immediately — no rebuild required. The same applies to page copy: the homepage hero lives in `content/home.mdx`, the about page in `content/about.mdx`, and the contact page in `content/contact.mdx`. Each falls back to a generic default if the file is absent. The image ships a healthcheck (`/api/health`); the compose file adds resource limits and hardened security options.
 
-Site identity (name, description, monogram, avatar, social links) and the canonical production URL are **runtime** environment variables, documented with their defaults in `.env.example`. They are read when the container starts, so the same prebuilt image serves any identity under any domain — no rebuild required. The compose file loads them from `.env` via `env_file`; the file is optional and each variable falls back to a placeholder default. `SITE_URL` (no trailing slash) is the one worth setting first: it drives Open Graph cards, the sitemap, robots.txt, and JSON-LD, and falls back to `http://localhost:3000`.
+Site identity (name, description, monogram, locale, avatar, email, social links) and the canonical production URL are **runtime** environment variables, documented with their defaults in `.env.example`. They are read when the container starts, so the same prebuilt image serves any identity under any domain — no rebuild required. The compose file loads them from `.env` via `env_file`; the file is optional and each variable falls back to a placeholder default. `SITE_URL` (no trailing slash) is the one worth setting first: it drives Open Graph cards, the sitemap, robots.txt, and JSON-LD, and falls back to `http://localhost:3000`.
 
 #### What can and cannot be set at runtime
 

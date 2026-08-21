@@ -1,13 +1,10 @@
 import { ImageResponse } from 'next/og';
+import { MonogramTile } from '@/components/icons/MonogramTile';
 import { ACCENT_BAR, ACCENT_DIAGONAL } from '@/lib/brand';
 import { siteConfig } from '@/lib/site';
 
-// Default share card, inherited by every route that doesn't define its own.
-// Next also wires this up as the twitter:image for the summary_large_image card.
-//
-// Rendered per request: it draws the env-driven name, title, and description,
-// and a statically generated card would bake the build-time values in with no
-// revalidation to correct them. Same reasoning as the force-dynamic pages.
+// Default share card, inherited by routes without their own; also the
+// twitter:image. Per request, since it draws the env-driven identity.
 export const dynamic = 'force-dynamic';
 
 export const alt = siteConfig.title;
@@ -37,24 +34,12 @@ export default function OpengraphImage() {
           marginBottom: 40,
         }}
       >
-        <div
-          style={{
-            width: 88,
-            height: 88,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 20,
-            background: ACCENT_DIAGONAL,
-          }}
-        >
-          {/* Serif capital "I" drawn as three bars so it reads as a letter, not
-              a bare vertical line. Top and bottom serifs bracket a narrower stem. */}
-          <div style={{ width: 39, height: 8, background: 'white' }} />
-          <div style={{ width: 11, height: 27, background: 'white' }} />
-          <div style={{ width: 39, height: 8, background: 'white' }} />
-        </div>
+        <MonogramTile
+          monogram={siteConfig.monogram}
+          size={88}
+          background={ACCENT_DIAGONAL}
+          radius={20}
+        />
         <span style={{ fontSize: 30, color: '#a1a1aa' }}>
           {siteConfig.author}
         </span>

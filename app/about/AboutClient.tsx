@@ -46,12 +46,20 @@ export default function AboutClient({
   avatarUrl,
   skills,
   interests,
+  skillsHeading,
+  skillsBlurb,
+  interestsHeading,
+  interestsBlurb,
   children,
 }: {
   linkedin?: string;
   avatarUrl: string;
   skills: SkillGroup[];
   interests: Interest[];
+  skillsHeading: string;
+  skillsBlurb: string;
+  interestsHeading: string;
+  interestsBlurb: string;
   /** Bio paragraphs, rendered from content/about.mdx by the server parent. */
   children: React.ReactNode;
 }) {
@@ -106,7 +114,7 @@ export default function AboutClient({
         </m.div>
       </div>
 
-      {/* Skills Section, hidden when about.mdx has none */}
+      {/* Skills section, hidden when about.mdx has none */}
       {skills.length > 0 && (
         <div className="mt-32">
           <m.div
@@ -117,10 +125,10 @@ export default function AboutClient({
             className="text-center mb-16"
           >
             <h2 className="heading-legible text-3xl md:text-4xl font-display font-bold tracking-tight">
-              Technical Arsenal
+              {skillsHeading}
             </h2>
             <p className="heading-legible mt-4 text-gray-600 dark:text-gray-400">
-              The tools I reach for - at work and at home.
+              {skillsBlurb}
             </p>
           </m.div>
 
@@ -135,8 +143,7 @@ export default function AboutClient({
                 className="surface p-6 hover:border-accent/50 transition-colors"
               >
                 <IconBadge size="md" shape="xl" className="mb-6">
-                  {/* about.mdx is hand-edited at runtime, so an unrecognized
-                      key falls back rather than rendering an empty chip. */}
+                  {/* Unrecognized key falls back: about.mdx is hand-edited. */}
                   {SKILL_ICONS[skillGroup.icon] ?? <Wrench size={24} />}
                 </IconBadge>
                 <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
@@ -159,7 +166,7 @@ export default function AboutClient({
         </div>
       )}
 
-      {/* Off the Clock — personal interests, hidden when about.mdx has none */}
+      {/* Personal interests, hidden when about.mdx has none */}
       {interests.length > 0 && (
         <div className="mt-32">
           <m.div
@@ -170,12 +177,10 @@ export default function AboutClient({
             className="text-center mb-16"
           >
             <h2 className="heading-legible text-3xl md:text-4xl font-display font-bold tracking-tight">
-              Off the Clock
+              {interestsHeading}
             </h2>
             <p className="heading-legible mt-4 max-w-2xl mx-auto text-gray-600 dark:text-gray-400">
-              When I'm not being paid to think about technology, I'm usually
-              still thinking about technology - plus a few things that keep me
-              away from a screen.
+              {interestsBlurb}
             </p>
           </m.div>
 

@@ -1,28 +1,25 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { MDXRemote } from 'next-mdx-remote/rsc';
 import Typewriter from './Typewriter';
+import { mdxRenderProps } from '@/components/MDXComponents';
+import { getHome } from '@/lib/home';
 import styles from './page.module.css';
 
-// Rendered per request so the layout's metadataBase / Open Graph URL / Person
-// JSON-LD resolve against the runtime `SITE_URL` (see lib/site.ts). Without
-// this the origin would be frozen into the static prerender at build time,
-// breaking canonical/OG tags for anyone running the prebuilt image under their
-// own domain. The markup is otherwise static, so the render cost is trivial.
+// Per request so metadataBase / OG URL / Person JSON-LD resolve against the
+// runtime SITE_URL instead of freezing the build-time origin into the prerender.
 export const dynamic = 'force-dynamic';
 
-// Server component: the hero markup is rendered on the server and painted
-// immediately (no opacity:0 / hydration gate). Entrance animations are CSS-only
-// (see page.module.css) so they run on first paint without waiting on ~245 KB
-// of JS. The one interactive bit — the typewriter — is a small client island
-// (app/Typewriter.tsx).
+// Server component: the hero paints immediately, with CSS-only entrances
+// (page.module.css) that need no JS. The typewriter is the one client island.
 export default function Home() {
+  const { eyebrow, headline, words, content } = getHome();
+
   return (
     <>
-      {/* Hero Section — the animated gradient backdrop is provided site-wide by
-          components/BackgroundCanvas.tsx. */}
+      {/* Backdrop comes from components/BackgroundCanvas.tsx, site-wide. */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Readability vignette — keeps the headline legible over the brighter
-            palette + glow, regardless of where the animated background lands. */}
+        {/* Readability vignette, wherever the animated background lands. */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,var(--background-deep)_0%,transparent_70%)] opacity-70 dark:opacity-80"
@@ -33,15 +30,15 @@ export default function Home() {
             <p
               className={`${styles.eyebrow} text-sm md:text-base font-semibold tracking-widest text-accent uppercase font-mono mb-4`}
             >
-              Technologist by day · tinkerer, shutterbug & gearhead after
+              {eyebrow}
             </p>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter mb-6 flex flex-wrap justify-center gap-x-4">
-              <span className={`${styles.word} inline-block`}>Creating</span>
+              <span className={`${styles.word} inline-block`}>{headline}</span>
               <div className="w-full h-0" />
               <span
                 className={`${styles.word} ${styles.word2} text-transparent bg-clip-text bg-gradient-to-r from-accent-from via-accent-via to-accent-to inline-block`}
               >
-                <Typewriter />
+                <Typewriter words={words} />
                 <span
                   aria-hidden
                   className={`${styles.cursor} inline-block w-[4px] h-[0.9em] bg-accent ml-2 align-middle -mt-2`}
@@ -51,11 +48,9 @@ export default function Home() {
             <div
               className={`${styles.surface} surface mt-4 max-w-2xl mx-auto mb-10 p-6`}
             >
-              <p className="text-xl text-gray-800 dark:text-gray-200 font-medium">
-                I'm Ian - I run technology for a living and can't leave it at
-                the office. When I'm off the clock you'll find me in the
-                homelab, behind a camera, or under a car hood.
-              </p>
+              <div className="text-xl text-gray-800 dark:text-gray-200 font-medium">
+                <MDXRemote source={content} {...mdxRenderProps} />
+              </div>
             </div>
 
             <div

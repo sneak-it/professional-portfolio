@@ -1,13 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import { parseFrontmatter } from './frontmatter';
-import { safeSlug } from './slug';
+import { parseFrontmatter } from './frontmatter.ts';
+import { safeSlug } from './slug.ts';
 
 /**
- * Shared MDX data-layer plumbing used by both the blog (`lib/mdx.ts`) and the
- * portfolio (`lib/portfolio.ts`). Centralizing the dir listing and the
- * read/parse (with its path-traversal guard and try/catch) keeps the two data
- * layers thin mappers over one implementation.
+ * Shared MDX plumbing for lib/mdx.ts and lib/portfolio.ts: one dir listing and
+ * one read/parse (with its traversal guard and try/catch) behind both.
  */
 
 export interface MdxFile {
@@ -18,21 +16,17 @@ export interface MdxFile {
 
 export interface ReadMdxOptions {
   /**
-   * Frontmatter keys that must be present as non-empty strings. A file missing
-   * any of them is logged and skipped (`readMdxFile` returns `null`), so a post
-   * with e.g. no `title`/`date` can't silently render blank alt text, an
-   * `undefined` JSON-LD headline, or break date sorting. The frontmatter is
-   * cast, not schema-checked, elsewhere — this is the one guard that runs.
+   * Frontmatter keys that must be non-empty strings; a file missing any is
+   * logged and skipped, rather than rendering blank alt text or breaking date
+   * sorting. Frontmatter is cast elsewhere, so this is the one guard that runs.
    */
   required?: string[];
 }
 
 /**
- * Lists the slugs (filenames minus the `.mdx` extension) in a content
- * directory, or `[]` if it doesn't exist. Filtering to `.mdx` keeps editor
- * backups, `drafts/` folders, and other stray entries out of the listings.
- * Returning slugs rather than filenames means callers can feed the result
- * straight to `readMdxFile` without stripping the extension themselves.
+ * Slugs (filenames minus `.mdx`) in a content dir, or `[]` if it doesn't exist.
+ * Filtering to `.mdx` keeps editor backups and `drafts/` out of the listings,
+ * and slugs feed straight into `readMdxFile`.
  */
 export function listMdxSlugs(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
@@ -43,12 +37,9 @@ export function listMdxSlugs(dir: string): string[] {
 }
 
 /**
- * Reads and parses a single MDX file by slug from `dir`. Sanitizes the slug
- * (path-traversal guard), returns `null` if the slug is unsafe or the file is
- * missing, and swallows read/parse errors (e.g. malformed YAML frontmatter) so
- * one bad file can't take down a whole listing — callers filter out the null.
- * Pass `required` to additionally skip files whose frontmatter is missing those
- * fields.
+ * Reads one MDX file by slug. Returns `null` if the slug is unsafe (traversal
+ * guard), the file is missing, or the read/parse throws — one bad file can't
+ * take down a listing, and callers filter out the null.
  */
 export function readMdxFile(
   dir: string,
@@ -81,4 +72,19 @@ export function readMdxFile(
     console.error(`Failed to load MDX file "${fullPath}"`, e);
     return null;
   }
+}
+
+/** A frontmatter array, else []: unchecked input must not throw at render. */
+export function list<T>(value: unknown): T[] {
+  return Array.isArray(value) ? (value as T[]) : [];
+}
+
+/** String entries of a frontmatter list; non-strings dropped, not coerced. */
+export function strings(value: unknown): string[] {
+  return list<unknown>(value).filter((v): v is string => typeof v === 'string');
+}
+
+/** A non-empty frontmatter string, else `fallback`. */
+export function text(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim() !== '' ? value : fallback;
 }

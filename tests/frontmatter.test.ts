@@ -20,8 +20,7 @@ void test('parseFrontmatter handles CRLF and a missing trailing newline', () => 
   });
 });
 
-// No delimiters, or delimiters that do not start the file, means no
-// frontmatter: the whole input is content.
+// No delimiters, or not at the start of the file: it's all content.
 void test('parseFrontmatter passes through when there is no frontmatter', () => {
   for (const src of ['', 'just body', 'text\n---\ntitle: A\n---\n']) {
     assert.deepEqual(
@@ -32,24 +31,21 @@ void test('parseFrontmatter passes through when there is no frontmatter', () => 
   }
 });
 
-// An empty block does not match the regex (it needs a line between the
-// delimiters), so the delimiters stay in the content.
+// An empty block doesn't match the regex, so the delimiters stay in content.
 void test('parseFrontmatter leaves an empty block alone', () => {
   const src = '---\n---\nbody';
   assert.deepEqual(parseFrontmatter(src), { data: {}, content: src });
 });
 
-// Scalar YAML parses to a string. Callers read `data[key]`, which is undefined
-// on a string, so a required-field check treats it as missing rather than
-// throwing.
+// Scalar YAML parses to a string. `data[key]` is undefined on a string, so a
+// required-field check treats it as missing rather than throwing.
 void test('parseFrontmatter does not throw on non-object frontmatter', () => {
   const { content } = parseFrontmatter('---\nfoo\n---\nbody');
   assert.equal(content, 'body');
-  assert.equal(parseFrontmatter('---\nfoo\n---\nbody').data as unknown, 'foo');
+  assert.equal(parseFrontmatter('---\nfoo\n---\nbody').data, 'foo');
 });
 
-// Malformed YAML throws. readMdxFile wraps this in a try/catch and skips the
-// file, so a bad content file cannot take a page down.
+// Malformed YAML throws; readMdxFile catches and skips the file.
 void test('parseFrontmatter throws on malformed YAML', () => {
   assert.throws(() => parseFrontmatter('---\na: [\n---\nbody'));
 });
