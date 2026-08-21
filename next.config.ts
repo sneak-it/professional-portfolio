@@ -8,15 +8,8 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    // Images are served from this origin only. No `remotePatterns`, so
-    // `/_next/image` will not fetch an off-origin URL for anyone: it is not a
-    // server-side fetcher, and it cannot be driven to re-encode arbitrary
-    // remote bytes on a half-core container.
-    //
-    // `localPatterns` is the positive half of the same policy: only these two
-    // directories are optimizable, and `search: ''` forbids a query string so
-    // the optimizer cannot be enumerated through `?v=` variants. A cover or
-    // avatar path outside these gets a 400 rather than being optimized.
+    // No `remotePatterns`, so `/_next/image` never fetches off-origin.
+    // `search: ''` forbids a query string, so it can't be enumerated via `?v=`.
     localPatterns: [
       { pathname: '/images/**', search: '' },
       { pathname: '/portfolio/**', search: '' },
@@ -30,23 +23,28 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
-      // Content pages render per request (see the route `dynamic` exports), so
-      // Next sends them `no-store`, which forbids any shared cache. These are
-      // anonymous, cookie-free, identical-for-everyone documents, so let a CDN
-      // or reverse proxy absorb repeat traffic and burst load. `s-maxage` is
-      // shared-cache only: browsers still revalidate, and the origin stays
-      // authoritative. Cloudflare additionally needs a Cache Rule marking HTML
-      // eligible for cache, since it caches by file extension by default and
-      // never caches HTML on its own. The metadata routes (robots/sitemap/
-      // manifest) are `force-dynamic` for the same runtime-SITE_URL reason, so
-      // they need the header too or every crawler fetch reaches the origin.
+      // These routes are `force-dynamic`, so Next would send `no-store` and
+      // forbid any shared cache. `s-maxage` is shared-cache only, so browsers
+      // still revalidate. Cloudflare also needs a Cache Rule (see CLOUDFLARE.md).
       {
         source:
-          '/:path(|about|contact|blog|portfolio|opengraph-image|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
+          '/:path(|about|contact|blog|portfolio|robots\\.txt|sitemap\\.xml|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
         headers: [
           {
             key: 'Cache-Control',
             value: 's-maxage=60, stale-while-revalidate=120',
+          },
+        ],
+      },
+      // Generated images: each request is a full rasterize, and the bytes only
+      // change on deploy or a `SITE_*` change, so browsers may hold them too.
+      {
+        source: '/:path(icon|apple-icon|opengraph-image)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value:
+              'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
           },
         ],
       },

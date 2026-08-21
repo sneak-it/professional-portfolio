@@ -19,16 +19,29 @@ Cache-Control: s-maxage=60, stale-while-revalidate=120
 ```
 
 covering `/`, `/about`, `/contact`, `/blog`, `/blog/<slug>`, `/portfolio`,
-`/portfolio/<section>`, `/portfolio/<section>/<slug>`, and `/opengraph-image`.
+`/portfolio/<section>`, `/portfolio/<section>/<slug>`, `/robots.txt`, and
+`/sitemap.xml`.
 
-Three things to note about that header:
+The generated images get a longer one, since their bytes only change when the
+build or a `SITE_*` value does, and each origin hit is a full rasterize:
 
-- `s-maxage` applies to shared caches only. Browsers ignore it and keep
-  revalidating, so a visitor never sees a stale page from their own cache.
-- Without it, Next sends `private, no-cache, no-store` on these routes, which
-  forbids caching anywhere.
+```
+Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800
+```
+
+covering `/icon`, `/apple-icon`, and `/opengraph-image`.
+
+Three things to note about these headers:
+
+- `s-maxage` applies to shared caches only. On the pages there is no `max-age`,
+  so browsers keep revalidating and a visitor never sees a stale document from
+  their own cache. The images do set `max-age`: they are safe for a browser to
+  hold, and re-rendering a favicon on every navigation is pure waste.
+- Without these, Next sends `private, no-cache, no-store` on the page routes and
+  `public, max-age=0, must-revalidate` on the images, so neither is cacheable by
+  a CDN.
 - `/api/health` is deliberately excluded so the container healthcheck is never
-  answered from a cache. `robots.txt` and `sitemap.xml` keep Next's defaults.
+  answered from a cache.
 
 Hashed assets under `/_next/static/` are immutable and are already cached by
 Cloudflare with no configuration.
