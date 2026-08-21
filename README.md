@@ -80,6 +80,12 @@ shared cache absorb repeat traffic without giving up per-request rendering. Clou
 header for HTML until a Cache Rule marks it eligible; see [CLOUDFLARE.md](CLOUDFLARE.md) for the
 dashboard side, which is not optional if you run behind Cloudflare.
 
+The three generated brand images (`/brand/icon`, `/brand/apple-icon`, `/brand/opengraph-image`) are
+cached far longer, because each request is a full rasterize. Their URLs carry a version token derived
+from the identity and palette they draw, so a `SITE_*` change moves the URL and takes effect
+immediately with no purge and no hard refresh. Editing one of the renderers in `app/brand/` does not
+move the token, and waits out the 24-hour `s-maxage` or a purge.
+
 ### Building manually
 
 The default target is the root image; pass `--target production-nonroot` for the uid 65532 variant.

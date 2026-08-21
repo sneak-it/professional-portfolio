@@ -22,14 +22,19 @@ covering `/`, `/about`, `/contact`, `/blog`, `/blog/<slug>`, `/portfolio`,
 `/portfolio/<section>`, `/portfolio/<section>/<slug>`, `/robots.txt`, and
 `/sitemap.xml`.
 
-The generated images get a longer one, since their bytes only change when the
-build or a `SITE_*` value does, and each origin hit is a full rasterize:
+The generated images get a longer one, since each origin hit is a full
+rasterize:
 
 ```
 Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800
 ```
 
-covering `/icon`, `/apple-icon`, and `/opengraph-image`.
+covering `/brand/icon`, `/brand/apple-icon`, and `/brand/opengraph-image`. A TTL
+that long is only safe because those URLs carry a version token derived from the
+identity and palette they draw (`BRAND_VERSION` in `lib/site.ts`), so a `SITE_*`
+change moves the URL instead of leaving a stale image behind it. An old token
+still renders current bytes, so a cached page holding a stale href degrades to
+old-but-valid rather than breaking.
 
 Three things to note about these headers:
 
@@ -142,7 +147,9 @@ when you do, because the rule defers to the origin header.
 
 To publish a change immediately, purge the affected URL in **Caching** and
 **Configuration**, using **Custom Purge** by URL, or **Purge Everything** for a
-content-wide update.
+content-wide update. The `/brand/` images need no purge after a `SITE_*` change,
+because the URL itself moves; they do need one after an edit to a renderer in
+`app/brand/`, which the token does not cover.
 
 ## Notes
 
