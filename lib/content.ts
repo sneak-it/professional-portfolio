@@ -14,6 +14,17 @@ export interface MdxFile {
   content: string;
 }
 
+/**
+ * Parsed files by path, invalidated on mtime change: one read and parse per
+ * edit, not per request. No size cap (unlike lib/image.ts): a key needs a real
+ * `.mdx` file, so the content tree bounds it. `data` is shared across requests,
+ * so callers must only read it.
+ */
+const parseCache = new Map<
+  string,
+  { mtimeMs: number; data: Record<string, unknown>; content: string }
+>();
+
 export interface ReadMdxOptions {
   /**
    * Frontmatter keys that must be non-empty strings; a file missing any is
@@ -68,9 +79,17 @@ export function readMdxFile(
   if (!fs.existsSync(fullPath)) return null;
 
   try {
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data, content } = parseFrontmatter(fileContents);
+    // In the try: an unreadable file lands on the catch below.
+    const { mtimeMs } = fs.statSync(fullPath);
+    let entry = parseCache.get(fullPath);
+    if (entry?.mtimeMs !== mtimeMs) {
+      const fileContents = fs.readFileSync(fullPath, 'utf8');
+      entry = { mtimeMs, ...parseFrontmatter(fileContents) };
+      parseCache.set(fullPath, entry);
+    }
+    const { data, content } = entry;
 
+    // Outside the cache: `required` varies per call, the parse does not.
     const missing = (options.required ?? []).filter((key) => {
       const value = data[key];
       return typeof value !== 'string' || value.trim() === '';

@@ -74,6 +74,28 @@ void test('listMdxFiles drops drafts while readMdxFile still returns them', () =
   }
 });
 
+// The parse is cached per (path, mtime), and content/ is a bind mount that
+// changes under a running container.
+void test('readMdxFile re-reads a file after it changes', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mdx-'));
+  const file = path.join(dir, 'post.mdx');
+  try {
+    fs.writeFileSync(file, '---\ntitle: First\n---\nbody one');
+    assert.equal(readMdxFile(dir, 'post')?.data.title, 'First');
+
+    // Explicit mtime: a same-millisecond rewrite would pass by accident.
+    fs.writeFileSync(file, '---\ntitle: Second\n---\nbody two');
+    const then = new Date(Date.now() + 2000);
+    fs.utimesSync(file, then, then);
+
+    const again = readMdxFile(dir, 'post');
+    assert.equal(again?.data.title, 'Second');
+    assert.equal(again?.content, 'body two');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 void test('isDraft only accepts the literal true', () => {
   assert.equal(isDraft({ draft: true }), true);
   assert.equal(isDraft({ draft: 'true' }), false);
