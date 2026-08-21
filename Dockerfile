@@ -25,7 +25,7 @@ RUN mkdir -p /empty-cache/images
 
 COPY . .
 
-RUN npm run build
+RUN npm run build && rm -f .next/standalone/.env .next/standalone/.env.production
 
 # Stage 3: Non-root production image (distroless)
 
