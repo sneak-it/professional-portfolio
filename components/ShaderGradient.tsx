@@ -71,33 +71,38 @@ const fragment = /* glsl */ `#version 300 es
   in vec2 vUv;
   out vec4 fragColor;
 
-  // Cheap value noise — no textures, no external assets. This hash (Dave
-  // Hoskins style) avoids the axis-aligned banding the classic sin() hash
-  // produces, which the contour step would otherwise amplify into seams.
+  // Cheap hash (Dave Hoskins style) — no textures, no external assets. Avoids
+  // the axis-aligned banding the classic sin() hash would feed the contour step.
   float hash(vec2 p) {
     vec3 p3 = fract(vec3(p.xyx) * 0.1031);
     p3 += dot(p3, p3.yzx + 33.33);
     return fract((p3.x + p3.y) * p3.z);
   }
-  float vnoise(vec2 p) {
+  // Gradient noise, not value noise: value noise is exactly flat across every
+  // cell edge, which fwidth() in contour() turns into dashed lattice seams.
+  vec2 hgrad(vec2 i) {
+    float a = hash(i) * 6.2831853;
+    return vec2(cos(a), sin(a));
+  }
+  float gnoise(vec2 p) {
     vec2 i = floor(p);
-    vec2 f = fract(p);
-    // Quintic fade (C2-continuous). The cubic fade f*f*(3-2f) leaves second-
-    // derivative kinks at cell boundaries, which fwidth() in the contour turns
-    // into visible grid-aligned seams; the quintic curve removes them.
+    vec2 f = p - i;
+    // Quintic fade — C2-continuous, so fwidth() sees no cell-boundary kinks.
     vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
-    float a = hash(i);
-    float b = hash(i + vec2(1.0, 0.0));
-    float c = hash(i + vec2(0.0, 1.0));
-    float d = hash(i + vec2(1.0, 1.0));
-    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+    float a = dot(hgrad(i), f);
+    float b = dot(hgrad(i + vec2(1.0, 0.0)), f - vec2(1.0, 0.0));
+    float c = dot(hgrad(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0));
+    float d = dot(hgrad(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0));
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y) * 0.7 + 0.5;
   }
   float fbm(vec2 p) {
     float v = 0.0;
     float a = 0.5;
     for (int i = 0; i < 3; i++) {
-      v += a * vnoise(p);
-      p *= 2.0;
+      v += a * gnoise(p);
+      // Rotate/offset per octave; a plain p *= 2.0 stacks every octave's
+      // residual lattice artifact onto one grid.
+      p = mat2(0.80, -0.60, 0.60, 0.80) * p * 2.0 + vec2(11.3, 7.7);
       a *= 0.5;
     }
     return v;
