@@ -1,9 +1,10 @@
 services:
   portfolio:
     image: ghcr.io/sneak-it/professional-portfolio:latest
-    # For the hardened variant, switch to :latest-nonroot, uncomment `user`,
-    # and make the mounted host dirs traversable by uid 65532:
-    #   chmod o+rx content content/blog content/portfolio public/portfolio public/portfolio/photography
+    # For the hardened variant, switch to :latest-nonroot and uncomment `user`.
+    # No permission step either way: `cap_drop: ALL` takes DAC_OVERRIDE from root
+    # too, so both variants read the mounts as an unprivileged user, and both are
+    # satisfied by the world-readable modes a default umask already produces.
     # user: "65532:65532"
     container_name: professional-portfolio
     ports:
@@ -15,14 +16,12 @@ services:
     env_file:
       - path: .env
         required: false
-    # The mounted host dirs must exist before starting:
-    #   mkdir -p public/portfolio/photography
+    # Mounting ./public shadows the copy shipped in the image, so the host tree is
+    # what gets served: it needs the SITE_AVATAR_URL file (default
+    # public/images/avatar-placeholder.png) or the portrait renders blank.
     volumes:
       - ./content:/app/content:ro
-      - ./public/portfolio:/app/public/portfolio:ro
-      # Images are same-origin only, so a custom SITE_AVATAR_URL needs its file
-      # here. The tracked avatar-placeholder.png keeps the default working.
-      - ./public/images:/app/public/images:ro
+      - ./public:/app/public:ro
       # Persist the Next.js image optimizer cache
       - images-cache:/app/.next/cache/images
     restart: unless-stopped

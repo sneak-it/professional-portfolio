@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { list, strings, text } from '../lib/content.ts';
+import { list, listDir, strings, text } from '../lib/content.ts';
 
 void test('list passes arrays through and rejects everything else', () => {
   assert.deepEqual(list([1, 2]), [1, 2]);
@@ -23,4 +23,21 @@ void test('text falls back for missing, blank, and non-string values', () => {
   assert.equal(text('   ', 'fb'), 'fb');
   assert.equal(text(undefined, 'fb'), 'fb');
   assert.equal(text(42, 'fb'), 'fb');
+});
+
+void test('listDir is quiet for a missing dir and loud for an unreadable one', () => {
+  const errors: unknown[] = [];
+  const original = console.error;
+  console.error = (...args: unknown[]) => errors.push(args);
+  try {
+    assert.deepEqual(listDir('/nonexistent-content-dir'), []);
+    assert.equal(errors.length, 0, 'ENOENT is a designed state, not an error');
+
+    // A file is not a dir: ENOTDIR stands in for the EACCES a bind mount the
+    // container cannot read would produce.
+    assert.deepEqual(listDir('lib/content.ts'), []);
+    assert.equal(errors.length, 1);
+  } finally {
+    console.error = original;
+  }
 });

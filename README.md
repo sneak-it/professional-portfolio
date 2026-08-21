@@ -25,29 +25,28 @@ Two image variants are published from the same layers:
 
 ### Using Docker Compose (recommended)
 
-1. Create the directories that get mounted into the container:
+1. Copy `docker-compose.yml` and `.env.example` from the root of the repository, then `cp .env.example .env` and edit the values you care about. Every variable is optional and falls back to the default shown in the file.
 
-   ```bash
-   mkdir -p public/portfolio/photography
-   ```
-
-   The compose file runs the root `:latest` image, which can read them as-is. To run the hardened `:latest-nonroot` variant instead, switch the `image:` tag, uncomment the `user: "65532:65532"` line, and make those directories traversable by that uid:
-
-   ```bash
-   chmod o+rx content content/blog content/portfolio public/portfolio public/portfolio/photography public/images
-   ```
-
-2. Copy `docker-compose.yml` and `.env.example` from the root of the repository, then `cp .env.example .env` and edit the values you care about. Every variable is optional and falls back to the default shown in the file.
-
-3. Start the container:
+2. Start the container:
 
    ```bash
    docker compose up -d
    ```
 
-4. The app will be available at `http://localhost:3000`.
+3. The app will be available at `http://localhost:3000`.
 
-`content/`, `public/portfolio/`, and `public/images/` are mounted read-only into the container (see `docker-compose.yml`), so you can add or edit blog posts, projects, and photos on the host and they are served immediately — no rebuild required. The same applies to page copy: the homepage hero lives in `content/home.mdx`, the about page in `content/about.mdx`, and the contact page in `content/contact.mdx`. Each falls back to a generic default if the file is absent. The image ships a healthcheck (`/api/health`); the compose file adds resource limits and hardened security options.
+To run the hardened `:latest-nonroot` image instead of the default `:latest`, switch the `image:` tag
+and uncomment the `user: "65532:65532"` line. There is no permission step for either variant, and
+none when you drop in a post or a photo: `cap_drop: ALL` strips `DAC_OVERRIDE`, so the default root
+image reads the mounts under the same rules as the nonroot one, and both are satisfied by the
+world-readable modes a default umask already produces.
+
+If a tree genuinely is unreadable — a hardened umask, a restrictive parent directory — the site
+renders empty rather than failing, and the container logs `Cannot read content dir "<path>"` so it is
+visible in `docker logs`. `chmod -R a+rX content public` fixes it; capital `X` sets the search bit on
+directories only, so nothing becomes executable.
+
+`content/` and `public/` are mounted read-only into the container (see `docker-compose.yml`), so you can add or edit blog posts, projects, and photos on the host and they are served immediately — no rebuild required. The same applies to page copy: the homepage hero lives in `content/home.mdx`, the about page in `content/about.mdx`, and the contact page in `content/contact.mdx`. Each falls back to a generic default if the file is absent. The image ships a healthcheck (`/api/health`); the compose file adds resource limits and hardened security options.
 
 Site identity (name, description, monogram, locale, avatar, email, social links) and the canonical production URL are **runtime** environment variables, documented with their defaults in `.env.example`. They are read when the container starts, so the same prebuilt image serves any identity under any domain — no rebuild required. The compose file loads them from `.env` via `env_file`; the file is optional and each variable falls back to a placeholder default. Because it is optional, a `.env` that is missing or sits outside the compose project directory is not an error, so the container logs `[site] SITE_NAME unset` at start; if you see that line in `docker logs`, the file never loaded. `SITE_URL` (no trailing slash) is the one worth setting first: it drives Open Graph cards, the sitemap, robots.txt, and JSON-LD, and falls back to `http://localhost:3000`. It must be an absolute `http(s)` URL, scheme included; anything else is rejected with a warning and the fallback is used rather than failing the request.
 
@@ -68,8 +67,7 @@ This matters for `SITE_AVATAR_URL`. Images are same-origin only: there are no `i
 and the CSP sets `img-src 'self'`, so a remote avatar URL will not load. Point it at a site-relative
 path under `/images/` and mount the file into `public/images/`, the same way galleries are mounted.
 A path outside the directories in `images.localPatterns` returns a 400 from the optimizer while the
-page still returns 200, so the portrait goes blank without an error; the default
-`/images/avatar-placeholder.png` is always valid.
+page still returns 200, so the portrait goes blank without an error; the default `/images/avatar-placeholder.png` is always a valid path, but the mount means the host copy is the one served: keep the file in `public/images/` or the portrait goes blank the same way.
 
 ### Caching
 
@@ -95,8 +93,7 @@ docker build -t portfolio-app .
 docker run -p 3000:3000 \
   -e SITE_URL=https://your-domain \
   -v "$(pwd)/content:/app/content:ro" \
-  -v "$(pwd)/public/portfolio:/app/public/portfolio:ro" \
-  -v "$(pwd)/public/images:/app/public/images:ro" \
+  -v "$(pwd)/public:/app/public:ro" \
   portfolio-app
 ```
 
@@ -212,4 +209,4 @@ Placeholder entries (`example-engagement.mdx`, `example-project.mdx`) are includ
 3. Create a folder in `public/portfolio/photography/` with the **exact same name** as the `.mdx` file (e.g. `public/portfolio/photography/my-trip/`).
 4. Drop your images (`.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`) inside that folder. Dimensions are read automatically and the images are rendered in the gallery with a lightbox. If the folder is empty, placeholder images are shown.
 
-> When running under Docker Compose, `content/`, `public/portfolio/`, and `public/images/` are bind-mounted, so new posts, projects, and photos appear without rebuilding the image.
+> When running under Docker Compose, `content/` and `public/` are bind-mounted, so new posts, projects, and photos appear without rebuilding the image.

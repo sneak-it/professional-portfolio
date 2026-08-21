@@ -1,7 +1,6 @@
-import fs from 'fs';
 import path from 'path';
 import { imageDimensions } from './image';
-import { listMdxSlugs, readMdxFile, type MdxFile } from './content';
+import { listDir, listMdxSlugs, readMdxFile, type MdxFile } from './content';
 import { byDateDesc } from './sort';
 
 /**
@@ -164,9 +163,9 @@ const IMAGE_FILE_RE = /\.(jpe?g|png|webp|gif)$/i;
 
 /** Image filenames in a gallery's folder. */
 function listGalleryImageFiles(slug: string): string[] {
-  const imagesDir = path.join(publicPhotographyDirectory, slug);
-  if (!fs.existsSync(imagesDir)) return [];
-  return fs.readdirSync(imagesDir).filter((file) => IMAGE_FILE_RE.test(file));
+  return listDir(path.join(publicPhotographyDirectory, slug)).filter((file) =>
+    IMAGE_FILE_RE.test(file),
+  );
 }
 
 /**

@@ -24,14 +24,29 @@ export interface ReadMdxOptions {
 }
 
 /**
+ * Entries of a content dir, or `[]` if it isn't there. An absent dir is a
+ * designed state (no posts, no gallery), so it stays quiet; anything else is
+ * not. EACCES in particular means a bind-mounted tree the container can't read,
+ * which would otherwise render as an empty site with nothing in the logs.
+ */
+export function listDir(dir: string): string[] {
+  try {
+    return fs.readdirSync(dir);
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
+      console.error(`Cannot read content dir "${dir}"`, e);
+    }
+    return [];
+  }
+}
+
+/**
  * Slugs (filenames minus `.mdx`) in a content dir, or `[]` if it doesn't exist.
  * Filtering to `.mdx` keeps editor backups and `drafts/` out of the listings,
  * and slugs feed straight into `readMdxFile`.
  */
 export function listMdxSlugs(dir: string): string[] {
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir)
+  return listDir(dir)
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => path.basename(file, '.mdx'));
 }
