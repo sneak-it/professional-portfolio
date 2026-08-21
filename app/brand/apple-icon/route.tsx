@@ -3,13 +3,12 @@ import { MonogramTile } from '@/components/icons/MonogramTile';
 import { ACCENT_DIAGONAL } from '@/lib/brand';
 import { siteConfig } from '@/lib/site';
 
-export const size = { width: 180, height: 180 };
-export const contentType = 'image/png';
-
-// Per request so a runtime SITE_MONOGRAM applies. See app/icon.tsx.
+// See app/brand/icon/route.tsx.
 export const dynamic = 'force-dynamic';
 
-export default function AppleIcon() {
+const size = { width: 180, height: 180 };
+
+export function GET() {
   return new ImageResponse(
     // Full-bleed: iOS applies its own mask.
     <MonogramTile

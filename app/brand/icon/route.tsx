@@ -2,14 +2,15 @@ import { ImageResponse } from 'next/og';
 import { MonogramTile } from '@/components/icons/MonogramTile';
 import { siteConfig } from '@/lib/site';
 
-// Also the favicon: Next emits the <link rel="icon"> tags from this convention.
-export const size = { width: 32, height: 32 };
-export const contentType = 'image/png';
-
-// Per request so a runtime SITE_MONOGRAM applies; Next caches these by default.
+// The favicon. A plain route handler rather than app/icon.tsx: file-based
+// metadata overrides the `metadata` object, so the convention gives no way to
+// version the URL, which is what earns the long Cache-Control in next.config.ts.
+// app/layout.tsx emits the href.
 export const dynamic = 'force-dynamic';
 
-export default function Icon() {
+const size = { width: 32, height: 32 };
+
+export function GET() {
   return new ImageResponse(
     // Flat black: at 32px the favicon needs contrast, not a gradient.
     <MonogramTile

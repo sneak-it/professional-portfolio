@@ -3,6 +3,7 @@
  * module's `server-only` guard throws outside a bundler. Same reasoning as
  * lib/config.ts.
  */
+import { createHash } from 'node:crypto';
 
 const DEFAULT_URL = 'http://localhost:3000';
 
@@ -31,4 +32,16 @@ export function siteUrl(raw = process.env.SITE_URL): string {
 /** Bounded here, not per consumer, so the chrome and the icons agree. */
 export function monogram(raw = process.env.SITE_MONOGRAM): string {
   return (raw?.trim() || 'YN').slice(0, 3);
+}
+
+/**
+ * Cache-buster for the app/brand/* image URLs. Those render from `parts` alone,
+ * so a moved token means moved bytes, which is what lets the responses carry a
+ * long Cache-Control instead of going stale on a `SITE_*` change.
+ */
+export function brandVersion(parts: readonly string[]): string {
+  return createHash('sha256')
+    .update(parts.join('\0'))
+    .digest('base64url')
+    .slice(0, 12);
 }

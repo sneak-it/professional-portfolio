@@ -3,15 +3,13 @@ import { MonogramTile } from '@/components/icons/MonogramTile';
 import { ACCENT_BAR, ACCENT_DIAGONAL } from '@/lib/brand';
 import { siteConfig } from '@/lib/site';
 
-// Default share card, inherited by routes without their own; also the
-// twitter:image. Per request, since it draws the env-driven identity.
+// Default share card, also the twitter:image. See app/brand/icon/route.tsx for
+// why this is a route handler; app/layout.tsx emits the URL and the alt text.
 export const dynamic = 'force-dynamic';
 
-export const alt = siteConfig.title;
-export const size = { width: 1200, height: 630 };
-export const contentType = 'image/png';
+const size = { width: 1200, height: 630 };
 
-export default function OpengraphImage() {
+export function GET() {
   return new ImageResponse(
     <div
       style={{

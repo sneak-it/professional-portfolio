@@ -1,5 +1,6 @@
 import 'server-only';
-import { monogram, siteUrl } from './site-env';
+import { ACCENT_BAR, ACCENT_DIAGONAL } from './brand';
+import { brandVersion, monogram, siteUrl } from './site-env';
 
 /**
  * Central site metadata. Every field is env-driven with a generic placeholder,
@@ -49,3 +50,17 @@ export const siteConfig = {
       'https://linkedin.com/in/your-profile',
   },
 } as const;
+
+/**
+ * Version token for the app/brand/* URLs, emitted by app/layout.tsx. Covers the
+ * palette as well as the identity, so a lib/brand.ts edit also busts the URL. A
+ * change to a renderer's own layout does not, and waits out `s-maxage`.
+ */
+export const BRAND_VERSION = brandVersion([
+  siteConfig.monogram,
+  siteConfig.title,
+  siteConfig.author,
+  siteConfig.description,
+  ACCENT_DIAGONAL,
+  ACCENT_BAR,
+]);

@@ -36,10 +36,11 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Generated images: each request is a full rasterize, and the bytes only
-      // change on deploy or a `SITE_*` change, so browsers may hold them too.
+      // Generated images: each request is a full rasterize, so let browsers hold
+      // them too. Safe because app/layout.tsx versions the URL (lib/site.ts
+      // `BRAND_VERSION`), so a `SITE_*` change moves it rather than going stale.
       {
-        source: '/:path(icon|apple-icon|opengraph-image)',
+        source: '/brand/:path(icon|apple-icon|opengraph-image)',
         headers: [
           {
             key: 'Cache-Control',

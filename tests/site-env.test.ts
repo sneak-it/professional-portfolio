@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { monogram, siteUrl } from '../lib/site-env.ts';
+import { brandVersion, monogram, siteUrl } from '../lib/site-env.ts';
 
 const DEFAULT_URL = 'http://localhost:3000';
 
@@ -29,4 +29,17 @@ void test('monogram bounds the value to three characters', () => {
   assert.equal(monogram(' AB '), 'AB');
   assert.equal(monogram(undefined), 'YN');
   assert.equal(monogram('   '), 'YN');
+});
+
+void test('brandVersion is stable per input and moves with any part', () => {
+  const base = ['IRT', 'Title', 'Author', 'Desc'];
+  assert.equal(brandVersion(base), brandVersion([...base]));
+  assert.notEqual(brandVersion(base), brandVersion(['IRX', ...base.slice(1)]));
+  assert.notEqual(brandVersion(base), brandVersion([...base.slice(0, 3), 'X']));
+  // NUL-joined, so a shifted boundary is not the same input.
+  assert.notEqual(brandVersion(['a', 'b']), brandVersion(['ab']));
+});
+
+void test('brandVersion emits a URL-safe token', () => {
+  assert.match(brandVersion(['a']), /^[A-Za-z0-9_-]{12}$/);
 });

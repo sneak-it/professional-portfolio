@@ -11,7 +11,7 @@ import BackgroundCanvas from '@/components/BackgroundCanvas';
 import MotionProvider from '@/components/MotionProvider';
 import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
-import { siteConfig } from '@/lib/site';
+import { BRAND_VERSION, siteConfig } from '@/lib/site';
 import { cspNonce } from '@/lib/nonce';
 import { BACKGROUND } from '@/lib/brand';
 
@@ -22,6 +22,9 @@ const grotesk = Hanken_Grotesk({
   variable: '--font-sans',
 });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
+
+// Versioned so a SITE_* change moves the URL; the renderers live in app/brand/.
+const ogImage = `/brand/opengraph-image?v=${BRAND_VERSION}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -36,6 +39,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  icons: {
+    icon: `/brand/icon?v=${BRAND_VERSION}`,
+    apple: `/brand/apple-icon?v=${BRAND_VERSION}`,
+  },
   openGraph: {
     type: 'website',
     locale: siteConfig.locale.replace('-', '_'),
@@ -43,11 +50,13 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     title: siteConfig.title,
     description: siteConfig.description,
+    images: [{ url: ogImage, width: 1200, height: 630, alt: siteConfig.title }],
   },
   twitter: {
     card: 'summary_large_image',
     title: siteConfig.title,
     description: siteConfig.description,
+    images: [ogImage],
   },
   robots: {
     index: true,
