@@ -39,7 +39,10 @@
 @theme {
   --font-sans: var(--font-sans);
   --font-display: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-mono:
+    ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono',
+    'Noto Sans Mono', 'DejaVu Sans Mono', 'Liberation Mono', Menlo, Consolas,
+    monospace;
 }
 
 @theme inline {

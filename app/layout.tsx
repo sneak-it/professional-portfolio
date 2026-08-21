@@ -3,7 +3,7 @@
 /// <reference types="react/canary" />
 import type { Metadata, Viewport } from 'next';
 import { ViewTransition } from 'react';
-import { Hanken_Grotesk, JetBrains_Mono } from 'next/font/google';
+import { Hanken_Grotesk } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -16,12 +16,12 @@ import { cspNonce } from '@/lib/nonce';
 import { BACKGROUND } from '@/lib/brand';
 
 // One variable-font instance covers every weight, so --font-display maps to it
-// in globals.css rather than fetching the family twice. Mono handles meta text.
+// in globals.css rather than fetching the family twice. Mono is a system stack
+// (see --font-mono in globals.css), so this is the only family we download.
 const grotesk = Hanken_Grotesk({
   subsets: ['latin'],
   variable: '--font-sans',
 });
-const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
 
 // Versioned so a SITE_* change moves the URL; the renderers live in app/brand/.
 const ogImage = `/brand/opengraph-image?v=${BRAND_VERSION}`;
@@ -92,7 +92,7 @@ export default async function RootLayout({
   return (
     <html
       lang={siteConfig.locale}
-      className={`${grotesk.variable} ${mono.variable}`}
+      className={grotesk.variable}
       suppressHydrationWarning
     >
       <body
