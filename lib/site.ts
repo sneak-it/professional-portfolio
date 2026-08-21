@@ -1,4 +1,5 @@
 import 'server-only';
+import { monogram, siteUrl } from './site-env';
 
 /**
  * Central site metadata. Every field is env-driven with a generic placeholder,
@@ -12,22 +13,25 @@ import 'server-only';
  */
 const name = process.env.SITE_NAME?.trim() || 'Your Name';
 
+// An env_file that never loaded otherwise looks exactly like a working deploy.
+if (!process.env.SITE_NAME) {
+  console.warn(
+    '[site] SITE_NAME unset; serving the placeholder identity. See .env.example.',
+  );
+}
+
 export const siteConfig = {
   name,
   title: process.env.SITE_TITLE?.trim() || name,
   description:
     process.env.SITE_DESCRIPTION?.trim() ||
     'Personal portfolio and blog: projects, writing, and photography.',
-  // Trim first: a whitespace-only value would throw in `new URL('')`.
-  url: (process.env.SITE_URL?.trim() || 'http://localhost:3000').replace(
-    /\/$/,
-    '',
-  ),
+  url: siteUrl(),
   author: process.env.SITE_AUTHOR?.trim() || name,
   // Contact details, surfaced on the contact page and footer.
   location: process.env.SITE_LOCATION?.trim() || 'Your City, ST',
   // Wordmark in the navbar and footer, and the glyph on the generated icons.
-  monogram: process.env.SITE_MONOGRAM?.trim() || 'YN',
+  monogram: monogram(),
   // BCP 47 tag for <html lang>; callers convert to the OG underscore form.
   locale: process.env.SITE_LOCALE?.trim() || 'en-US',
   // Site-relative only, and inside images.localPatterns (next.config.ts, baked
