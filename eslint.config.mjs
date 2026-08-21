@@ -3,6 +3,7 @@ import { defineConfig } from "eslint/config";
 import next from "eslint-config-next";
 import tseslint from "typescript-eslint";
 import prettier from "eslint-config-prettier/flat";
+import reactPkg from "react/package.json" with { type: "json" };
 
 export default defineConfig(
   // Exclude build artifacts, node_modules, generated files, and JS config files.
@@ -40,6 +41,10 @@ export default defineConfig(
       },
     },
   },
+
+  // eslint-plugin-react 7.37.5 detects the React version via APIs ESLint 10
+  // removed; reading it from the installed package skips that codepath.
+  { settings: { react: { version: reactPkg.version } } },
 
   // Custom rule overrides and project-specific tuning
   {

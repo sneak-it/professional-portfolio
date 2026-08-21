@@ -126,7 +126,7 @@ function jpegSize(b: Buffer): Size {
 export function readSize(b: Buffer): Size {
   need(b, 12);
 
-  let size: Size | null = null;
+  let size: Size | null;
   if (b.readUInt32BE(0) === 0x89504e47) {
     need(b, 24);
     size = { width: b.readUInt32BE(16), height: b.readUInt32BE(20) };
