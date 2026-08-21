@@ -89,6 +89,26 @@ export function readMdxFile(
   }
 }
 
+/** `draft: true` in frontmatter keeps a file out of every listing. */
+export function isDraft(data: Record<string, unknown>): boolean {
+  return data.draft === true;
+}
+
+/**
+ * Every readable, non-draft `.mdx` file in a dir. Listings share this; single
+ * item lookups call `readMdxFile` directly, which is what leaves a draft
+ * reachable at its own URL for preview.
+ */
+export function listMdxFiles(
+  dir: string,
+  options: ReadMdxOptions = {},
+): MdxFile[] {
+  return listMdxSlugs(dir)
+    .map((slug) => readMdxFile(dir, slug, options))
+    .filter((file): file is MdxFile => file !== null)
+    .filter((file) => !isDraft(file.data));
+}
+
 /** A frontmatter array, else []: unchecked input must not throw at render. */
 export function list<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];

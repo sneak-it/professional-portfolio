@@ -137,6 +137,12 @@ docker run -p 3000:3000 \
 
 All content is MDX. Site-wide metadata (name, description, social links) lives in `lib/site.ts`.
 
+### Drafts
+
+Add `draft: true` to the frontmatter of any `.mdx` file, blog post or portfolio item. It drops out of
+the listings, the section counts, and the sitemap, but stays reachable at its own URL so you can
+preview it, served with `noindex, nofollow` so crawlers leave it alone.
+
 ### Adding a Blog Post
 
 1. Create a new `.mdx` file in `content/blog/`. The filename becomes the URL slug.

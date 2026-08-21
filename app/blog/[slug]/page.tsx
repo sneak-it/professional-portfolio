@@ -31,6 +31,10 @@ export async function generateMetadata({
     title,
     description: excerpt,
     alternates: { canonical: url },
+    // Drafts stay reachable for preview, so keep crawlers off them.
+    ...(post.meta.draft === true && {
+      robots: { index: false, follow: false },
+    }),
     openGraph: {
       type: 'article',
       title,

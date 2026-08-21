@@ -1,5 +1,5 @@
 import path from 'path';
-import { listMdxSlugs, readMdxFile } from './content';
+import { listMdxFiles, readMdxFile } from './content';
 import { byDateDesc } from './sort';
 
 const postsDirectory = path.join(process.cwd(), 'content/blog');
@@ -41,9 +41,7 @@ export function getPostBySlug(slug: string): BlogPost | null {
 // List views (/blog, sitemap) only need metadata — carrying `content` would
 // ship every full post body into the client payload for nothing.
 export function getAllPostMeta(): BlogPostSummary[] {
-  return listMdxSlugs(postsDirectory)
-    .map((slug) => getPostBySlug(slug))
-    .filter((post): post is BlogPost => post !== null)
-    .map(({ slug, meta }) => ({ slug, meta }))
+  return listMdxFiles(postsDirectory, { required: ['title', 'date'] })
+    .map((file) => ({ slug: file.slug, meta: file.data as BlogPostMeta }))
     .sort((a, b) => byDateDesc(a.meta, b.meta));
 }

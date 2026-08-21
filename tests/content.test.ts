@@ -1,6 +1,17 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import test from 'node:test';
-import { list, listDir, strings, text } from '../lib/content.ts';
+import {
+  isDraft,
+  list,
+  listDir,
+  listMdxFiles,
+  readMdxFile,
+  strings,
+  text,
+} from '../lib/content.ts';
 
 void test('list passes arrays through and rejects everything else', () => {
   assert.deepEqual(list([1, 2]), [1, 2]);
@@ -40,4 +51,32 @@ void test('listDir is quiet for a missing dir and loud for an unreadable one', (
   } finally {
     console.error = original;
   }
+});
+
+void test('listMdxFiles drops drafts while readMdxFile still returns them', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mdx-'));
+  try {
+    fs.writeFileSync(path.join(dir, 'live.mdx'), '---\ntitle: Live\n---\nbody');
+    fs.writeFileSync(
+      path.join(dir, 'wip.mdx'),
+      '---\ntitle: WIP\ndraft: true\n---\nbody',
+    );
+
+    assert.deepEqual(
+      listMdxFiles(dir).map((f) => f.slug),
+      ['live.mdx'.replace('.mdx', '')],
+      'the draft is not listed',
+    );
+    // Still reachable by slug: that is what makes preview-by-URL work.
+    assert.equal(readMdxFile(dir, 'wip')?.data.draft, true);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+void test('isDraft only accepts the literal true', () => {
+  assert.equal(isDraft({ draft: true }), true);
+  assert.equal(isDraft({ draft: 'true' }), false);
+  assert.equal(isDraft({ draft: 1 }), false);
+  assert.equal(isDraft({}), false);
 });

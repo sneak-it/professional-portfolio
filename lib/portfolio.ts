@@ -1,6 +1,12 @@
 import path from 'path';
 import { imageDimensions } from './image';
-import { listDir, listMdxSlugs, readMdxFile, type MdxFile } from './content';
+import {
+  isDraft,
+  listDir,
+  listMdxFiles,
+  readMdxFile,
+  type MdxFile,
+} from './content';
 import { byDateDesc } from './sort';
 
 /**
@@ -58,6 +64,8 @@ export interface ProjectItem {
   description: string;
   coverImage: string;
   date: string;
+  /** Only ever set on a direct lookup; listings filter drafts out. */
+  draft?: true;
   content?: string;
   tech?: string[];
   link?: string;
@@ -79,6 +87,7 @@ export interface GalleryItem {
   description: string;
   coverImage: string;
   date: string;
+  draft?: true;
   images: PortfolioImage[];
 }
 
@@ -130,6 +139,7 @@ function projectSummary(section: SectionSlug, file: MdxFile): ProjectSummary {
     description: (data.description as string) || '',
     coverImage: (data.coverImage as string) || '',
     date: (data.date as string) || '',
+    ...(isDraft(data) && { draft: true as const }),
     tech: data.tech as string[] | undefined,
     link: (data.link as string) || undefined,
     github: (data.github as string) || undefined,
@@ -149,10 +159,7 @@ export function getProjectItem(
 
 /** Listing: the MDX body is never built, so it cannot reach the payload. */
 export function getProjectItems(section: SectionSlug): ProjectSummary[] {
-  const dir = sectionDir(section);
-  return listMdxSlugs(dir)
-    .map((slug) => readMdxFile(dir, slug))
-    .filter((f): f is MdxFile => f !== null)
+  return listMdxFiles(sectionDir(section))
     .map((file) => projectSummary(section, file))
     .sort(byDateDesc);
 }
@@ -246,6 +253,7 @@ export function getPhotographyGallery(slug: string): GalleryItem | null {
     description: (data.description as string) || '',
     coverImage,
     date: (data.date as string) || '',
+    ...(isDraft(data) && { draft: true as const }),
     images,
   };
 }
@@ -257,13 +265,9 @@ export function getPhotographyGallery(slug: string): GalleryItem | null {
  * photo. Also feeds the hub via `getSectionSummaries`.
  */
 export function getPhotographyGalleries(): GallerySummary[] {
-  const dir = sectionDir('photography');
-  return listMdxSlugs(dir)
-    .map((slug) => {
-      const mdx = readMdxFile(dir, slug);
-      if (mdx === null) return null;
+  return listMdxFiles(sectionDir('photography'))
+    .map((mdx) => {
       const { data } = mdx;
-      const files = listGalleryImageFiles(mdx.slug);
       return {
         section: 'photography' as const,
         slug: mdx.slug,
@@ -271,10 +275,9 @@ export function getPhotographyGalleries(): GallerySummary[] {
         description: (data.description as string) || '',
         coverImage: galleryCoverSrc(mdx.slug, data.coverImage),
         date: (data.date as string) || '',
-        imageCount: files.length,
+        imageCount: listGalleryImageFiles(mdx.slug).length,
       };
     })
-    .filter((g): g is GallerySummary => g !== null)
     .sort(byDateDesc);
 }
 
