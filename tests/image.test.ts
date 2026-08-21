@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { isLocalSrc, readSize } from '../lib/image.ts';
+import { isLocalSrc, publicFilePath, readSize } from '../lib/image.ts';
 
 function png(w: number, h: number) {
   const b = Buffer.alloc(24);
@@ -95,4 +95,21 @@ void test('isLocalSrc accepts only same-origin paths', () => {
   ]) {
     assert.equal(isLocalSrc(src), false, String(src));
   }
+});
+
+void test('publicFilePath keeps env-supplied URLs inside public/', () => {
+  const root = '/srv/app/public';
+  assert.equal(
+    publicFilePath('/images/a.png', root),
+    '/srv/app/public/images/a.png',
+  );
+  assert.equal(publicFilePath('/', root), root);
+
+  // Escapes, non-local sources, and non-strings all resolve to nothing.
+  assert.equal(publicFilePath('/../../etc/passwd', root), null);
+  assert.equal(publicFilePath('/images/../../etc/passwd', root), null);
+  assert.equal(publicFilePath('//evil.example/x.png', root), null);
+  assert.equal(publicFilePath('https://evil.example/x.png', root), null);
+  assert.equal(publicFilePath('images/a.png', root), null);
+  assert.equal(publicFilePath(undefined, root), null);
 });

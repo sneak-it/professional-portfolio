@@ -1,5 +1,7 @@
 import 'server-only';
+import fs from 'fs';
 import { ACCENT_BAR, ACCENT_DIAGONAL } from './brand';
+import { publicFilePath } from './image';
 import { brandVersion, monogram, siteUrl } from './site-env';
 
 /**
@@ -50,6 +52,28 @@ export const siteConfig = {
       'https://linkedin.com/in/your-profile',
   },
 } as const;
+
+const AVATAR_FALLBACK = '/images/avatar-placeholder.png';
+const missingAvatars = new Set<string>();
+
+/**
+ * The avatar to render, or null when no file backs it — callers show their own
+ * fallback instead of a broken frame. Resolved per call, not at import: public/
+ * is bind-mounted, so the file can appear or vanish without a restart. Without
+ * this a bad SITE_AVATAR_URL 400s at /_next/image while the page still returns
+ * 200, so the portrait goes blank with nothing in the logs.
+ */
+export function avatarSrc(): string | null {
+  for (const src of new Set([siteConfig.avatarUrl, AVATAR_FALLBACK])) {
+    const file = publicFilePath(src);
+    if (file !== null && fs.existsSync(file)) return src;
+    if (!missingAvatars.has(src)) {
+      missingAvatars.add(src);
+      console.warn(`[site] no avatar file for "${src}"`);
+    }
+  }
+  return null;
+}
 
 /**
  * Version token for the app/brand/* URLs, emitted by app/layout.tsx. Covers the

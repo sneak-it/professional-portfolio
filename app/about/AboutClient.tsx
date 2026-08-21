@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import CoverImage from '@/components/CoverImage';
 import { m } from 'motion/react';
 import {
   Cloud,
@@ -53,7 +53,7 @@ export default function AboutClient({
   children,
 }: {
   linkedin?: string;
-  avatarUrl: string;
+  avatarUrl: string | null;
   skills: SkillGroup[];
   interests: Interest[];
   skillsHeading: string;
@@ -72,14 +72,11 @@ export default function AboutClient({
           transition={{ duration: 0.6 }}
         >
           <div className="relative aspect-square max-w-md mx-auto lg:mx-0 rounded-3xl overflow-hidden shadow-2xl">
-            <Image
+            <CoverImage
               src={avatarUrl}
               alt="Portrait"
-              fill
               priority
               sizes="(max-width: 1024px) 100vw, 448px"
-              className="object-cover"
-              referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           </div>

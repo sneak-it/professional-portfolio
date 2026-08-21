@@ -3,7 +3,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import AboutClient from './AboutClient';
 import { mdxRenderProps } from '@/components/MDXComponents';
 import { getAbout } from '@/lib/about';
-import { siteConfig } from '@/lib/site';
+import { avatarSrc, siteConfig } from '@/lib/site';
 
 // Per request so canonical/OG URLs reflect the runtime SITE_URL. See app/page.tsx.
 export const dynamic = 'force-dynamic';
@@ -38,7 +38,7 @@ export default function AboutPage() {
   return (
     <AboutClient
       linkedin={siteConfig.social.linkedin}
-      avatarUrl={siteConfig.avatarUrl}
+      avatarUrl={avatarSrc()}
       skills={skills}
       interests={interests}
       skillsHeading={skillsHeading}

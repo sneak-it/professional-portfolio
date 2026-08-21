@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { IMAGE_DIMENSION_CACHE_MAX } from './config.ts';
 
 /**
@@ -27,6 +28,24 @@ export function isLocalSrc(src: unknown): src is string {
   return (
     typeof src === 'string' && src.startsWith('/') && !src.startsWith('//')
   );
+}
+
+const PUBLIC_DIR = path.join(process.cwd(), 'public');
+
+/**
+ * Filesystem path backing a site-relative `public/` URL, or null if the URL
+ * isn't local or resolves outside `public/`. SITE_AVATAR_URL reaches this from
+ * the environment, so the containment check is a real boundary.
+ */
+export function publicFilePath(
+  src: unknown,
+  publicDir: string = PUBLIC_DIR,
+): string | null {
+  if (!isLocalSrc(src)) return null;
+  const full = path.resolve(publicDir, `.${src}`);
+  return full === publicDir || full.startsWith(publicDir + path.sep)
+    ? full
+    : null;
 }
 
 // ponytail: 64 KiB header window; raise if a JPEG's SOF ever lands past it.
