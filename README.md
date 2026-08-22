@@ -73,7 +73,7 @@ page still returns 200, so the portrait goes blank without an error; the default
 
 Every content route renders per request, so content edits and `SITE_*` changes take effect
 immediately, and every document request reaches the Node process. `next.config.ts` already sends
-`Cache-Control: s-maxage=60, stale-while-revalidate=120` on the pages worth caching, which lets a
+`Cache-Control: s-maxage=300, stale-while-revalidate=600` on the pages worth caching, which lets a
 shared cache absorb repeat traffic without giving up per-request rendering. Cloudflare ignores that
 header for HTML until a Cache Rule marks it eligible; see [CLOUDFLARE.md](CLOUDFLARE.md) for the
 dashboard side, which is not optional if you run behind Cloudflare.

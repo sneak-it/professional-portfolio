@@ -15,7 +15,7 @@ minutes. Everything on the origin side is already done.
 `next.config.ts` sets this header on the pages worth caching:
 
 ```
-Cache-Control: s-maxage=60, stale-while-revalidate=120
+Cache-Control: s-maxage=300, stale-while-revalidate=600
 ```
 
 covering `/`, `/about`, `/contact`, `/blog`, `/blog/<slug>`, `/portfolio`,
@@ -83,7 +83,7 @@ sufficient; the rule below is the other half.
 5. **Set cache eligibility** to **Eligible for cache**.
 
 6. **Set Edge TTL** to **Use cache-control header if present**. This is the
-   important one: it makes Cloudflare honor the 60 seconds the origin sends
+   important one: it makes Cloudflare honor the 5 minutes the origin sends
    instead of applying a default of its own. Do not pick "Ignore cache-control
    header and use this TTL" unless you intend to override the origin.
 
@@ -104,7 +104,7 @@ The first should report `MISS` and the second `HIT`. Confirm the origin header
 is present too:
 
 ```
-cache-control: s-maxage=60, stale-while-revalidate=120
+cache-control: s-maxage=300, stale-while-revalidate=600
 ```
 
 Check that the exclusion works as well. This one must never be cached:
@@ -127,16 +127,17 @@ curl -sI https://yourdomain.tld/api/health | grep -i cf-cache-status
 ## What this changes
 
 With the rule live, a burst on one URL collapses to roughly one origin request
-per minute per URL, so the container's CPU stops being the limit on how much
+per 5 minutes per URL, so the container's CPU stops being the limit on how much
 traffic the site can absorb. Measured without a cache, the origin saturates
 around 370 requests per second on a developer machine and roughly 145 under the
 `cpus: '0.5'` limit in `docker-compose.yml`, degrading by queueing rather than
 by erroring.
 
 The trade-off is staleness at the edge. After a content edit, a cached page can
-be up to 60 seconds behind, plus up to 120 seconds more if
+be up to 5 minutes behind, plus up to 10 minutes more if
 `stale-while-revalidate` serves a stale copy while refreshing. Pages nobody has
-requested are unaffected, and the origin itself is always current.
+requested are unaffected, and the origin itself is always current. To publish
+sooner than that, purge the URL; see below.
 
 ## Adjusting the freshness window
 
