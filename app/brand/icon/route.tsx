@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { cachedImage } from '../cached-image';
 import { MonogramTile } from '@/components/icons/MonogramTile';
 import { siteConfig } from '@/lib/site';
 
@@ -10,15 +11,16 @@ export const dynamic = 'force-dynamic';
 
 const size = { width: 32, height: 32 };
 
-export function GET() {
-  return new ImageResponse(
-    // Flat black: at 32px the favicon needs contrast, not a gradient.
-    <MonogramTile
-      monogram={siteConfig.monogram}
-      size={size.width}
-      background="#000000"
-      radius={7}
-    />,
-    size,
-  );
-}
+export const GET = cachedImage(
+  () =>
+    new ImageResponse(
+      // Flat black: at 32px the favicon needs contrast, not a gradient.
+      <MonogramTile
+        monogram={siteConfig.monogram}
+        size={size.width}
+        background="#000000"
+        radius={7}
+      />,
+      size,
+    ),
+);
