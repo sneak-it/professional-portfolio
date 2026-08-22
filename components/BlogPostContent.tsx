@@ -4,7 +4,8 @@ import CoverImage from '@/components/CoverImage';
 import Surface from '@/components/Surface';
 import BackButton from '@/components/BackButton';
 import ShareButton from '@/components/ShareButton';
-import PostMeta from '@/components/PostMeta';
+import { PostDate, PostReadTime, PostUpdated } from '@/components/PostMeta';
+import TagList from '@/components/TagList';
 import PostNav from '@/components/PostNav';
 import { headings } from '@/lib/markdown';
 import { PROSE, PROSE_CODE } from '@/lib/prose';
@@ -33,18 +34,21 @@ export default function BlogPostContent({
 
       <Surface as="div" padding="lg" className="mt-6">
         <header className="mb-10">
-          <PostMeta
-            tags={post.meta.tags}
-            linkTags
-            date={post.meta.date}
-            readTime={post.meta.readTime}
-            updated={post.meta.updated}
-            className="mb-6"
-          />
+          <div className="mb-6 flex items-start justify-between gap-4">
+            <TagList tags={post.meta.tags} link />
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              <PostDate date={post.meta.date} />
+              {post.meta.updated && <PostUpdated date={post.meta.updated} />}
+            </div>
+          </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-8">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-4">
             {post.meta.title}
           </h1>
+
+          <div className="mb-10">
+            <PostReadTime readTime={post.meta.readTime} />
+          </div>
 
           <div className="relative aspect-video rounded-3xl overflow-hidden mb-10">
             <CoverImage
