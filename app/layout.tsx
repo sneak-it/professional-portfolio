@@ -1,14 +1,11 @@
-// ViewTransition is canary-only, which is what the App Router runs. A reference
-// rather than an import: react/canary has no runtime counterpart to resolve.
-/// <reference types="react/canary" />
 import type { Metadata, Viewport } from 'next';
-import { ViewTransition } from 'react';
 import { Hanken_Grotesk } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BackgroundCanvas from '@/components/BackgroundCanvas';
 import MotionProvider from '@/components/MotionProvider';
+import PageTransition from '@/components/PageTransition';
 import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
 import { BRAND_VERSION, siteConfig } from '@/lib/site';
@@ -117,11 +114,7 @@ export default async function RootLayout({
             <BackgroundCanvas />
             <Navbar monogram={siteConfig.monogram} />
             <main id="main-content" className="flex-grow pt-20">
-              {/* Route crossfade: the layout persists while `children` swaps,
-                  which React animates. Styled in globals.css. */}
-              <ViewTransition default="page-crossfade">
-                {children}
-              </ViewTransition>
+              <PageTransition>{children}</PageTransition>
             </main>
             <Footer />
           </MotionProvider>
