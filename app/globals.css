@@ -133,6 +133,30 @@
   }
 }
 
+/* Same-route navigation (tag filter, pagination) cross-fades. */
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+::view-transition-old(.page-fade),
+::view-transition-new(.page-fade) {
+  animation-duration: 0.25s;
+  animation-timing-function: ease;
+}
+::view-transition-old(.page-fade) {
+  animation-name: page-fade-out;
+}
+::view-transition-new(.page-fade) {
+  animation-name: page-fade-in;
+}
+
 /* Sibling navigation (prev/next post) slides rather than zooming. */
 @keyframes page-exit-left {
   to {
