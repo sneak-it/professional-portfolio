@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { slugify } from '@/lib/slug';
 
-export const tagHref = (slug: string) => `/blog?tag=${slug}`;
+const tagHref = (slug: string) => `/blog?tag=${slug}`;
 
 // accent-2 keeps tags on their own axis from links and pagination. Amber fails
 // contrast as text, so a chip is a tint plus a per-theme text colour.
@@ -16,26 +16,23 @@ export const chipClass = (active: boolean) =>
   `${BASE} ${active ? ACTIVE : IDLE}`;
 
 /**
- * The one tag chip: post meta row, /blog filter row, all-tags index. `link`
- * makes it a filter link, which on the /blog cards needs `relative z-10` to
- * sit above the card overlay (components/BlogList.tsx).
+ * The one tag chip: the article header and the /blog filter panel. `link` makes
+ * it a filter link to /blog?tag=.
  */
 export default function TagList({
   tags,
-  max,
   link = false,
   activeSlug,
   counts,
   className = '',
 }: {
   tags: Array<string | { name: string; slug: string; count: number }>;
-  max?: number;
   link?: boolean;
   activeSlug?: string;
   counts?: boolean;
   className?: string;
 }) {
-  const items = (max === undefined ? tags : tags.slice(0, max)).map((tag) =>
+  const items = tags.map((tag) =>
     typeof tag === 'string' ? { name: tag, slug: slugify(tag), count: 0 } : tag,
   );
   if (items.length === 0) return null;
@@ -51,7 +48,7 @@ export default function TagList({
               <Link
                 href={tagHref(slug)}
                 aria-current={active ? 'page' : undefined}
-                className={`relative z-10 ${chipClass(active)}`}
+                className={chipClass(active)}
               >
                 {label}
               </Link>

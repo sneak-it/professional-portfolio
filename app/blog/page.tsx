@@ -14,7 +14,7 @@ import BlogList from '@/components/BlogList';
 // config both apply immediately. See lib/mdx.ts and lib/site.ts.
 export const dynamic = 'force-dynamic';
 
-// Single source for both the metadata description and the visible PageHeader.
+// Metadata only; the page itself shows just the title.
 const DESCRIPTION =
   'Thoughts, tutorials, and insights on web development, design, and technology.';
 
@@ -110,7 +110,6 @@ export default async function Blog({
   return (
     <BlogList
       posts={posts.slice(start, start + POSTS_PER_PAGE)}
-      description={DESCRIPTION}
       currentPage={currentPage}
       totalPages={totalPages}
       tags={tags}

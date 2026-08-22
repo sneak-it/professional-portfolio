@@ -1,9 +1,16 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import CoverImage from '@/components/CoverImage';
 import { m } from 'motion/react';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  ArrowRight,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Tag as TagIcon,
+} from 'lucide-react';
 import Container from '@/components/Container';
 import PageHeader from '@/components/PageHeader';
 import PostMeta from '@/components/PostMeta';
@@ -11,24 +18,41 @@ import TagList, { chipClass } from '@/components/TagList';
 import { fadeInUpOnView } from '@/lib/motion';
 import type { BlogPostSummary, Tag } from '@/lib/mdx';
 
-// Chips shown inline; the rest of the vocabulary lives on the all-tags page.
-const CHIP_LIMIT = 12;
-
 export default function BlogList({
   posts,
-  description,
   currentPage,
   totalPages,
   tags,
   activeTag,
 }: {
   posts: BlogPostSummary[];
-  description: string;
   currentPage: number;
   totalPages: number;
   tags: Tag[];
   activeTag?: string;
 }) {
+  const active = tags.find((t) => t.slug === activeTag);
+  const filter = useRef<HTMLDetailsElement>(null);
+
+  // <details> has no light dismiss, so close it on an outside click or Escape.
+  useEffect(() => {
+    const dismiss = (event: Event) => {
+      const el = filter.current;
+      if (!el?.open) return;
+      const outside =
+        event.type === 'keydown'
+          ? (event as KeyboardEvent).key === 'Escape'
+          : !el.contains(event.target as Node);
+      if (outside) el.open = false;
+    };
+    document.addEventListener('pointerdown', dismiss);
+    document.addEventListener('keydown', dismiss);
+    return () => {
+      document.removeEventListener('pointerdown', dismiss);
+      document.removeEventListener('keydown', dismiss);
+    };
+  }, []);
+
   // Carries the filter, or paging out of a filtered view silently drops it.
   const pageHref = (page: number) => {
     const params = new URLSearchParams();
@@ -40,29 +64,40 @@ export default function BlogList({
 
   return (
     <Container size="md">
-      <PageHeader title="Blog" description={description} />
-
-      {tags.length > 0 && (
-        <nav
-          className="mb-12 flex flex-wrap items-center gap-2"
-          aria-label="Filter posts by tag"
-        >
-          <Link
-            href="/blog"
-            aria-current={activeTag ? undefined : 'page'}
-            className={chipClass(!activeTag)}
-          >
-            All
-          </Link>
-          <TagList
-            tags={tags}
-            max={CHIP_LIMIT}
-            link
-            counts
-            activeSlug={activeTag}
-          />
-        </nav>
-      )}
+      <PageHeader
+        title="Blog"
+        action={
+          tags.length > 0 && (
+            <nav aria-label="Filter posts by tag">
+              {/* Native disclosure, panel absolutely placed: no layout shift. */}
+              <details ref={filter} className="group relative">
+                <summary
+                  className={`inline-flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden ${chipClass(
+                    Boolean(activeTag),
+                  )}`}
+                >
+                  <TagIcon size={12} />
+                  {active ? active.name : 'Tags'}
+                  <ChevronDown
+                    size={12}
+                    className="transition-transform group-open:rotate-180"
+                  />
+                </summary>
+                <div className="card-surface absolute right-0 z-30 mt-2 flex max-h-80 w-64 flex-wrap items-start gap-2 overflow-y-auto p-4 shadow-2xl">
+                  <Link
+                    href="/blog"
+                    aria-current={activeTag ? undefined : 'page'}
+                    className={chipClass(!activeTag)}
+                  >
+                    All
+                  </Link>
+                  <TagList tags={tags} link counts activeSlug={activeTag} />
+                </div>
+              </details>
+            </nav>
+          )
+        }
+      />
 
       <div className="space-y-4">
         {posts.map((post, index) => (
@@ -84,9 +119,6 @@ export default function BlogList({
 
             <div className="flex flex-col flex-grow justify-center h-full py-2">
               <PostMeta
-                tags={post.meta.tags}
-                maxTags={3}
-                linkTags
                 date={post.meta.date}
                 readTime={post.meta.readTime}
                 className="mb-4"

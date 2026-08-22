@@ -195,7 +195,8 @@ for `SITEMAP_CACHE_TTL_MS`.
 
 Tags are the only taxonomy, and they do double duty: `/blog?tag=<slug>` filters
 the listing to one tag at a time, and the same list becomes the post's
-`keywords`. Run `npm run check:content` before committing — it catches a tag
+`keywords`. The `/blog` filter chip expands to the full tag list with
+post counts. Run `npm run check:content` before committing — it catches a tag
 spelled two ways (`Next.js` vs `NextJS`), which is what fragments a vocabulary
 over a few dozen posts.
 

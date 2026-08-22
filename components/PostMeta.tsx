@@ -1,5 +1,4 @@
 import { Calendar, Clock, PencilLine } from 'lucide-react';
-import TagList from '@/components/TagList';
 import { formatDate } from '@/lib/date';
 
 const ITEM =
@@ -31,35 +30,23 @@ export function PostReadTime({ readTime }: { readTime: string }) {
   );
 }
 
-/**
- * The meta block on a blog list card: a date · read-time · updated row over the
- * tag chips. `maxTags` caps the chips, since the card wraps badly past three.
- */
+/** The date · read-time · updated row, used on the blog list cards. */
 export default function PostMeta({
-  tags = [],
-  maxTags,
-  linkTags = false,
   date,
   readTime,
   updated,
   className = '',
 }: {
-  tags?: string[];
-  maxTags?: number;
-  linkTags?: boolean;
   date: string;
   readTime?: string;
   updated?: string;
   className?: string;
 }) {
   return (
-    <div className={`flex flex-col gap-3 ${className}`}>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <PostDate date={date} />
-        {readTime && <PostReadTime readTime={readTime} />}
-        {updated && <PostUpdated date={updated} />}
-      </div>
-      <TagList tags={tags} max={maxTags} link={linkTags} />
+    <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 ${className}`}>
+      <PostDate date={date} />
+      {readTime && <PostReadTime readTime={readTime} />}
+      {updated && <PostUpdated date={updated} />}
     </div>
   );
 }
