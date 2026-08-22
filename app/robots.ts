@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { siteConfig } from '@/lib/site';
+import { absoluteUrl } from '@/lib/site';
 
 // Rendered at request time so the emitted origin reflects the runtime `SITE_URL`
 // (see lib/site.ts) rather than whatever was set when the image was built —
@@ -13,7 +13,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/'],
     },
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    sitemap: absoluteUrl('/sitemap.xml'),
     // No `host`: Next emits it as a `Host:` line, which is a Yandex extension
     // Yandex itself dropped, and Google lists it as unsupported. The canonical
     // tags and the sitemap URL above are what actually declare the origin.

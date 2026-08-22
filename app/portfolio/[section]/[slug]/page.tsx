@@ -10,7 +10,7 @@ import {
   getProjectItem,
   getPhotographyGallery,
 } from '@/lib/portfolio';
-import { siteConfig } from '@/lib/site';
+import { absoluteUrl } from '@/lib/site';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
 import { PROSE } from '@/lib/prose';
 import ProjectDetailClient from './ProjectDetailClient';
@@ -80,7 +80,7 @@ export default async function PortfolioItemPage({
     const gallery = getPhotographyGallery(slug);
     if (!gallery) notFound();
 
-    const url = `${siteConfig.url}/portfolio/${config.slug}/${gallery.slug}`;
+    const url = absoluteUrl(`/portfolio/${config.slug}/${gallery.slug}`);
     const galleryJsonLd = {
       '@context': 'https://schema.org',
       '@type': 'ImageGallery',
@@ -90,7 +90,7 @@ export default async function PortfolioItemPage({
       datePublished: gallery.date || undefined,
       // Gallery srcs are always site-relative (scanned out of public/), so
       // JSON-LD just needs the origin prepended.
-      image: gallery.images.map((img) => `${siteConfig.url}${img.src}`),
+      image: gallery.images.map((img) => absoluteUrl(img.src)),
     };
 
     return (
@@ -111,7 +111,7 @@ export default async function PortfolioItemPage({
   const project = getProjectItem(config.slug, slug);
   if (!project) notFound();
 
-  const url = `${siteConfig.url}/portfolio/${config.slug}/${project.slug}`;
+  const url = absoluteUrl(`/portfolio/${config.slug}/${project.slug}`);
   const projectJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CreativeWork',

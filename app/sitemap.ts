@@ -1,12 +1,13 @@
 import type { MetadataRoute } from 'next';
 import { SITEMAP_CACHE_TTL_MS } from '@/lib/config';
+import { toDate } from '@/lib/date';
 import { getAllPostMeta } from '@/lib/mdx';
 import {
   PORTFOLIO_SECTIONS,
   getProjectItems,
   getPhotographyGalleries,
 } from '@/lib/portfolio';
-import { siteConfig } from '@/lib/site';
+import { absoluteUrl } from '@/lib/site';
 
 // Rendered at request time so the emitted origin always reflects the runtime
 // `SITE_URL` (see lib/site.ts) rather than a build-time value — this is what
@@ -21,13 +22,6 @@ type Entry = MetadataRoute.Sitemap[number];
 interface Route {
   path: string;
   lastModified?: Date;
-}
-
-/** Parses an ISO frontmatter date, or `undefined` if missing/unparseable. */
-function toDate(value: string | undefined): Date | undefined {
-  if (!value) return undefined;
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
 }
 
 /** Most-recent of the given dates, ignoring `undefined`; `undefined` if none. */
@@ -142,6 +136,5 @@ function getRoutes(): Route[] {
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = siteConfig.url;
-  return getRoutes().map((r) => entry(`${base}${r.path}`, r.lastModified));
+  return getRoutes().map((r) => entry(absoluteUrl(r.path), r.lastModified));
 }

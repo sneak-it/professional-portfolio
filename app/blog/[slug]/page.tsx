@@ -3,7 +3,7 @@ import { getPostBySlug } from '@/lib/mdx';
 import BlogPostContent from '@/components/BlogPostContent';
 import { CachedMDX } from '@/components/MDXComponents';
 import JsonLd from '@/components/JsonLd';
-import { siteConfig } from '@/lib/site';
+import { absoluteUrl, siteConfig } from '@/lib/site';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
 import { notFound } from 'next/navigation';
 
@@ -63,7 +63,7 @@ export default async function BlogPost({
     notFound();
   }
 
-  const url = `${siteConfig.url}/blog/${post.slug}`;
+  const url = absoluteUrl(`/blog/${post.slug}`);
 
   const articleJsonLd = {
     '@context': 'https://schema.org',

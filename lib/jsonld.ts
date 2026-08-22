@@ -1,4 +1,4 @@
-import { siteConfig } from './site';
+import { absoluteUrl } from './site';
 
 /**
  * Builds a schema.org `BreadcrumbList` JSON-LD object from an ordered list of
@@ -16,7 +16,7 @@ export function breadcrumbJsonLd(
       '@type': 'ListItem',
       position: i + 1,
       name: crumb.name,
-      item: `${siteConfig.url}${crumb.path === '/' ? '' : crumb.path}`,
+      item: absoluteUrl(crumb.path === '/' ? '' : crumb.path),
     })),
   };
 }

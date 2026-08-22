@@ -53,6 +53,15 @@ export const siteConfig = {
   },
 } as const;
 
+/**
+ * Absolute URL for a site-relative path, resolved against the runtime origin.
+ * Concatenation only — callers that need '/' to collapse to the bare origin
+ * (breadcrumb items) handle that themselves, because the sitemap does not.
+ */
+export function absoluteUrl(path: string): string {
+  return `${siteConfig.url}${path}`;
+}
+
 const AVATAR_FALLBACK = '/images/avatar-placeholder.png';
 const missingAvatars = new Set<string>();
 
