@@ -15,8 +15,7 @@ const postsDirectory = path.join(process.cwd(), 'content/blog');
 export interface BlogPostMeta {
   title: string;
   date: string;
-  // Only title and date are structural; a post with no tags is still
-  // publishable, so this is an empty array rather than a required field.
+  // Only title and date are structural; a post with no tags is publishable.
   tags: string[];
   // Derived from the body when frontmatter omits them, so they are never blank.
   readTime: string;
@@ -63,18 +62,14 @@ export function getPostBySlug(slug: string): BlogPost | null {
   };
 }
 
-// List views (/blog, sitemap) only need metadata — carrying `content` would
-// ship every full post body into the client payload for nothing.
+// List views (/blog, sitemap) need metadata only, so `content` is dropped.
 export function getAllPostMeta(): BlogPostSummary[] {
   return listMdxFiles(postsDirectory, { required: ['title', 'date'] })
     .map((file) => ({ slug: file.slug, meta: postMeta(file) }))
     .sort((a, b) => byDateDesc(a.meta, b.meta));
 }
 
-/**
- * Below this a tag view is thin duplicate content: it is left out of the sitemap
- * and marked noindex. Not an env knob, it does not vary per deploy.
- */
+/** Below this a tag view is thin duplicate content: no sitemap, noindex. */
 export const TAG_INDEX_MIN_POSTS = 3;
 
 export interface Tag {
@@ -85,13 +80,12 @@ export interface Tag {
 
 /**
  * Distinct tags across published posts, most-used first. Display name is
- * first-seen, and posts arrive newest-first, so the newest spelling of a tag
- * wins; `check:content` reports the conflicting spellings.
+ * first-seen and posts arrive newest-first, so the newest spelling wins.
  */
 export function getTags(): Tag[] {
   const byName = new Map<string, Tag>();
   for (const post of getAllPostMeta()) {
-    // Per post, so `tags: ['AI', 'ai']` counts once rather than twice.
+    // Per post, so `tags: ['AI', 'ai']` counts once.
     for (const slug of new Set(post.meta.tags.map(slugify))) {
       if (slug === '') continue;
       const tag = byName.get(slug);

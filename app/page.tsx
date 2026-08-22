@@ -6,7 +6,7 @@ import { getHome } from '@/lib/home';
 import styles from './page.module.css';
 
 // Per request so metadataBase / OG URL / Person JSON-LD resolve against the
-// runtime SITE_URL instead of freezing the build-time origin into the prerender.
+// runtime SITE_URL.
 export const dynamic = 'force-dynamic';
 
 // Server component: the hero paints immediately, with CSS-only entrances

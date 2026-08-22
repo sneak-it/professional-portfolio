@@ -1,14 +1,12 @@
 /**
- * Comparator for sorting items newest-first by a `date` field. Shared by the
- * blog and portfolio data layers so both order content the same way.
+ * Newest-first comparator on a `date` field, shared by the blog and portfolio
+ * data layers.
  *
- *   items.sort(byDateDesc)            // items shaped like { date: string }
- *   posts.sort((a, b) => byDateDesc(a.meta, b.meta))  // date nested under .meta
+ *   items.sort(byDateDesc)
+ *   posts.sort((a, b) => byDateDesc(a.meta, b.meta))  // date under .meta
  *
- * Dates are parsed via `Date.parse()` so non-zero-padded values like
- * `2026-4-26` order correctly (a naive string compare puts them in the wrong
- * place). Missing or unparseable dates sort last, deterministically, and equal
- * dates return 0 to honor the comparator contract.
+ * Parsed with `Date.parse()`, so `2026-4-26` orders correctly. Missing and
+ * unparseable dates sort last; equal dates return 0.
  */
 export function byDateDesc<T extends { date?: string }>(a: T, b: T): number {
   const ta = parseTime(a.date);

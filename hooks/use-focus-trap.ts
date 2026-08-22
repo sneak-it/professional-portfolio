@@ -6,9 +6,8 @@ const FOCUSABLE =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 /**
- * Traps Tab focus within `ref` while `active`, moves focus into the container
- * on activation, and restores focus to the previously-focused element on
- * deactivation. Used by modal dialogs (e.g. the gallery lightbox).
+ * Traps Tab focus within `ref` while `active`, moving focus in on activation
+ * and restoring it on deactivation. Used by the gallery lightbox.
  */
 export function useFocusTrap<T extends HTMLElement>(active: boolean) {
   const ref = useRef<T>(null);

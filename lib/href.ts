@@ -1,8 +1,7 @@
 /**
- * Scheme allowlist for MDX links. Parsed rather than pattern-matched because the
- * URL parser strips the tabs, newlines, and case tricks that defeat a regex
- * (`java\nscript:` and `JavaScript:` both normalise to `javascript:`). The base
- * resolves relative hrefs and fragments to `https:`, so those stay allowed.
+ * Scheme allowlist for MDX links, parsed with the URL parser so tab, newline,
+ * and case variants normalise first (`java\nscript:` → `javascript:`). The
+ * base resolves relative hrefs and fragments to `https:`.
  */
 export function isSafeHref(href: unknown): href is string {
   if (typeof href !== 'string') return false;

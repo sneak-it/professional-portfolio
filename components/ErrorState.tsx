@@ -5,10 +5,9 @@ import { RotateCw, ArrowLeft } from 'lucide-react';
 import MessagePage from '@/components/MessagePage';
 
 /**
- * Segment-level error boundary copy: the "Oops" display headline, a "Try again"
- * button wired to the boundary's `retry`, and a contextual back link. Each
- * route's `error.tsx` keeps its own `console.error(error)` effect and just
- * supplies the copy + back target.
+ * Segment-level error boundary copy: headline, a "Try again" button wired to
+ * `retry`, and a back link. Each route's `error.tsx` supplies the copy and
+ * keeps its own `console.error(error)`.
  */
 export default function ErrorState({
   title,

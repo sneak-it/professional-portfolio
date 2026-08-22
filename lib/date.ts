@@ -1,11 +1,9 @@
 /**
  * Human-readable rendering for the ISO dates in MDX frontmatter.
  *
- * `timeZone: 'UTC'` is load-bearing: `new Date('2026-06-20')` is parsed as UTC
- * midnight, so formatting it in any zone west of UTC would print the 19th.
- *
- * Locale is fixed to match the hardcoded `lang="en"` and `locale: 'en_US'` in
- * app/layout.tsx; making all three configurable is one change, not this one.
+ * `timeZone: 'UTC'` is load-bearing: `new Date('2026-06-20')` parses as UTC
+ * midnight, and any zone west of UTC prints the 19th. Locale matches the
+ * `lang="en"` / `locale: 'en_US'` in app/layout.tsx.
  */
 const FORMATTER = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',

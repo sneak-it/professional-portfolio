@@ -21,9 +21,8 @@ export default function PageTransition({ children }: { children: ReactNode }) {
     });
   }
 
-  // Keep the div: React names host children by position, so a page whose
-  // fragment leads with a <script> would shift its content off index 0 and
-  // never pair with the previous page.
+  // Keep the div: React names host children by position, so the wrapper pins
+  // each page to a stable index across navigations.
   return (
     <ViewTransition default={nav.cls}>
       <div>{children}</div>

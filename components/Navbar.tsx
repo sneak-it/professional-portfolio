@@ -35,9 +35,8 @@ export default function Navbar({ monogram }: { monogram: string }) {
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
   const pathname = usePathname();
 
-  // Sliding-indicator geometry, measured from the live link elements. A single
-  // pill + underline translate between links (CSS transform) instead of a
-  // Framer layoutId animation, which would require the larger domMax bundle.
+  // Sliding-indicator geometry, measured from the live link elements. The pill
+  // and underline translate with a CSS transform.
   const navRef = useRef<HTMLDivElement>(null);
   const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
   const [pill, setPill] = useState<Indicator | null>(null);
@@ -56,7 +55,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
   }, []);
 
   // Keep last geometry when the target is gone (pointer left / no active link)
-  // so the indicator fades in place rather than sliding to origin.
+  // so the indicator fades in place.
   const applyMeasurements = useCallback(() => {
     const hovered = measure(hoveredPath);
     if (hovered) setPill(hovered);
@@ -71,8 +70,8 @@ export default function Navbar({ monogram }: { monogram: string }) {
     applyRef.current = applyMeasurements;
   });
 
-  // Layout effect: positions land before paint, so indicators never animate in
-  // from origin on first render. Re-runs on hover/route change to drive slides.
+  // Layout effect: positions land before paint. Re-runs on hover/route change
+  // to drive the slides.
   useIsomorphicLayoutEffect(() => {
     applyMeasurements();
   }, [applyMeasurements]);

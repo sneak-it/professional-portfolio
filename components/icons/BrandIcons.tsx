@@ -1,9 +1,8 @@
 import type { SVGProps } from 'react';
 
 /**
- * Brand glyphs. lucide-react 1.x ships no brand icons, so these are inline SVGs
- * (paths from simple-icons, CC0). Sized via the `size` prop, color via
- * `currentColor` so they inherit text color like lucide icons.
+ * Brand glyphs as inline SVGs (paths from simple-icons, CC0), since
+ * lucide-react 1.x ships none. `size` prop, `currentColor` fill.
  */
 type BrandIconProps = SVGProps<SVGSVGElement> & { size?: number };
 

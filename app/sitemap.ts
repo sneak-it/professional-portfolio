@@ -9,11 +9,8 @@ import {
 } from '@/lib/portfolio';
 import { absoluteUrl } from '@/lib/site';
 
-// Rendered at request time so the emitted origin always reflects the runtime
-// `SITE_URL` (see lib/site.ts) rather than a build-time value — this is what
-// lets one prebuilt image serve any domain. The expensive part (scanning every
-// content file for dates) is memoized below, so per-request work is just a
-// cache lookup plus prepending the origin.
+// Rendered per request so the origin reflects the runtime `SITE_URL` (see
+// lib/site.ts). The content scan is memoized below.
 export const dynamic = 'force-dynamic';
 
 type Entry = MetadataRoute.Sitemap[number];
@@ -38,11 +35,8 @@ function entry(url: string, lastModified?: Date): Entry {
 }
 
 /**
- * Scans all content and returns origin-independent routes. This is the costly
- * step — it reads and parses every blog/portfolio file — so its result is
- * cached (see `getRoutes`). Deliberately excludes the origin: it's applied per
- * request instead, so a runtime `SITE_URL` change can never be served stale
- * from this cache.
+ * Origin-independent routes from a full content scan, cached by `getRoutes`.
+ * The origin is applied per request, so a `SITE_URL` change is served fresh.
  */
 function buildRoutes(): Route[] {
   const postItems = getAllPostMeta().map((post) => ({
@@ -93,8 +87,7 @@ function buildRoutes(): Route[] {
   });
 
   const staticRoutes: Route[] = [
-    // No meaningful runtime change-date, so lastModified is omitted; these change
-    // on code deploys, not on content edits.
+    // These change on code deploys, so lastModified is omitted.
     { path: '/' },
     { path: '/about' },
     { path: '/contact' },
@@ -108,7 +101,7 @@ function buildRoutes(): Route[] {
     { path: '/blog', lastModified: latest(postItems.map((i) => i.date)) },
   ];
 
-  // Thin tag views are omitted rather than listed and then noindex-ed.
+  // Thin tag views are omitted.
   const tagRoutes: Route[] = getTags()
     .filter((tag) => tag.count >= TAG_INDEX_MIN_POSTS)
     .map((tag) => ({ path: `/blog?tag=${tag.slug}` }));
@@ -123,11 +116,8 @@ function buildRoutes(): Route[] {
   ];
 }
 
-// SITEMAP_CACHE_TTL_MS is purely a cost knob: it bounds how often the content
-// tree is walked, and how quickly a newly uploaded file appears in the sitemap.
-// It does NOT affect the pages themselves, which render per request. Crawlers
-// fetch sitemap.xml infrequently, so even a long TTL collapses any burst to a
-// single scan.
+// SITEMAP_CACHE_TTL_MS trades sitemap freshness against content-tree walks.
+// Pages render per request, so it only affects sitemap.xml.
 
 let routeCache: { at: number; routes: Route[] } | null = null;
 

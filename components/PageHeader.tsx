@@ -4,10 +4,7 @@ import type { ReactNode } from 'react';
 import { m } from 'motion/react';
 import { fadeInUp } from '@/lib/motion';
 
-/**
- * Animated page title + optional subtitle, repeated near-verbatim across
- * routes. `align` toggles the centered (default) vs left-aligned variant.
- */
+/** Animated page title + optional subtitle. `align`: centered or left. */
 export default function PageHeader({
   title,
   description,

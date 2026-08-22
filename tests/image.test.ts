@@ -64,7 +64,7 @@ void test('reads svg from width/height, else viewBox', () => {
 void test('rejects malformed input instead of hanging or over-reading', () => {
   // Truncated PNG: magic present, IHDR missing.
   assert.throws(() => readSize(png(10, 10).subarray(0, 18)));
-  // Zero-length JPEG segment would loop forever without the progress check.
+  // Zero-length JPEG segment: exercises the progress check.
   assert.throws(() => readSize(jpeg(10, 10, 0)));
   // No SOF within the window.
   assert.throws(() => readSize(Buffer.concat([Buffer.from([0xff, 0xd8])])));

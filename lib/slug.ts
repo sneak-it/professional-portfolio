@@ -1,9 +1,7 @@
 /**
- * Sanitizes a content slug (typically a route param) before it is used to
- * build a filesystem path. Strips a trailing `.mdx` and rejects anything
- * that isn't a plain slug — letters, digits, hyphens, underscores — so a
- * crafted value like `../../etc/passwd` can never escape the content
- * directory. Returns the normalized slug, or `null` if it is unsafe.
+ * Sanitizes a content slug before it reaches a filesystem path: strips one
+ * trailing `.mdx`, accepts only letters, digits, hyphens, and underscores.
+ * Returns the normalized slug, or `null` if it is unsafe.
  */
 export function safeSlug(slug: string): string | null {
   const realSlug = slug.replace(/\.mdx$/, '');
@@ -12,8 +10,8 @@ export function safeSlug(slug: string): string | null {
 
 /**
  * A display string as a URL slug: lowercase, non-alphanumerics collapsed to a
- * single hyphen, ends trimmed. Shared by tag URLs and heading anchors so the two
- * can never disagree. May return `''` (a string of only punctuation).
+ * single hyphen, ends trimmed. Shared by tag URLs and heading anchors. May
+ * return `''`.
  */
 export function slugify(text: string): string {
   return text

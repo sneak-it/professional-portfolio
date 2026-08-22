@@ -1,9 +1,6 @@
 /**
- * Shared Tailwind Typography class strings for MDX-rendered bodies, so the blog
- * post and portfolio write-up stay visually in sync.
- *
- * `PROSE` is the common base; `PROSE_CODE` adds the inline-code/code-block
- * treatment the blog needs on top (the portfolio write-up omits it).
+ * Shared Tailwind Typography classes for MDX bodies. `PROSE` is the base;
+ * `PROSE_CODE` adds the code treatment the blog needs on top.
  */
 export const PROSE =
   'prose prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-headings:tracking-tight prose-h2:mt-12 prose-a:font-medium prose-a:underline-offset-4 prose-img:rounded-2xl [&_li:has(>input)]:list-none';

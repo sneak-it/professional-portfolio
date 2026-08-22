@@ -1,7 +1,6 @@
 /**
  * The monogram tile shared by the three app/brand/ image routes. Satori needs
- * explicit `display: flex` and no CSS shorthands; `next/og` bundles Geist, so
- * the text costs no font fetch.
+ * explicit `display: flex` and no CSS shorthands.
  */
 export function MonogramTile({
   monogram,

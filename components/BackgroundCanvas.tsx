@@ -4,17 +4,12 @@ import { useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
 import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 
-/* ---------------------------------------------------------------------------
-   Site-wide background, mounted once in app/layout.tsx. This is the bundle-size
-   firewall for the WebGL gradient:
+/* Site-wide background, mounted once in app/layout.tsx, and the bundle-size
+   gate for the WebGL gradient:
 
-     - full (desktop, motion on) → lazy-load the OGL shader gradient. Because
-       the import is gated behind the post-mount `full` tier, the OGL + shader
-       chunk downloads only on desktop, after first paint — it is absent from
-       the initial/SSR bundle and never fetched on mobile or with reduced motion.
-     - lite (mobile) / none (reduced motion) → a static CSS gradient. Zero JS,
-       no OGL, auto-themed from the same --accent-* tokens.
---------------------------------------------------------------------------- */
+     - full → lazy OGL shader gradient. Gated behind the post-mount tier, so
+       the chunk loads on desktop only, after first paint.
+     - lite / none → static CSS gradient, zero JS, same --accent-* tokens. */
 
 const ShaderGradient = dynamic(() => import('./ShaderGradient'), {
   ssr: false,
@@ -41,8 +36,8 @@ function StaticGradient() {
       aria-hidden="true"
       className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-background-deep"
     >
-      {/* Soft accent tint on the calm side so it isn't flat black / bright
-          white — matches the shader's ambient wash. */}
+      {/* Soft accent tint on the calm side, matching the shader's ambient
+          wash. */}
       <div
         className="absolute inset-0 opacity-[0.16] dark:opacity-[0.18]"
         style={{

@@ -1,17 +1,14 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-// CSP lives here, not in next.config.ts `headers()`: the nonce must be fresh per
-// request, and that config is baked into the build. Replaces
-// `script-src 'unsafe-inline'`, whose only justification was preserving static
-// generation that no longer exists (every route is force-dynamic).
+// Built per request, so the nonce is fresh on every response.
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const isDev = process.env.NODE_ENV === 'development';
 
   const csp = [
     "default-src 'self'",
-    // 'strict-dynamic' makes 'self' inert: only scripts loaded by a nonce'd
-    // script run, which is how Next pulls its chunks. React evals in dev only.
+    // 'strict-dynamic': only scripts loaded by a nonce'd script run, which is
+    // how Next pulls its chunks. React evals in dev only.
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${
       isDev ? " 'unsafe-eval'" : ''
     }`,
@@ -41,7 +38,7 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      // `brand`: those routes return PNGs, which have no use for a CSP nonce.
+      // `brand`: PNG responses, no nonce to inject.
       source: '/((?!api|brand|_next/static|_next/image|favicon.ico).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },

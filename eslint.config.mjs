@@ -6,9 +6,8 @@ import prettier from "eslint-config-prettier/flat";
 import reactPkg from "react/package.json" with { type: "json" };
 
 export default defineConfig(
-  // Exclude build artifacts, node_modules, generated files, and JS config files.
-  // Note: eslint-config-next sets the TypeScript parser globally, which causes
-  // type-aware rules to fail on non-TypeScript files like .mjs configs.
+  // Build artifacts and JS configs: eslint-config-next sets the TS parser
+  // globally, and type-aware rules fail on .mjs.
   {
     ignores: [
       ".next/**/*",
@@ -74,7 +73,7 @@ export default defineConfig(
       "@typescript-eslint/no-unnecessary-type-parameters": "warn",
       "@typescript-eslint/no-extraneous-class": "warn",
 
-      // Warn on using Error type instead of unknown (React 19 compat)
+      // Catch-clause variables should be typed unknown (React 19 compat)
       "@typescript-eslint/use-unknown-in-catch-callback-variable": "warn",
 
       "@typescript-eslint/no-misused-promises": "off",
@@ -107,7 +106,7 @@ export default defineConfig(
     },
   },
 
-  // CLI scripts: stdout is the product, not a stray debug statement.
+  // CLI scripts: stdout is the product.
   {
     files: ["scripts/**/*.ts"],
     rules: { "no-console": "off" },

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { GitHubIcon, LinkedInIcon } from '@/components/icons/BrandIcons';
 import { siteConfig } from '@/lib/site';
 
-// A blanked-out SITE_*_URL hides its link instead of rendering a dead anchor.
+// A blanked-out SITE_*_URL hides its link.
 const socials = [
   { name: 'GitHub', href: siteConfig.social.github, Icon: GitHubIcon },
   { name: 'LinkedIn', href: siteConfig.social.linkedin, Icon: LinkedInIcon },

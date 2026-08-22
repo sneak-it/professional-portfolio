@@ -10,17 +10,11 @@ import {
 import { byDateDesc } from './sort.ts';
 
 /**
- * Unified, MDX-driven Portfolio data layer.
- *
- * The Portfolio is organized into three sections, each backed by its own folder
- * of `.mdx` files under `content/portfolio/<section>/`. Two sections
- * ('technology-consulting', 'open-source') are "project" style and render as
- * write-ups; 'photography' is "gallery" style and renders as a scrollable image
- * gallery whose images are auto-discovered from `public/portfolio/photography/<slug>/`.
- *
- * Adding a new engagement, project, or photography sub-category is just dropping
- * an MDX file in the matching folder — picked up via ISR without a rebuild
- * (mirrors the old lib/galleries.ts model).
+ * MDX-driven Portfolio data layer. Three sections, each a folder of `.mdx`
+ * under `content/portfolio/<section>/`: 'technology-consulting' and
+ * 'open-source' render as project write-ups, 'photography' as a gallery whose
+ * images are scanned from `public/portfolio/photography/<slug>/`. Adding an
+ * item is dropping an MDX file in the matching folder.
  */
 
 export const PORTFOLIO_SECTIONS = [
@@ -74,12 +68,7 @@ export interface ProjectItem {
   challenges?: string;
 }
 
-/**
- * Gallery-style item (photography). Structural superset of the old `Gallery`.
- *
- * No `content`: nothing renders a photography MDX body, so carrying it only
- * serialized dead prose into the client payload.
- */
+/** Gallery-style item. No `content`: nothing renders a photography body. */
 export interface GalleryItem {
   section: 'photography';
   slug: string;
@@ -92,10 +81,8 @@ export interface GalleryItem {
 }
 
 /**
- * Listing shapes. The section listings render covers, titles, and a photo
- * count, so the full MDX body and the per-image dimension array would be
- * serialized into the RSC payload of a page that never reads them. Mirrors what
- * `getAllPostMeta` already does for the blog (see lib/mdx.ts).
+ * Listing shapes: covers, titles, and a photo count, without the MDX body or
+ * the per-image dimensions. Same split as `getAllPostMeta` (see lib/mdx.ts).
  */
 export type ProjectSummary = Omit<ProjectItem, 'content'>;
 
@@ -157,7 +144,7 @@ export function getProjectItem(
   return { ...projectSummary(section, file), content: file.content };
 }
 
-/** Listing: the MDX body is never built, so it cannot reach the payload. */
+/** Listing: metadata only, no MDX body. */
 export function getProjectItems(section: SectionSlug): ProjectSummary[] {
   return listMdxFiles(sectionDir(section))
     .map((file) => projectSummary(section, file))
@@ -177,8 +164,7 @@ function listGalleryImageFiles(slug: string): string[] {
 
 /**
  * Cover src without dimension reads: frontmatter, else the first image in the
- * gallery folder, else empty. Empty is a real answer, not a failure: CoverImage
- * renders its accent-gradient fallback, which is the designed empty state.
+ * gallery folder, else empty (CoverImage's gradient fallback).
  */
 function galleryCoverSrc(slug: string, coverImage: unknown): string {
   if (typeof coverImage === 'string' && coverImage) return coverImage;
@@ -192,8 +178,7 @@ function galleryCoverSrc(slug: string, coverImage: unknown): string {
  *   alt:
  *     dsc_0142.jpg: 'Fog lifting off the ridge at sunrise'
  *
- * Only string values are kept; anything else is ignored rather than coerced,
- * since a bad value would be announced verbatim to a screen reader.
+ * Only string values are kept, since alt text is read aloud verbatim.
  */
 function altMap(value: unknown): Record<string, string> {
   if (typeof value !== 'object' || value === null) return {};
@@ -259,10 +244,8 @@ export function getPhotographyGallery(slug: string): GalleryItem | null {
 }
 
 /**
- * Gallery listing. Reads no image headers: the cover comes from
- * `galleryCoverSrc` and the count from the directory listing, so a section with
- * N galleries costs N readdir calls instead of one `statSync` + header read per
- * photo. Also feeds the hub via `getSectionSummaries`.
+ * Gallery listing: one readdir per gallery, no image headers. Also feeds the
+ * hub via `getSectionSummaries`.
  */
 export function getPhotographyGalleries(): GallerySummary[] {
   return listMdxFiles(sectionDir('photography'))

@@ -3,8 +3,7 @@ import test from 'node:test';
 import { safeSlug, slugify } from '../lib/slug.ts';
 
 // safeSlug is the only thing between a route param and a filesystem path
-// (lib/content.ts builds `${dir}/${slug}.mdx` from its return value), so these
-// assert the guard rather than the happy path.
+// (lib/content.ts builds `${dir}/${slug}.mdx` from its return value).
 
 void test('safeSlug accepts plain slugs and strips one .mdx', () => {
   assert.equal(safeSlug('my-post'), 'my-post');
@@ -59,7 +58,7 @@ void test('slugify lowercases and collapses non-alphanumerics', () => {
   assert.equal(slugify('AI'), 'ai');
 });
 
-// Distinct spellings that do NOT merge: the reason check:content lints them.
+// Distinct spellings stay distinct, which is why check:content lints them.
 void test('slugify does not merge punctuation variants', () => {
   assert.notEqual(slugify('Next.js'), slugify('NextJS'));
   assert.equal(slugify('NextJS'), 'nextjs');

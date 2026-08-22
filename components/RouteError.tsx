@@ -4,9 +4,8 @@ import { useEffect } from 'react';
 import ErrorState from '@/components/ErrorState';
 
 /**
- * Shared route-level error boundary. A single generic message is used across
- * every segment so the boundaries stay consistent; individual `error.tsx` files
- * just re-export this.
+ * Shared route-level error boundary, re-exported by each segment's
+ * `error.tsx`.
  */
 export default function RouteError({
   error,

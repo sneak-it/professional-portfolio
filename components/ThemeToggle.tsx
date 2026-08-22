@@ -34,11 +34,8 @@ export function ThemeToggle() {
     };
   }, []);
 
-  // A plain group of toggle buttons, not role="menu": the ARIA menu pattern
-  // requires arrow keys, Home/End, and a roving tabindex, and declaring the role
-  // without them promises a keyboard model that is not there. Buttons are
-  // Tab-navigable with no special model, and aria-pressed carries which theme is
-  // active. Escape and focus restore below are kept.
+  // A plain group of toggle buttons: Tab-navigable, aria-pressed marks the
+  // active theme, Escape and focus-restore handled below.
 
   // Move focus into the popover when it opens.
   React.useEffect(() => {

@@ -1,9 +1,7 @@
 /**
- * Frontmatter linter for content/. Run with `npm run check:content`.
- *
- * Catches what the renderers deliberately tolerate: a typo'd key silently does
- * nothing, an empty title falls back to the slug, a tag spelled two ways
- * fragments the vocabulary. Errors exit 1; the rest is reported for reading.
+ * Frontmatter linter for content/: `npm run check:content`. Catches what the
+ * renderers tolerate silently — typo'd keys, empty titles, tags spelled two
+ * ways. Errors exit 1; the rest is informational.
  */
 import fs from 'fs';
 import path from 'path';
@@ -113,7 +111,7 @@ function checkTags(file: string, value: unknown) {
 
 function checkFile(dir: string, slug: string, schema: Schema) {
   const file = path.join(dir, `${slug}.mdx`);
-  // No `required` here: this must report a bad field, not skip the file.
+  // No `required` here, so a bad field is reported and the file still reads.
   const parsed = readMdxFile(dir, slug);
   if (parsed === null) {
     error(file, 'unreadable or unparseable');
@@ -168,8 +166,7 @@ function checkFile(dir: string, slug: string, schema: Schema) {
 }
 
 function checkTagVocabulary() {
-  // Two slugs that differ only in punctuation are the drift this exists to
-  // catch: `next-js` and `nextjs` never merge on their own.
+  // `next-js` and `nextjs` slug apart, so report the spellings together.
   const collapsed = new Map<string, string[]>();
   for (const slug of spellings.keys()) {
     const key = slug.replace(/-/g, '');

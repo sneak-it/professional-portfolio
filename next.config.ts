@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    // No `remotePatterns`, so `/_next/image` never fetches off-origin.
-    // `search: ''` forbids a query string, so it can't be enumerated via `?v=`.
+    // Local patterns only, so `/_next/image` serves same-origin paths, and
+    // `search: ''` forbids a query string.
     localPatterns: [
       { pathname: '/images/**', search: '' },
       { pathname: '/portfolio/**', search: '' },
@@ -23,9 +23,8 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
-      // These routes are `force-dynamic`, so Next would send `no-store` and
-      // forbid any shared cache. `s-maxage` is shared-cache only, so browsers
-      // still revalidate. Cloudflare also needs a Cache Rule (see CLOUDFLARE.md).
+      // `s-maxage` opts these force-dynamic routes into a shared cache;
+      // browsers still revalidate. Cloudflare needs a Cache Rule (CLOUDFLARE.md).
       {
         source:
           '/:path(|about|contact|blog|portfolio|robots\\.txt|sitemap\\.xml|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
@@ -36,9 +35,8 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Generated images: each request is a full rasterize, so let browsers hold
-      // them too. Safe because app/layout.tsx versions the URL (lib/site.ts
-      // `BRAND_VERSION`), so a `SITE_*` change moves it rather than going stale.
+      // Each request is a full rasterize, so let browsers hold them too;
+      // app/layout.tsx versions the URL (lib/site.ts `BRAND_VERSION`).
       {
         source: '/brand/:path(icon|apple-icon|opengraph-image)',
         headers: [

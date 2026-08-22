@@ -17,7 +17,6 @@ void test('stripFences removes fenced blocks and their contents', () => {
   );
 });
 
-// The regression the /m-flag `$` bug caused: only the marker lines were removed.
 void test('stripFences closes an unterminated fence at end of input', () => {
   assert.equal(stripFences('a\n```\nconst x = 1;\n# not a heading\n'), 'a\n');
 });

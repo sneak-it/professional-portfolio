@@ -3,9 +3,8 @@
 import type { ReactNode } from 'react';
 import { LazyMotion, MotionConfig } from 'motion/react';
 
-// Client boundary for motion: LazyMotion loads the domAnimation bundle lazily.
-// Lives here (not the server layout) because the loader is a function prop.
-// `strict` makes any stray `motion.*` throw in dev.
+// Client boundary for motion: LazyMotion lazy-loads domAnimation, and the
+// function prop is why this is its own file. `strict` throws on `motion.*`.
 export default function MotionProvider({ children }: { children: ReactNode }) {
   return (
     <LazyMotion

@@ -1,9 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/lib/site';
 
-// Rendered at request time so the emitted origin reflects the runtime `SITE_URL`
-// (see lib/site.ts) rather than whatever was set when the image was built —
-// robots.txt must be correct on the first crawl of any prebuilt-image deploy.
+// Rendered at request time so the emitted origin reflects the runtime
+// `SITE_URL` (see lib/site.ts) on the first crawl of a prebuilt-image deploy.
 export const dynamic = 'force-dynamic';
 
 export default function robots(): MetadataRoute.Robots {
@@ -14,8 +13,7 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ['/api/'],
     },
     sitemap: absoluteUrl('/sitemap.xml'),
-    // No `host`: Next emits it as a `Host:` line, which is a Yandex extension
-    // Yandex itself dropped, and Google lists it as unsupported. The canonical
-    // tags and the sitemap URL above are what actually declare the origin.
+    // No `host`: the `Host:` line Next emits for it is unsupported, and the
+    // canonical tags and sitemap URL above already declare the origin.
   };
 }

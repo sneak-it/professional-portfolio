@@ -1,9 +1,8 @@
 import Image from 'next/image';
 
 /**
- * Cover image with an accent-gradient block as the fallback when no cover is
- * available. Shared by the blog list/post pages, CoverCard, and the portfolio
- * section list so the two paths cannot drift.
+ * Cover image, falling back to an accent-gradient block. Shared by the blog
+ * pages, CoverCard, and the portfolio section list.
  */
 export default function CoverImage({
   src,

@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react';
 
 /**
- * Frosted-glass reading panel: lifts long-form / body text off the animated
- * topographic background so it stays legible. The visual lives in the
- * `.surface` utility (app/globals.css); this component just adds the standard
- * inner padding and forwards `className` / `as`, mirroring Container's shape.
+ * Frosted-glass reading panel that keeps body text legible over the animated
+ * background. The visual is the `.surface` utility (app/globals.css); this adds
+ * the standard inner padding and forwards `className` / `as`.
  */
 const PADDING = {
   md: 'p-8 md:p-10',

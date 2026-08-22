@@ -3,29 +3,17 @@
 import { useEffect, useRef } from 'react';
 import { Renderer, Triangle, Program, Mesh } from 'ogl';
 
-/* ---------------------------------------------------------------------------
-   Animated topographic contour field.
+/* Animated topographic contour field: iso-lines of a drifting noise height
+   field, thicker every 5th line, tinted by elevation from --accent-from/via/to
+   (re-read on theme change).
 
-   A full-screen shader that draws iso-lines of a slowly-drifting noise height
-   field — like the contour lines on a topographic map — with thicker "index"
-   contours every 5th line and a green→teal→blue elevation tint. Colours are
-   read live from the --accent-from/via/to CSS variables (re-read on theme
-   change), so editing the palette in globals.css reskins this automatically.
+   Mounted only on the `full` motion tier and lazy-loaded, so OGL stays off
+   mobile and out of first paint (see components/BackgroundCanvas.tsx). Budget:
+   one full-screen triangle, one 3-octave noise field per pixel, capped DPR,
+   shader anti-aliasing, 30 fps cap, no depth buffer, rAF paused when hidden. */
 
-   This component is ONLY mounted on the `full` motion tier (see
-   components/BackgroundCanvas.tsx) and is loaded as a lazy chunk, so OGL never
-   ships to mobile / reduced-motion users or blocks first paint.
-
-   Efficiency: trivial vertex stage (one full-screen triangle), a single
-   3-octave noise field per pixel, capped DPR, shader-based anti-aliasing (no
-   MSAA), a 30 fps render cap, an opaque drawing buffer with no depth
-   attachment, and the rAF pauses while the tab is hidden.
---------------------------------------------------------------------------- */
-
-/* Render cap. The height field drifts at `uTime * 0.035`, so a frame advances
-   the terrain by a fraction of a contour width and 30 fps is indistinguishable
-   from 120 — at a quarter of the fill rate on a high-refresh display. Raise
-   this if the drift term is ever sped up. */
+/* Render cap. The field drifts at `uTime * 0.035`, so 30 fps looks like 120 at
+   a quarter of the fill rate. Raise it if the drift speeds up. */
 const TARGET_FPS = 30;
 
 const FRAME_MS = 1000 / TARGET_FPS;
@@ -80,15 +68,15 @@ const fragment = /* glsl */ `#version 300 es
   in vec2 vUv;
   out vec4 fragColor;
 
-  // Cheap hash (Dave Hoskins style) — no textures, no external assets. Avoids
-  // the axis-aligned banding the classic sin() hash would feed the contour step.
+  // Cheap hash (Dave Hoskins style) — no textures, no external assets, and no
+  // axis-aligned banding feeding the contour step.
   float hash(vec2 p) {
     vec3 p3 = fract(vec3(p.xyx) * 0.1031);
     p3 += dot(p3, p3.yzx + 33.33);
     return fract((p3.x + p3.y) * p3.z);
   }
-  // Gradient noise, not value noise: value noise is exactly flat across every
-  // cell edge, which fwidth() in contour() turns into dashed lattice seams.
+  // Gradient noise, so cell edges carry slope and fwidth() in contour() draws
+  // a continuous line across them.
   vec2 hgrad(vec2 i) {
     float a = hash(i) * 6.2831853;
     return vec2(cos(a), sin(a));
@@ -109,17 +97,16 @@ const fragment = /* glsl */ `#version 300 es
     float a = 0.5;
     for (int i = 0; i < 3; i++) {
       v += a * gnoise(p);
-      // Rotate/offset per octave; a plain p *= 2.0 stacks every octave's
-      // residual lattice artifact onto one grid.
+      // Rotate/offset per octave, spreading each octave's lattice artifact
+      // across grids.
       p = mat2(0.80, -0.60, 0.60, 0.80) * p * 2.0 + vec2(11.3, 7.7);
       a *= 0.5;
     }
     return v;
   }
 
-  // One anti-aliased iso-line family at the given line spacing. Returns ~1 on a
-  // contour, 0 between. fwidth keeps the line a constant ~1px regardless of how
-  // steep the slope is — the trick that makes contour lines look clean.
+  // One anti-aliased iso-line family at the given spacing: ~1 on a contour, 0
+  // between. fwidth holds the line at ~1px on any slope.
   float contour(float h, float spacing) {
     float f = h / spacing;
     float w = fwidth(f);
@@ -132,8 +119,7 @@ const fragment = /* glsl */ `#version 300 es
     uvA.x *= uResolution.x / uResolution.y;
 
     // Slowly-drifting height field — the "terrain". The domain is rotated ~30°
-    // so the noise lattice never aligns with the screen axes (belt-and-braces
-    // against axis-aligned seams).
+    // to keep the noise lattice off the screen axes.
     mat2 R = mat2(0.866, -0.5, 0.5, 0.866);
     float t = uTime * 0.035;
     float h = fbm(R * (uvA * 3.0) + vec2(t, t * 0.6));
@@ -143,7 +129,7 @@ const fragment = /* glsl */ `#version 300 es
     float major = contour(h, 0.25);
     float lines = max(minor * 0.5, major);
 
-    // Line colour by elevation: low → high reads green → teal → blue.
+    // Line colour by elevation: low → high walks the accent trio.
     vec3 lineCol = mix(uColorA, uColorB, smoothstep(0.25, 0.55, h));
     lineCol = mix(lineCol, uColorC, smoothstep(0.55, 0.85, h));
 
@@ -151,11 +137,8 @@ const fragment = /* glsl */ `#version 300 es
     float side = mix(0.14, 1.0, smoothstep(0.30, 0.85, vUv.x));
     float lineAmt = lines * side;
 
-    // Compose the whole background opaquely in-shader (so every layer is
-    // dithered together — no static CSS gradients to band). Dark mode is
-    // light-on-dark: the accent is ADDED over the dark base. Light mode is the
-    // inverse — dark-on-light: the bright base is TINTED toward the accent — so
-    // the contours stay coloured instead of washing out to white.
+    // Composed opaquely in-shader, so every layer is dithered together. Dark
+    // mode ADDS the accent over the base; light mode TINTS the base toward it.
     vec3 col = uBg;
 
     // Ambient accent wash on the left.
@@ -183,25 +166,18 @@ export default function ShaderGradient() {
     const container = containerRef.current;
     if (!container) return;
 
-    // Cap DPR low — contour lines are shader-anti-aliased, so high retina
-    // resolution is wasted fill rate. Not 1.0: the lines are ~1 *device* pixel
-    // wide, so downsampling makes the compositor upscale them into a soft blur
-    // on exactly the displays that can afford the pixels. The fps cap above is
-    // the cheaper lever.
+    // 1.25: lines are shader-anti-aliased, so full retina is wasted fill rate,
+    // and 1.0 lets the compositor blur ~1-device-pixel lines.
     const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
     const renderer = new Renderer({
       dpr,
-      // The shader writes alpha 1.0 over an opaque wrapper, so an alpha channel
-      // buys only a per-pixel compositor blend that never does anything. One
-      // full-screen triangle means no depth testing and no geometry edges, so
-      // the depth attachment and MSAA go too.
+      // The shader writes alpha 1.0 over an opaque wrapper, and one full-screen
+      // triangle needs no depth testing or geometry anti-aliasing.
       alpha: false,
       depth: false,
       antialias: false,
       powerPreference: 'low-power',
-      // WebGL2 (default). The shaders are GLSL ES 3.00 (#version 300 es), where
-      // fwidth() — used for the contour lines — is core, so no extension is
-      // needed (unlike a GLSL ES 1.00 shader on WebGL2, which can't access it).
+      // WebGL2 (default): GLSL ES 3.00 has fwidth() in core, no extension.
     });
     const gl = renderer.gl;
     gl.canvas.style.position = 'absolute';
@@ -261,10 +237,8 @@ export default function ShaderGradient() {
     let rafId = 0;
     let running = true;
     const start = performance.now();
-    // Deadlines advance on a fixed grid rather than resetting to `now`, so vsync
-    // quantisation cancels out instead of accumulating. That holds the average on
-    // target at any refresh rate, variable ones included; resetting to `now`
-    // needs a fudge factor and still drifts to 25-33 fps depending on the panel.
+    // Deadlines advance on a fixed grid, so vsync quantisation cancels out and
+    // the average holds on target at any refresh rate, variable ones included.
     let due = 0;
     const loop = (now: number) => {
       if (!running) return;
@@ -272,11 +246,11 @@ export default function ShaderGradient() {
       rafId = requestAnimationFrame(loop);
       if (now < due) return;
       due += FRAME_MS;
-      // Stalled (hidden tab, long task): skip ahead instead of rendering every
-      // frame to catch up. Nothing here is frame-sequential.
+      // Stalled (hidden tab, long task): skip ahead. Nothing here is
+      // frame-sequential.
       if (due < now) due = now + FRAME_MS;
-      // Wall-clock elapsed, not a frame counter, so the cap changes GPU cost
-      // and not the speed of the drift.
+      // Wall-clock elapsed, so the cap changes GPU cost and leaves the drift
+      // speed alone.
       time.value = (now - start) / 1000;
       renderer.render({ scene: mesh });
     };

@@ -44,8 +44,7 @@ void test('listDir is quiet for a missing dir and loud for an unreadable one', (
     assert.deepEqual(listDir('/nonexistent-content-dir'), []);
     assert.equal(errors.length, 0, 'ENOENT is a designed state, not an error');
 
-    // A file is not a dir: ENOTDIR stands in for the EACCES a bind mount the
-    // container cannot read would produce.
+    // ENOTDIR stands in for the EACCES an unreadable bind mount produces.
     assert.deepEqual(listDir('lib/content.ts'), []);
     assert.equal(errors.length, 1);
   } finally {
@@ -83,7 +82,7 @@ void test('readMdxFile re-reads a file after it changes', () => {
     fs.writeFileSync(file, '---\ntitle: First\n---\nbody one');
     assert.equal(readMdxFile(dir, 'post')?.data.title, 'First');
 
-    // Explicit mtime: a same-millisecond rewrite would pass by accident.
+    // Explicit mtime: a same-millisecond rewrite needs a distinct key.
     fs.writeFileSync(file, '---\ntitle: Second\n---\nbody two');
     const then = new Date(Date.now() + 2000);
     fs.utimesSync(file, then, then);
@@ -111,7 +110,6 @@ void test('isDraft treats a future date as not yet published', () => {
   assert.equal(isDraft({ date: `${year - 5}-01-01`, draft: true }), true);
 });
 
-// Same posture as byDateDesc, which sorts these last rather than special-casing.
 void test('isDraft ignores a missing or unparseable date', () => {
   assert.equal(isDraft({ date: 'not a date' }), false);
   assert.equal(isDraft({ date: '' }), false);

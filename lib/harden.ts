@@ -1,9 +1,6 @@
 /**
- * Remark-plugin half of the MDX allowlist (components half:
- * components/MDXComponents.tsx). Use both together via `mdxRenderProps`.
- *
- * A components map only sees elements MDX generates from markdown syntax.
- * Authored HTML becomes an intrinsic JSX element that only this plugin reaches:
+ * Remark-plugin half of the MDX allowlist, covering authored HTML. The
+ * components half is components/MDXComponents.tsx; `mdxRenderProps` pairs them.
  *
  *   <script>alert(1)</script>      -> dropped with its subtree
  *   <div onclick="alert(1)">       -> onclick stripped
@@ -31,8 +28,7 @@ export const BLOCKED_TAGS = [
   'applet',
 ] as const;
 
-// Capitalised aliases for raw-HTML <a>/<img>: lowercase intrinsic names are not
-// looked up in `components`, so the nodes are renamed to these.
+// Capitalised aliases for raw-HTML <a>/<img>, so `components` resolves them.
 const RAW_HTML_ALIASES: Record<string, string> = {
   a: 'MdxRawLink',
   img: 'MdxRawImage',
@@ -71,8 +67,7 @@ export function hardenRawHtml() {
               if (attr.type !== 'mdxJsxAttribute') return true;
               if (typeof attr.name !== 'string') return true;
               const lower = attr.name.toLowerCase();
-              // Any tag, not just the aliased ones: the CSP has no
-              // 'unsafe-inline', but don't depend on the header holding.
+              // Every tag, as defence in depth behind the CSP.
               return !lower.startsWith('on') && !owned?.has(lower);
             });
           }

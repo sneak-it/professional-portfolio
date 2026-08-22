@@ -1,18 +1,11 @@
 /**
- * Operational tuning knobs, read at container start.
- *
- * Separate from lib/site.ts, which owns identity: nothing here is visible to a
- * visitor, these only trade freshness against work done per request. Same
- * runtime-not-build-time rule applies, so no `NEXT_PUBLIC_`. Unlike lib/site.ts
- * there is no `server-only` guard: lib/image.ts imports this and is exercised by
- * a plain `node --test` run, where that package throws. Nothing here is secret,
- * and a client importer would just read the defaults.
- *
- * See .env.example.
+ * Operational tuning knobs, read at container start; see .env.example. These
+ * trade freshness against per-request work (lib/site.ts owns identity). Read at
+ * runtime, so no `NEXT_PUBLIC_`, and no `server-only` guard, so lib/image.ts
+ * stays reachable from `node --test`.
  */
 
-// Non-positive and malformed values fall back rather than half-break the
-// caller (a negative page size slices from the end of the list).
+// Non-positive and malformed values fall back to the default.
 function envInt(name: string, fallback: number): number {
   const parsed = Number(process.env[name]);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;

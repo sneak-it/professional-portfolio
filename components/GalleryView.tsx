@@ -37,8 +37,8 @@ export default function GalleryView({
   useEffect(() => {
     if (!isOpen) return;
 
-    // Lock the page behind the dialog. Restores the previous value rather than
-    // clearing, so an already-locked body (nested overlay) is left as found.
+    // Lock the page behind the dialog, restoring the previous value so a
+    // nested overlay leaves the body as it found it.
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 

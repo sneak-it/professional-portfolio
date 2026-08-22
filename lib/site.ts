@@ -5,18 +5,15 @@ import { publicFilePath } from './image';
 import { brandVersion, monogram, siteUrl } from './site-env';
 
 /**
- * Central site metadata. Every field is env-driven with a generic placeholder,
- * so one prebuilt image serves any identity under any domain. Read at container
- * start; see .env.example.
+ * Central site metadata. Every field is env-driven with a placeholder, so one
+ * prebuilt image serves any identity under any domain; see .env.example.
  *
- * No `NEXT_PUBLIC_`: that prefix inlines and freezes values at build time,
- * which is the opposite of what a portable image needs. `server-only` enforces
- * it — client components take these as props. Every route that emits them
- * renders at runtime, so an override flows through everywhere.
+ * Read at container start, so no `NEXT_PUBLIC_`; `server-only` enforces that
+ * and client components take these as props.
  */
 const name = process.env.SITE_NAME?.trim() || 'Your Name';
 
-// An env_file that never loaded otherwise looks exactly like a working deploy.
+// Warn loudly, so a missing env_file shows up in the logs.
 if (!process.env.SITE_NAME) {
   console.warn(
     '[site] SITE_NAME unset; serving the placeholder identity. See .env.example.',
@@ -37,12 +34,12 @@ export const siteConfig = {
   monogram: monogram(),
   // BCP 47 tag for <html lang>; callers convert to the OG underscore form.
   locale: process.env.SITE_LOCALE?.trim() || 'en-US',
-  // Site-relative only, and inside images.localPatterns (next.config.ts, baked
-  // at build time): point this at a file mounted under public/images/.
+  // Site-relative, inside images.localPatterns (next.config.ts): point this at
+  // a file mounted under public/images/.
   avatarUrl:
     process.env.SITE_AVATAR_URL?.trim() || '/images/avatar-placeholder.png',
-  // `??` not `||`: an empty value blanks the link out (callers hide it), an
-  // unset one keeps the placeholder. `email` has none — a fake mailto: is worse.
+  // `??`: an empty value blanks the link out (callers hide it), an unset one
+  // keeps the placeholder. `email` has no placeholder.
   social: {
     email: process.env.SITE_EMAIL?.trim() ?? '',
     github:
@@ -55,8 +52,7 @@ export const siteConfig = {
 
 /**
  * Absolute URL for a site-relative path, resolved against the runtime origin.
- * Concatenation only — callers that need '/' to collapse to the bare origin
- * (breadcrumb items) handle that themselves, because the sitemap does not.
+ * Concatenation only; breadcrumb callers collapse a bare '/' themselves.
  */
 export function absoluteUrl(path: string): string {
   return `${siteConfig.url}${path}`;
@@ -66,11 +62,8 @@ const AVATAR_FALLBACK = '/images/avatar-placeholder.png';
 const missingAvatars = new Set<string>();
 
 /**
- * The avatar to render, or null when no file backs it — callers show their own
- * fallback instead of a broken frame. Resolved per call, not at import: public/
- * is bind-mounted, so the file can appear or vanish without a restart. Without
- * this a bad SITE_AVATAR_URL 400s at /_next/image while the page still returns
- * 200, so the portrait goes blank with nothing in the logs.
+ * The avatar to render, or null when no file backs it. Resolved per call:
+ * public/ is bind-mounted, so the file can appear or vanish live.
  */
 export function avatarSrc(): string | null {
   for (const src of new Set([siteConfig.avatarUrl, AVATAR_FALLBACK])) {
@@ -86,8 +79,7 @@ export function avatarSrc(): string | null {
 
 /**
  * Version token for the app/brand/* URLs, emitted by app/layout.tsx. Covers the
- * palette as well as the identity, so a lib/brand.ts edit also busts the URL. A
- * change to a renderer's own layout does not, and waits out `s-maxage`.
+ * palette as well as the identity, so a lib/brand.ts edit busts the URL too.
  */
 export const BRAND_VERSION = brandVersion([
   siteConfig.monogram,

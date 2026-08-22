@@ -1,10 +1,8 @@
 import { absoluteUrl } from './site';
 
 /**
- * Builds a schema.org `BreadcrumbList` JSON-LD object from an ordered list of
- * crumbs. Each `path` is site-relative ('/' for home) and is resolved against
- * the canonical origin, so callers never hand-build the absolute URLs or the
- * repetitive `position`/`@type` boilerplate.
+ * schema.org `BreadcrumbList` from an ordered crumb list. Each site-relative
+ * `path` ('/' for home) resolves against the canonical origin.
  */
 export function breadcrumbJsonLd(
   crumbs: Array<{ name: string; path: string }>,

@@ -2,10 +2,9 @@ import type { ReactNode } from 'react';
 import Container from '@/components/Container';
 
 /**
- * Centered full-page message: a large gradient display string, a heading, a
- * muted paragraph, and a row of pill CTAs. Shared by app/not-found.tsx and
- * components/ErrorState.tsx. app/global-error.tsx stays a separate inline-style
- * copy because it renders without the app's CSS.
+ * Centered full-page message: gradient display string, heading, paragraph, pill
+ * CTAs. Shared by app/not-found.tsx and components/ErrorState.tsx.
+ * app/global-error.tsx is inline-styled separately, having no CSS.
  */
 export default function MessagePage({
   display,

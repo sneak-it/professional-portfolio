@@ -3,10 +3,9 @@ import TagList from '@/components/TagList';
 import { formatDate } from '@/lib/date';
 
 /**
- * The meta block above a blog post, on both the list card and the article
- * header: a date · read-time · updated row, with the tag chips on their own line
- * beneath it. `maxTags` caps the chips on the card, where a long tag list wraps
- * badly; the article header shows all of them.
+ * The meta block above a blog post, on the list card and the article header: a
+ * date · read-time · updated row over the tag chips. `maxTags` caps the chips
+ * on the card; the article header shows all of them.
  */
 export default function PostMeta({
   tags = [],

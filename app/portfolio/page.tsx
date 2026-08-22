@@ -4,9 +4,8 @@ import { breadcrumbJsonLd } from '@/lib/jsonld';
 import JsonLd from '@/components/JsonLd';
 import PortfolioHub from './PortfolioHub';
 
-// Rendered per request so content added, edited, or removed in the bind-mounted
-// content/ dir is served immediately, and so the runtime site config applies.
-// See lib/portfolio.ts and lib/site.ts.
+// Rendered per request: the bind-mounted content/ dir and the runtime site
+// config both apply immediately. See lib/portfolio.ts and lib/site.ts.
 export const dynamic = 'force-dynamic';
 
 // Single source for both the metadata description and the visible PageHeader.

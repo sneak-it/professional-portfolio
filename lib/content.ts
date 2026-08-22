@@ -15,10 +15,8 @@ export interface MdxFile {
 }
 
 /**
- * Parsed files by path, invalidated on mtime change: one read and parse per
- * edit, not per request. No size cap (unlike lib/image.ts): a key needs a real
- * `.mdx` file, so the content tree bounds it. `data` is shared across requests,
- * so callers must only read it.
+ * Parsed files by path, invalidated on mtime change. Uncapped: a key needs a
+ * real `.mdx` file. `data` is shared across requests, so treat it read-only.
  */
 const parseCache = new Map<
   string,
@@ -28,17 +26,14 @@ const parseCache = new Map<
 export interface ReadMdxOptions {
   /**
    * Frontmatter keys that must be non-empty strings; a file missing any is
-   * logged and skipped, rather than rendering blank alt text or breaking date
-   * sorting. Frontmatter is cast elsewhere, so this is the one guard that runs.
+   * logged and skipped. The only guard, since frontmatter is cast elsewhere.
    */
   required?: string[];
 }
 
 /**
- * Entries of a content dir, or `[]` if it isn't there. An absent dir is a
- * designed state (no posts, no gallery), so it stays quiet; anything else is
- * not. EACCES in particular means a bind-mounted tree the container can't read,
- * which would otherwise render as an empty site with nothing in the logs.
+ * Entries of a content dir, or `[]` if absent (a designed state, so quiet).
+ * Every other error is logged; EACCES means an unreadable bind mount.
  */
 export function listDir(dir: string): string[] {
   try {
@@ -52,9 +47,8 @@ export function listDir(dir: string): string[] {
 }
 
 /**
- * Slugs (filenames minus `.mdx`) in a content dir, or `[]` if it doesn't exist.
- * Filtering to `.mdx` keeps editor backups and `drafts/` out of the listings,
- * and slugs feed straight into `readMdxFile`.
+ * Slugs (filenames minus `.mdx`) in a content dir, or `[]`. The `.mdx` filter
+ * keeps editor backups and `drafts/` out; slugs feed `readMdxFile`.
  */
 export function listMdxSlugs(dir: string): string[] {
   return listDir(dir)
@@ -63,9 +57,8 @@ export function listMdxSlugs(dir: string): string[] {
 }
 
 /**
- * Reads one MDX file by slug. Returns `null` if the slug is unsafe (traversal
- * guard), the file is missing, or the read/parse throws — one bad file can't
- * take down a listing, and callers filter out the null.
+ * Reads one MDX file by slug. `null` for an unsafe slug, a missing file, or a
+ * failed parse, so one bad file can't take down a listing.
  */
 export function readMdxFile(
   dir: string,
@@ -110,8 +103,7 @@ export function readMdxFile(
 
 /**
  * `draft: true`, or a `date` still in the future, keeps a file out of every
- * listing. A missing or unparseable date is not a draft, matching `byDateDesc`,
- * which sorts those last rather than treating them as special.
+ * listing. A missing or unparseable date is not a draft.
  */
 export function isDraft(data: Record<string, unknown>): boolean {
   if (data.draft === true) return true;
@@ -120,9 +112,8 @@ export function isDraft(data: Record<string, unknown>): boolean {
 }
 
 /**
- * Every readable, non-draft `.mdx` file in a dir. Listings share this; single
- * item lookups call `readMdxFile` directly, which is what leaves a draft
- * reachable at its own URL for preview.
+ * Every readable, non-draft `.mdx` file in a dir. Single-item lookups call
+ * `readMdxFile` directly, which leaves drafts reachable for preview.
  */
 export function listMdxFiles(
   dir: string,
@@ -139,7 +130,7 @@ export function list<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
 }
 
-/** String entries of a frontmatter list; non-strings dropped, not coerced. */
+/** String entries of a frontmatter list; non-strings dropped. */
 export function strings(value: unknown): string[] {
   return list<unknown>(value).filter((v): v is string => typeof v === 'string');
 }

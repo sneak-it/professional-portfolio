@@ -26,7 +26,7 @@ export function getHome(): Home {
   return {
     eyebrow: text(data.eyebrow, 'Building things, on and off the clock'),
     headline: text(data.headline, 'Creating'),
-    // An empty list would leave the gradient span blank forever.
+    // Non-empty: the gradient span needs at least one word.
     words: words.length > 0 ? (words as [string, ...string[]]) : DEFAULT_WORDS,
     content: file?.content ?? '',
   };

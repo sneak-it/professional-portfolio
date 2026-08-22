@@ -10,8 +10,8 @@ import JsonLd from '@/components/JsonLd';
 import SectionGalleryList from './SectionGalleryList';
 import SectionProjectList from './SectionProjectList';
 
-// Rendered per request so content added, edited, or removed in the bind-mounted
-// content/ dir is served immediately, and so the runtime site config applies.
+// Rendered per request: the bind-mounted content/ dir and the runtime site
+// config both apply immediately.
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({

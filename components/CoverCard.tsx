@@ -3,10 +3,9 @@ import Link from 'next/link';
 import CoverImage from '@/components/CoverImage';
 
 /**
- * Overlay cover card: a full-bleed image (or accent-gradient fallback when the
- * cover is missing) under a darkening gradient, with a bottom title/description
- * block and an optional meta row and top-right badge. Shared by the portfolio
- * hub and the photography section grid.
+ * Overlay cover card: full-bleed image under a darkening gradient, with a
+ * bottom title/description block and optional meta row and badge. Shared by
+ * the portfolio hub and the photography grid.
  */
 export default function CoverCard({
   href,

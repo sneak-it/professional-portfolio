@@ -3,8 +3,8 @@ import test from 'node:test';
 import { getAllPostMeta, getPostsByTag, getTags } from '../lib/mdx.ts';
 import { slugify } from '../lib/slug.ts';
 
-// Runs against the real content/ tree, so these assert invariants rather than
-// literal counts: a new post must not be able to break the suite.
+// Runs against the real content/ tree, so these assert invariants that hold
+// as posts are added.
 
 void test('every post has an array of tags', () => {
   for (const post of getAllPostMeta()) {

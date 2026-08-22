@@ -3,7 +3,7 @@ import { list, readMdxFile, text } from './content';
 
 /**
  * About-page content from `content/about.mdx`, bind-mount editable. `icon` is a
- * stable key, not JSX, so this stays presentation-free; AboutClient maps it.
+ * stable key, so this stays presentation-free; AboutClient maps it to JSX.
  */
 export type SkillIcon = 'ops' | 'network' | 'data' | 'business';
 

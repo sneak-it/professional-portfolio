@@ -3,26 +3,17 @@ import path from 'path';
 import { IMAGE_DIMENSION_CACHE_MAX } from './config.ts';
 
 /**
- * Shared, server-only image dimension reader.
+ * Server-only image dimension reader: header bytes only, memoized by
+ * (path, mtime). Used by the gallery scan and the MDX <img> renderer to stamp
+ * width/height and avoid CLS.
  *
- * Reads just the file header and memoizes by (path, mtime), so repeat reads of
- * an unchanged file are free. Used both by the portfolio gallery scan and by the
- * MDX <img> renderer to stamp intrinsic width/height (reserving layout space and
- * avoiding CLS). Server-only: it touches `fs`, so never import this into a
- * client component.
- *
- * Formats: PNG, GIF, WebP, JPEG, SVG. Anything else throws; both callers treat a
- * throw as "no dimensions" and render without them. AVIF/HEIF/JXL/ICNS are
- * deliberately unsupported; their container walks are what made `image-size`
- * (this module's predecessor) hang on malformed input.
+ * PNG, GIF, WebP, JPEG, SVG. Anything else throws, and both callers then
+ * render without dimensions.
  */
 
 /**
- * True for a root-relative path on this origin. Excludes protocol-relative
- * ('//host'), remote ('http(s)://'), and `data:` sources, matching the
- * `img-src 'self'` CSP and the absence of `images.remotePatterns` in
- * next.config.ts. Gates the MDX <img> renderer so an off-origin src fails at
- * render instead of relying on the browser to enforce the header.
+ * True for a root-relative path on this origin, matching the `img-src 'self'`
+ * CSP. Gates the MDX <img> renderer so an off-origin src fails at render.
  */
 export function isLocalSrc(src: unknown): src is string {
   return (

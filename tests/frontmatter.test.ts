@@ -37,8 +37,8 @@ void test('parseFrontmatter leaves an empty block alone', () => {
   assert.deepEqual(parseFrontmatter(src), { data: {}, content: src });
 });
 
-// Scalar YAML parses to a string. `data[key]` is undefined on a string, so a
-// required-field check treats it as missing rather than throwing.
+// Scalar YAML parses to a string, so `data[key]` is undefined and the
+// required-field check treats it as missing.
 void test('parseFrontmatter does not throw on non-object frontmatter', () => {
   const { content } = parseFrontmatter('---\nfoo\n---\nbody');
   assert.equal(content, 'body');

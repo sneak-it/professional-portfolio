@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // Lightweight health endpoint polled by the Docker HEALTHCHECK (see Dockerfile).
-// Force dynamic so it's never statically optimized/cached and always reflects a live process.
+// Force dynamic so the response always reflects a live process.
 export const dynamic = 'force-dynamic';
 
 export function GET() {

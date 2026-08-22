@@ -2,9 +2,8 @@
 
 import { useEffect } from 'react';
 
-// global-error replaces the root layout entirely, so it must render its own
-// <html>/<body> and cannot rely on the app's fonts, theme, or global CSS.
-// Styling is kept inline to guarantee a usable fallback even when the layout fails.
+// global-error replaces the root layout, so it renders its own <html>/<body>
+// with inline styles — no app fonts, theme, or global CSS available here.
 export default function GlobalError({
   error,
   retry,

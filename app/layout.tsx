@@ -12,9 +12,8 @@ import { BRAND_VERSION, siteConfig } from '@/lib/site';
 import { cspNonce } from '@/lib/nonce';
 import { BACKGROUND } from '@/lib/brand';
 
-// One variable-font instance covers every weight, so --font-display maps to it
-// in globals.css rather than fetching the family twice. Mono is a system stack
-// (see --font-mono in globals.css), so this is the only family we download.
+// One variable-font instance covers every weight; --font-display maps to it in
+// globals.css. Mono is a system stack, so this is the only family downloaded.
 const grotesk = Hanken_Grotesk({
   subsets: ['latin'],
   variable: '--font-sans',
@@ -61,8 +60,7 @@ export const metadata: Metadata = {
   },
 };
 
-// Matches browser chrome to the page background. Static: nothing here is
-// request-dependent.
+// Matches browser chrome to the page background.
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: BACKGROUND.light },

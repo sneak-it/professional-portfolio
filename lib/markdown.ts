@@ -1,12 +1,9 @@
 /**
- * Reads an MDX body as text, for frontmatter this project derives rather than
- * asks authors to maintain. Everything here strips fenced code first: a 200-line
- * config dump is not forty minutes of reading, and a `# comment` inside a fence
- * is not a heading.
+ * Reads an MDX body as text for the frontmatter this project derives. Fenced
+ * code is stripped first, so it counts toward neither read time nor headings.
  */
 
-// The end-of-input lookahead, not `$`, closes an unterminated fence: under /m,
-// `$` would match the end of the opening line and strip only the marker.
+// The end-of-input lookahead closes an unterminated fence.
 const FENCE =
   /^ {0,3}(`{3,}|~{3,})[\s\S]*?(?:^ {0,3}\1[^\n]*\n?|$(?![\s\S]))/gm;
 
@@ -30,7 +27,7 @@ export function readTime(source: string): string {
 
 const EXCERPT_MAX = 200;
 
-// Lines that are structure, not prose: headings, JSX, images, quotes, tables,
+// Structural lines: headings, JSX, images, quotes, tables,
 // list items, fence remnants, and frontmatter-ish separators.
 const SKIP_LINE = /^\s*([#<>|`~*+-]|!\[|\d+\.\s|:{3})/;
 

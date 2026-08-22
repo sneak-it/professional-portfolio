@@ -36,7 +36,7 @@ void test('brandVersion is stable per input and moves with any part', () => {
   assert.equal(brandVersion(base), brandVersion([...base]));
   assert.notEqual(brandVersion(base), brandVersion(['IRX', ...base.slice(1)]));
   assert.notEqual(brandVersion(base), brandVersion([...base.slice(0, 3), 'X']));
-  // NUL-joined, so a shifted boundary is not the same input.
+  // NUL-joined, so a shifted boundary yields a different hash.
   assert.notEqual(brandVersion(['a', 'b']), brandVersion(['ab']));
 });
 

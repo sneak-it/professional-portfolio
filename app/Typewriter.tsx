@@ -20,7 +20,7 @@ export default function Typewriter({
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    // Reduced motion: the JS half of the gating page.module.css already does.
+    // Reduced motion: the JS half of the gating page.module.css handles.
     if (tier === 'none') return;
 
     // Always in range (% words.length); the fallback is for the compiler.
@@ -43,7 +43,7 @@ export default function Typewriter({
           setText(word.slice(0, text.length - 1));
         }, DELETE_MS / word.length);
       } else {
-        // From a timer, not the effect body: gives a beat between words.
+        // From a timer, giving a beat between words.
         timer = setTimeout(() => {
           setDeleting(false);
           setWordIndex((i) => (i + 1) % words.length);

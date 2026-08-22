@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 /**
  * Page shell: centers content and applies the standard horizontal + vertical
- * page padding repeated across every route. `size` picks the max width.
+ * page padding. `size` picks the max width.
  */
 const SIZES = {
   sm: 'max-w-3xl',

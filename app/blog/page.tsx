@@ -10,35 +10,29 @@ import {
 } from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
 
-// Rendered per request so content added, edited, or removed in the bind-mounted
-// content/ dir is served immediately, and so the runtime site config applies.
-// See lib/mdx.ts and lib/site.ts.
+// Rendered per request: the bind-mounted content/ dir and the runtime site
+// config both apply immediately. See lib/mdx.ts and lib/site.ts.
 export const dynamic = 'force-dynamic';
 
 // Single source for both the metadata description and the visible PageHeader.
 const DESCRIPTION =
   'Thoughts, tutorials, and insights on web development, design, and technology.';
 
-// Resolve the requested page to a valid 1-based index, or null when the param is
-// present but out of range / malformed (so callers can 404 instead of clamping,
-// which would create an infinite space of duplicate URLs).
+// Resolve the requested page to a valid 1-based index, or null when the param
+// is present but out of range / malformed. Callers 404 on null.
 function resolvePage(
   page: string | undefined,
   totalPages: number,
 ): number | null {
   if (page === undefined) return 1;
-  // Bare positive integers only. `Number()` alone also accepts ' 2 ', '2.0',
-  // '0x2' and '2e0', each of which would render page 2 under a self-referential
-  // canonical and duplicate one page of content across several indexable URLs.
+  // Bare positive integers only, so one page of content has one indexable URL.
   if (!/^[1-9]\d*$/.test(page)) return null;
   const parsed = Number(page);
   return parsed > totalPages ? null : parsed;
 }
 
 /**
- * The requested tag, or null when the param is present but unknown — same
- * posture as `resolvePage`: 404 rather than silently listing everything, which
- * would make every typo another indexable copy of /blog.
+ * The requested tag, or null when unknown; callers 404, as with `resolvePage`.
  *
  * ponytail: single tag; intersect a comma-split list if browsing needs it.
  */

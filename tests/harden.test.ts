@@ -10,7 +10,7 @@ const el = (
 ): MdxJsxNode => ({ type: 'mdxJsxFlowElement', name, attributes, children });
 
 const attr = (name: string) => ({ type: 'mdxJsxAttribute', name });
-// Unannotated: MdxJsxNode has no `value`, so a typed literal would be rejected.
+// Unannotated: MdxJsxNode has no `value`.
 const text = (value: string) => ({ type: 'text', value });
 
 /** Runs the plugin over a synthetic root and returns the mutated tree. */
@@ -65,7 +65,6 @@ void test('strips owned attributes regardless of casing', () => {
   assert.deepEqual(attrNames(tree.children?.[0]), ['href']);
 });
 
-// The regression this file exists for: filtering used to run only on a/img.
 void test('strips inline event handlers on any tag', () => {
   const tree = harden([
     el('div', [attr('onclick'), attr('id')]),
@@ -111,8 +110,8 @@ void test('tolerates nodes with no children or attributes', () => {
   });
 });
 
-// GFM task lists need <input> back in the components map, so this is the layer
-// that has to keep dropping an authored one.
+// GFM task lists need <input> in the components map, so this layer drops
+// authored ones.
 void test('drops authored input HTML even though the components map allows it', () => {
   const tree = harden([
     el('input', [attr('type'), attr('onchange')]),

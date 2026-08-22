@@ -3,8 +3,7 @@ import test from 'node:test';
 import { inspect } from 'node:util';
 import { isSafeHref } from '../lib/href.ts';
 
-// The scheme allowlist behind SafeLink. The obfuscation cases are the point:
-// they are what a regex-based check would let through.
+// The scheme allowlist behind SafeLink. The obfuscation cases are the point.
 
 void test('isSafeHref allows http, https, and mailto', () => {
   for (const href of [
@@ -61,14 +60,13 @@ void test('isSafeHref rejects non-strings', () => {
   }
 });
 
-// A space isn't stripped, so the value stays a relative path, not a scheme.
+// A space isn't stripped, so the value stays a relative path.
 void test('isSafeHref treats a spaced scheme as a relative path', () => {
   assert.equal(isSafeHref('java script:alert(1)'), true);
 });
 
-// Entity-escapes arrive already percent-encoded. Safe for a different reason
-// than the cases above: a scheme cannot contain '%', so the colon never starts
-// one and the browser resolves it as a path on our origin.
+// Entity-escapes arrive already percent-encoded. A scheme cannot contain '%',
+// so the browser resolves this as a path on our origin.
 void test('isSafeHref treats a percent-encoded scheme as a relative path', () => {
   const href = 'java%0Ascript:alert(1)';
   assert.equal(isSafeHref(href), true);

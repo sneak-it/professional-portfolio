@@ -10,13 +10,9 @@ void test('byDateDesc orders newest first', () => {
   assert.equal(byDateDesc(d('2026-01-01'), d('2026-01-01')), 0);
 });
 
-// The reason the comparator parses instead of comparing strings: '2026-4-26'
-// sorts after '2026-12-01' lexically but before it chronologically.
-//
-// Only day-granularity claims are asserted here. Date.parse reads a padded ISO
-// date as UTC midnight but a non-padded one as *local* midnight, so
-// '2026-4-26' and '2026-04-26' are not the same instant and their relative
-// order depends on the machine's timezone.
+// The comparator parses dates: '2026-4-26' sorts after '2026-12-01' lexically
+// but before it chronologically. Only day-granularity is asserted — Date.parse
+// reads padded dates as UTC and non-padded ones as local midnight.
 void test('byDateDesc handles non-zero-padded dates', () => {
   assert.equal(byDateDesc(d('2026-4-26'), d('2026-12-01')), 1);
   assert.equal(byDateDesc(d('2026-4-26'), d('2026-04-25')), -1);
@@ -35,7 +31,7 @@ void test('byDateDesc is antisymmetric', () => {
   const values = ['2026-01-01', '2025-06-15', '2026-4-26', undefined, 'nope'];
   for (const a of values) {
     for (const b of values) {
-      // Summing avoids asserting against -0, which strict equal rejects.
+      // Summed: strictEqual distinguishes -0 from 0.
       assert.equal(
         byDateDesc(d(a), d(b)) + byDateDesc(d(b), d(a)),
         0,
