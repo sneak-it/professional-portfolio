@@ -7,17 +7,17 @@ import { siteConfig } from '@/lib/site';
 // earns the long Cache-Control in next.config.ts. app/layout.tsx emits the href.
 export const dynamic = 'force-dynamic';
 
-const size = { width: 32, height: 32 };
+const size = { width: 64, height: 64 };
 
 export const GET = cachedImage(
   () =>
     new ImageResponse(
-      // Flat black: at 32px the favicon needs contrast.
+      // Flat black: at favicon sizes the tile needs contrast.
       <MonogramTile
         monogram={siteConfig.monogram}
         size={size.width}
         background="#000000"
-        radius={7}
+        radius={14}
       />,
       size,
     ),
