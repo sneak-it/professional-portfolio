@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { slideTo } from '@/components/PageTransition';
 import type { BlogPostSummary } from '@/lib/mdx';
 
 function PostNavLink({
@@ -11,10 +14,14 @@ function PostNavLink({
 }) {
   const isPrev = dir === 'prev';
   const Icon = isPrev ? ArrowLeft : ArrowRight;
+  const href = `/blog/${post.slug}`;
   return (
     <Link
-      href={`/blog/${post.slug}`}
+      href={href}
       rel={dir}
+      onClick={() => {
+        slideTo(href, dir);
+      }}
       className={`group card-surface flex flex-col gap-1 p-5 hover:border-accent/50 transition-colors ${
         isPrev ? 'items-start' : 'items-end text-right sm:col-start-2'
       }`}
