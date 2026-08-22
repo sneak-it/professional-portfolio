@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <>
       {/* Backdrop comes from components/BackgroundCanvas.tsx, site-wide. */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[calc(100dvh-18rem)] flex items-center justify-center overflow-hidden">
         {/* Readability vignette, wherever the animated background lands. */}
         <div
           aria-hidden
