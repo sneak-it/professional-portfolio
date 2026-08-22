@@ -28,7 +28,7 @@ export default function BlogPostContent({
   const showToc =
     typeof post.meta.toc === 'boolean' ? post.meta.toc : toc.length >= 4;
   return (
-    <Container as="article" size="sm">
+    <Container as="article" size="xl">
       <BackButton href="/blog" label="Back to Blog" />
 
       <Surface as="div" padding="lg" className="mt-6">
@@ -51,7 +51,7 @@ export default function BlogPostContent({
               src={post.meta.image}
               alt={post.meta.title}
               priority
-              sizes="(max-width: 768px) 100vw, 768px"
+              sizes="(max-width: 1280px) 100vw, 1280px"
             />
           </div>
         </header>
