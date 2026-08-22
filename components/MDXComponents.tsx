@@ -1,5 +1,6 @@
 import path from 'path';
-import type { ComponentPropsWithoutRef, ReactElement } from 'react';
+import { isValidElement } from 'react';
+import type { ComponentPropsWithoutRef, ReactElement, ReactNode } from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import { Info, Lightbulb, TriangleAlert } from 'lucide-react';
@@ -13,6 +14,7 @@ import Surface from '@/components/Surface';
 import { imageDimensions, isLocalSrc } from '@/lib/image';
 import { isSafeHref } from '@/lib/href';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
+import { slugify } from '@/lib/slug';
 
 /**
  * Defense-in-depth allowlist for MDX rendering, over next-mdx-remote's
@@ -163,6 +165,32 @@ function Callout({
   );
 }
 
+function flatten(node: ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(flatten).join('');
+  if (isValidElement(node))
+    return flatten((node.props as { children?: ReactNode }).children);
+  return '';
+}
+
+/**
+ * Anchorable heading, with the id `headings()` predicts. An authored id wins:
+ * GFM's footnote section emits `id="footnote-label"` that its backrefs target.
+ */
+function heading(Tag: 'h2' | 'h3') {
+  return function Heading({
+    children,
+    id,
+    ...rest
+  }: ComponentPropsWithoutRef<'h2'>) {
+    return (
+      <Tag {...rest} id={(id ?? slugify(flatten(children))) || undefined}>
+        {children}
+      </Tag>
+    );
+  };
+}
+
 // GFM task lists compile to <input type="checkbox">, and `input` is blocked.
 // This re-admits just that checkbox; lib/harden.ts drops authored <input>.
 function TaskCheckbox({ type, ...rest }: ComponentPropsWithoutRef<'input'>) {
@@ -177,6 +205,8 @@ export const mdxComponents = {
   MdxRawImage: SafeImage,
   Figure,
   Callout,
+  h2: heading('h2'),
+  h3: heading('h3'),
   // Server components only: a client one would ship JS per post for no gain.
   Container,
   CoverCard,

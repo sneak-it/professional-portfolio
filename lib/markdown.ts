@@ -1,3 +1,5 @@
+import { slugify } from './slug.ts';
+
 /**
  * Reads an MDX body as text for the frontmatter this project derives. Fenced
  * code is stripped first, so it counts toward neither read time nor headings.
@@ -55,4 +57,30 @@ export function firstParagraph(source: string): string {
     return `${flat.slice(0, cut > 0 ? cut : EXCERPT_MAX).trimEnd()}…`;
   }
   return '';
+}
+
+export interface Heading {
+  depth: 2 | 3;
+  text: string;
+  id: string;
+}
+
+/**
+ * `##`/`###` headings outside fenced code, in source order. Ids match what the
+ * h2/h3 components render, so TOC hrefs cannot drift from the anchors.
+ */
+export function headings(source: string): Heading[] {
+  const found: Heading[] = [];
+  for (const [, hashes, raw] of stripFences(source).matchAll(
+    /^(#{2,3})[ \t]+(.+)$/gm,
+  )) {
+    const text = plainText(raw ?? '');
+    if (text === '') continue;
+    found.push({
+      depth: hashes?.length === 3 ? 3 : 2,
+      text,
+      id: slugify(text),
+    });
+  }
+  return found;
 }

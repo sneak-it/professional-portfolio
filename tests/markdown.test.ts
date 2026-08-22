@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   firstParagraph,
+  headings,
   readTime,
   stripFences,
   wordCount,
@@ -86,4 +87,37 @@ void test('firstParagraph returns empty for a body with no prose', () => {
   assert.equal(firstParagraph('\n\n   \n'), '');
   assert.equal(firstParagraph('<Figure src="/x.png" />\n'), '');
   assert.equal(firstParagraph('```\nonly code\n```\n'), '');
+});
+
+void test('headings collects h2 and h3 only, in source order', () => {
+  const items = headings(
+    '# Title\n\n## One\n\ntext\n\n### Deep\n\n#### Ignored\n\n## Two\n',
+  );
+  assert.deepEqual(items, [
+    { depth: 2, text: 'One', id: 'one' },
+    { depth: 3, text: 'Deep', id: 'deep' },
+    { depth: 2, text: 'Two', id: 'two' },
+  ]);
+});
+
+void test('headings ignores hashes inside fenced code', () => {
+  assert.deepEqual(headings('```sh\n## not a heading\n```\n\n## Real\n'), [
+    { depth: 2, text: 'Real', id: 'real' },
+  ]);
+});
+
+void test('headings flattens inline markdown the same way the anchor does', () => {
+  assert.deepEqual(headings('## The `code` and **bold** bit\n'), [
+    { depth: 2, text: 'The code and bold bit', id: 'the-code-and-bold-bit' },
+  ]);
+  assert.deepEqual(headings('## A [link](/somewhere) here\n'), [
+    { depth: 2, text: 'A link here', id: 'a-link-here' },
+  ]);
+});
+
+void test('headings keeps duplicate titles and drops unslugable ones', () => {
+  const dupes = headings('## Setup\n\n## Setup\n');
+  assert.equal(dupes.length, 2);
+  assert.equal(dupes[0]?.id, dupes[1]?.id);
+  assert.deepEqual(headings('##Tight\n\n## ***\n'), []);
 });

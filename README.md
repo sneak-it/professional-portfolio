@@ -179,7 +179,9 @@ before tagging a new post. Exits non-zero on any error.
    ```
 
    Optional: `excerpt` and `readTime` (both derived from the body when omitted),
-   `updated: 'YYYY-MM-DD'` to show a revision date, and `draft: true`.
+   `updated: 'YYYY-MM-DD'` to show a revision date, `draft: true`, and
+   `toc: true | false` to force or suppress the table of contents (shown by
+   default once a post has four or more `##`/`###` headings).
 
 3. Write your content below using Markdown, which includes the GitHub-Flavored
    extensions: tables, footnotes, task lists, `~~strikethrough~~`, and bare-URL

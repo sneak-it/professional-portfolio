@@ -6,6 +6,7 @@ import BackButton from '@/components/BackButton';
 import ShareButton from '@/components/ShareButton';
 import PostMeta from '@/components/PostMeta';
 import PostNav from '@/components/PostNav';
+import { headings } from '@/lib/markdown';
 import { PROSE, PROSE_CODE } from '@/lib/prose';
 import { avatarSrc, siteConfig } from '@/lib/site';
 import type { BlogPost, BlogPostSummary } from '@/lib/mdx';
@@ -22,6 +23,10 @@ export default function BlogPostContent({
   children: React.ReactNode;
 }) {
   const avatar = avatarSrc();
+  const toc = headings(post.content);
+  // Fewer than four sections is shorter than the list describing them.
+  const showToc =
+    typeof post.meta.toc === 'boolean' ? post.meta.toc : toc.length >= 4;
   return (
     <Container as="article" size="sm">
       <BackButton href="/blog" label="Back to Blog" />
@@ -50,6 +55,29 @@ export default function BlogPostContent({
             />
           </div>
         </header>
+
+        {showToc && toc.length > 0 && (
+          <details className="mb-10 card-surface p-5">
+            <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Contents
+            </summary>
+            <ol className="mt-4 space-y-2">
+              {toc.map((item, i) => (
+                <li
+                  key={`${item.id}-${i}`}
+                  className={item.depth === 3 ? 'ml-5' : ''}
+                >
+                  <a
+                    href={`#${item.id}`}
+                    className="text-gray-700 hover:text-accent dark:text-gray-300 transition-colors"
+                  >
+                    {item.text}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </details>
+        )}
 
         <div className={`${PROSE} ${PROSE_CODE}`}>{children}</div>
 

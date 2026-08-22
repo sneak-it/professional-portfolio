@@ -31,6 +31,7 @@ const BLOG: Schema = {
     'excerpt',
     'readTime',
     'draft',
+    'toc',
   ],
   image: 'image',
   tags: true,
@@ -135,11 +136,14 @@ function checkFile(dir: string, slug: string, schema: Schema) {
   checkDate(file, 'date', data.date);
   checkDate(file, 'updated', data.updated);
 
-  if (data.draft !== undefined && typeof data.draft !== 'boolean') {
-    error(
-      file,
-      `draft must be a boolean, got ${typeof data.draft} (${JSON.stringify(data.draft)})`,
-    );
+  for (const key of ['draft', 'toc']) {
+    const value = data[key];
+    if (value !== undefined && typeof value !== 'boolean') {
+      error(
+        file,
+        `${key} must be a boolean, got ${typeof value} (${JSON.stringify(value)})`,
+      );
+    }
   }
 
   const src = data[schema.image];
