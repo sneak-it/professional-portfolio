@@ -39,9 +39,18 @@ export default function PageTransition({ children }: { children: ReactNode }) {
 
   // Keep the div: React names host children by position, so the wrapper pins
   // each page to a stable index across navigations.
+  //
+  // The radius is load-bearing, not decoration. This ViewTransition lives in
+  // the layout, so every navigation is an *update*, and React only keeps the
+  // view-transition-name on an update when the measured rect moved/resized or
+  // the element is "clipped" (non-default clip-path/overflow/filter/mask/
+  // border-radius). Two routes of equal height at scroll-top measure
+  // identical, React cancels the name, and the page swaps with no animation.
+  // A sub-pixel radius is the only one of those five with no rendering or
+  // containing-block side effects.
   return (
     <ViewTransition default={nav.cls}>
-      <div>{children}</div>
+      <div style={{ borderRadius: '0.01px' }}>{children}</div>
     </ViewTransition>
   );
 }
