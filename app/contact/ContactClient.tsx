@@ -40,54 +40,68 @@ export default function ContactClient({
         {/* One to three cards, depending on which SITE_* values are set. */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {email && (
-            <m.div
+            <m.a
               {...fadeInUp}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
+              href={`mailto:${email}`}
+              className="group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
             >
-              <IconBadge color="primary" size="lg" className="mb-6">
+              <IconBadge
+                color="primary"
+                size="lg"
+                className="mb-6 transition-transform duration-300 group-hover:scale-110"
+              >
                 <Mail size={32} />
               </IconBadge>
-              <h3 className="text-xl font-bold mb-2">Email</h3>
-              <a
-                href={`mailto:${email}`}
-                className="text-gray-600 dark:text-gray-400 hover:text-accent transition-colors break-all"
-              >
+              <h3 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent">
+                Email
+              </h3>
+              <span className="text-gray-600 dark:text-gray-400 transition-colors group-hover:text-accent break-all">
                 {email}
-              </a>
-            </m.div>
+              </span>
+            </m.a>
           )}
 
           {linkedin && (
-            <m.div
+            <m.a
               {...fadeInUp}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
+              href={linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
             >
-              <IconBadge color="primary" size="lg" className="mb-6">
+              <IconBadge
+                color="primary"
+                size="lg"
+                className="mb-6 transition-transform duration-300 group-hover:scale-110"
+              >
                 <LinkedInIcon size={32} />
               </IconBadge>
-              <h3 className="text-xl font-bold mb-2">LinkedIn</h3>
-              <a
-                href={linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 dark:text-gray-400 hover:text-accent transition-colors"
-              >
+              <h3 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent">
+                LinkedIn
+              </h3>
+              <span className="text-gray-600 dark:text-gray-400 transition-colors group-hover:text-accent">
                 Connect with me
-              </a>
-            </m.div>
+              </span>
+            </m.a>
           )}
 
           <m.div
             {...fadeInUp}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col items-center p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10"
+            className="group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
           >
-            <IconBadge color="secondary" size="lg" className="mb-6">
+            <IconBadge
+              color="secondary"
+              size="lg"
+              className="mb-6 transition-transform duration-300 group-hover:scale-110"
+            >
               <MapPin size={32} />
             </IconBadge>
-            <h3 className="text-xl font-bold mb-2">Location</h3>
+            <h3 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent">
+              Location
+            </h3>
             <p className="text-gray-600 dark:text-gray-400">{location}</p>
           </m.div>
         </div>
