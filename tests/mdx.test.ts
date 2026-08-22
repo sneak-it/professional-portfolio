@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { getAllPostMeta, getPostsByTag, getTags } from '../lib/mdx.ts';
+import {
+  getAdjacentPosts,
+  getAllPostMeta,
+  getPostsByTag,
+  getTags,
+} from '../lib/mdx.ts';
 import { slugify } from '../lib/slug.ts';
 
 // Runs against the real content/ tree, so these assert invariants that hold
@@ -66,4 +71,27 @@ void test('tag views never include drafts', () => {
       assert.ok(published.has(post.slug), `${post.slug} is not published`);
     }
   }
+});
+
+void test('getAdjacentPosts walks the published list in both directions', () => {
+  const posts = getAllPostMeta();
+  const newest = posts[0];
+  const secondNewest = posts[1];
+  const oldest = posts[posts.length - 1];
+  const secondOldest = posts[posts.length - 2];
+  assert.ok(secondNewest && secondOldest, 'content/ needs two posts');
+  assert.ok(newest && oldest);
+
+  const first = getAdjacentPosts(newest.slug);
+  assert.equal(first.next, undefined, 'newest post has no newer neighbour');
+  assert.equal(first.prev?.slug, secondNewest.slug);
+
+  const last = getAdjacentPosts(oldest.slug);
+  assert.equal(last.prev, undefined, 'oldest post has no older neighbour');
+  assert.equal(last.next?.slug, secondOldest.slug);
+});
+
+void test('getAdjacentPosts returns no neighbours off the published list', () => {
+  assert.deepEqual(getAdjacentPosts('definitely-not-a-post'), {});
+  assert.deepEqual(getAdjacentPosts('markdown-reference'), {});
 });

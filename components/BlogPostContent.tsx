@@ -5,15 +5,20 @@ import Surface from '@/components/Surface';
 import BackButton from '@/components/BackButton';
 import ShareButton from '@/components/ShareButton';
 import PostMeta from '@/components/PostMeta';
+import PostNav from '@/components/PostNav';
 import { PROSE, PROSE_CODE } from '@/lib/prose';
 import { avatarSrc, siteConfig } from '@/lib/site';
-import type { BlogPost } from '@/lib/mdx';
+import type { BlogPost, BlogPostSummary } from '@/lib/mdx';
 
 export default function BlogPostContent({
   post,
+  prev,
+  next,
   children,
 }: {
   post: BlogPost;
+  prev?: BlogPostSummary;
+  next?: BlogPostSummary;
   children: React.ReactNode;
 }) {
   const avatar = avatarSrc();
@@ -48,26 +53,30 @@ export default function BlogPostContent({
 
         <div className={`${PROSE} ${PROSE_CODE}`}>{children}</div>
 
-        <footer className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            {avatar ? (
-              <Image
-                src={avatar}
-                alt={siteConfig.author}
-                width={48}
-                height={48}
-                className="rounded-full"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent-2/30" />
-            )}
-            <div>
-              <p className="font-bold">{siteConfig.author}</p>
+        <footer className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              {avatar ? (
+                <Image
+                  src={avatar}
+                  alt={siteConfig.author}
+                  width={48}
+                  height={48}
+                  className="rounded-full"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent-2/30" />
+              )}
+              <div>
+                <p className="font-bold">{siteConfig.author}</p>
+              </div>
             </div>
+
+            <ShareButton title={post.meta.title} />
           </div>
 
-          <ShareButton title={post.meta.title} />
+          <PostNav prev={prev} next={next} />
         </footer>
       </Surface>
     </Container>

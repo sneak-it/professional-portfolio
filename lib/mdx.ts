@@ -109,3 +109,15 @@ export function getPostsByTag(slug: string): BlogPostSummary[] {
     post.meta.tags.some((name) => slugify(name) === slug),
   );
 }
+
+/** Neighbours in the published list; `{}` for a draft or unknown slug. */
+export function getAdjacentPosts(slug: string): {
+  prev?: BlogPostSummary;
+  next?: BlogPostSummary;
+} {
+  const posts = getAllPostMeta();
+  const i = posts.findIndex((p) => p.slug === slug);
+  if (i === -1) return {};
+  // Newest-first, so the older post is the next index.
+  return { prev: posts[i + 1], next: posts[i - 1] };
+}

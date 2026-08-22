@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { isDraft } from '@/lib/content';
-import { getPostBySlug } from '@/lib/mdx';
+import { getAdjacentPosts, getPostBySlug } from '@/lib/mdx';
 import BlogPostContent from '@/components/BlogPostContent';
 import { CachedMDX } from '@/components/MDXComponents';
 import JsonLd from '@/components/JsonLd';
@@ -67,6 +67,7 @@ export default async function BlogPost({
   }
 
   const url = absoluteUrl(`/blog/${post.slug}`);
+  const { prev, next } = getAdjacentPosts(post.slug);
 
   const articleJsonLd = {
     '@context': 'https://schema.org',
@@ -91,7 +92,7 @@ export default async function BlogPost({
           { name: post.meta.title, path: `/blog/${post.slug}` },
         ])}
       />
-      <BlogPostContent post={post}>
+      <BlogPostContent post={post} prev={prev} next={next}>
         <CachedMDX source={post.content} />
       </BlogPostContent>
     </>
