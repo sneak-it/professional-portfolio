@@ -110,3 +110,14 @@ void test('tolerates nodes with no children or attributes', () => {
     hardenRawHtml()(tree);
   });
 });
+
+// GFM task lists need <input> back in the components map, so this is the layer
+// that has to keep dropping an authored one.
+void test('drops authored input HTML even though the components map allows it', () => {
+  const tree = harden([
+    el('input', [attr('type'), attr('onchange')]),
+    el('p', [], [el('input', [attr('type')]), text('kept')]),
+  ]);
+  assert.deepEqual(names(tree), ['p']);
+  assert.deepEqual(names(tree.children?.[0]), ['text']);
+});

@@ -1,6 +1,7 @@
 import path from 'path';
 import type { ComponentPropsWithoutRef, ReactElement } from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
+import remarkGfm from 'remark-gfm';
 import { imageDimensions, isLocalSrc } from '@/lib/image';
 import { isSafeHref } from '@/lib/href';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
@@ -114,6 +115,14 @@ function Figure({
   );
 }
 
+// GFM task lists compile to <input type="checkbox">, and `input` is blocked.
+// Authored <input> HTML never reaches here — lib/harden.ts drops it a layer
+// earlier — so this only re-admits the markdown-generated checkbox.
+function TaskCheckbox({ type, ...rest }: ComponentPropsWithoutRef<'input'>) {
+  if (type !== 'checkbox') return null;
+  return <input {...rest} type="checkbox" disabled />;
+}
+
 export const mdxComponents = {
   a: SafeLink,
   img: SafeImage,
@@ -121,6 +130,8 @@ export const mdxComponents = {
   MdxRawImage: SafeImage,
   Figure,
   ...Object.fromEntries(BLOCKED_TAGS.map((tag) => [tag, Blocked])),
+  // After the spread, deliberately: the one blocked tag with a safe narrow case.
+  input: TaskCheckbox,
 } as const;
 
 /**
@@ -130,7 +141,7 @@ export const mdxComponents = {
  */
 const mdxRenderProps = {
   components: mdxComponents,
-  options: { mdxOptions: { remarkPlugins: [hardenRawHtml] } },
+  options: { mdxOptions: { remarkPlugins: [remarkGfm, hardenRawHtml] } },
 };
 
 // Keyed by body text, so an edit lands on a new key and needs no revalidation.

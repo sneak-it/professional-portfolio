@@ -1,0 +1,81 @@
+---
+title: 'Markdown Reference'
+date: '2026-08-22'
+readTime: '4 min read'
+image: ''
+category: 'Development'
+excerpt: 'Every Markdown and GitHub-Flavored Markdown feature this site renders, on one page, kept as a draft so it stays a living reference rather than a published post.'
+draft: true
+---
+
+This post is a fixture. It stays `draft: true` permanently: reachable at its own URL for checking a render, never in listings or the feed. Every syntax the site supports appears below, so a change to the MDX pipeline has one page that exercises all of it.
+
+## Tables
+
+GitHub-Flavored Markdown tables. The alignment row controls each column; Typography styles the borders.
+
+| Feature | Syntax | Notes |
+| --- | :---: | ---: |
+| Table | `\| a \| b \|` | Needs the header separator row |
+| Strikethrough | `~~text~~` | One tilde works as well |
+| Task list | `- [x] done` | Renders a disabled checkbox |
+| Footnote | `[^1]` | Definition can live anywhere in the file |
+
+## Strikethrough
+
+Prices are ~~$40~~ $25 this week. A single tilde strikes too, matching GitHub: ~also struck~.
+
+## Task lists
+
+- [x] Tables
+- [x] Strikethrough
+- [ ] Something still outstanding
+- [ ] Nested items work too
+  - [x] Including at depth
+
+Checkboxes are always disabled: a static page has nowhere to record a click.
+
+## Footnotes
+
+GFM footnotes render a numbered reference that links to a definition list at the end of the post, with a back-reference arrow returning to the text.[^why] Multiple references to the same note collapse to one definition.[^why]
+
+## Autolinks
+
+A bare URL becomes a link without any bracket syntax: https://nextjs.org and www.typescriptlang.org both linkify. Email addresses do too: hello@example.com.
+
+External links open in a new tab; footnote and heading anchors are fragments, so they stay in this one.
+
+## The ordinary things
+
+**Bold**, *italic*, `inline code`, and [an explicit link](https://react.dev).
+
+> A blockquote, for quoting something at length. It wraps like any other block.
+
+1. Ordered lists
+2. Keep their numbering
+3. Across items
+
+- Unordered lists
+- Use bullets
+- Unless they carry a checkbox
+
+```ts
+// Fenced code, with a language tag. Nothing inside a fence is parsed as
+// Markdown, so this # is a comment and not a heading.
+const rendered = compileMDX({ source, ...mdxRenderProps });
+```
+
+---
+
+A horizontal rule sits above this line.
+
+## Raw HTML is not a feature
+
+Authored HTML is filtered, not rendered. The two elements below are in the body of this file and produce nothing at all:
+
+<script>alert('never runs')</script>
+<input type="text" value="never renders" />
+
+An authored `<a>` or `<img>` does survive, but is rewritten to route through the same hardened components as Markdown links and images.
+
+[^why]: Footnotes are the one GFM feature that generates its own heading and anchor ids, which is why the pipeline has to leave an existing `id` alone rather than overwriting it.
