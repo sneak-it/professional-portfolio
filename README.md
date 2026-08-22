@@ -186,8 +186,9 @@ before tagging a new post. Exits non-zero on any error.
 
 3. Write your content below using Markdown, which includes the GitHub-Flavored
    extensions: tables, footnotes, task lists, `~~strikethrough~~`, and bare-URL
-   autolinks. `content/blog/markdown-reference.mdx` is a draft post that renders
-   every supported feature on one page.
+   autolinks. `content/blog/authoring-reference.mdx` is a draft post that
+   exercises every frontmatter field, Markdown feature, and component on one
+   page, including the ones that deliberately do not render.
 
 In the body you can use `<Callout type="note|tip|warn" title="…">` and
 `<Figure src alt caption />`, plus the layout components (`Container`, `Surface`,

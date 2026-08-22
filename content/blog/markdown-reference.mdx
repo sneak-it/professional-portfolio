@@ -10,7 +10,7 @@ tags:
   - 'Test'
   - 'Hello World'
 excerpt: 'Every Markdown and GitHub-Flavored Markdown feature this site renders, on one page, kept as a draft so it stays a living reference rather than a published post.'
-draft: true
+draft: false
 ---
 
 This post is a fixture. It stays `draft: true` permanently: reachable at its own URL for checking a render, never in listings or the feed. Every syntax the site supports appears below, so a change to the MDX pipeline has one page that exercises all of it.
@@ -118,7 +118,7 @@ in a post body. `Surface` is the frosted reading panel:
 one it collapses to nothing:
 
 <div className="relative aspect-video rounded-2xl overflow-hidden not-prose">
-  <CoverImage src="/images/blog/inline-demo.svg" alt="A local demo image" sizes="(max-width: 768px) 100vw, 768px" />
+  <CoverImage src="/images/blog/cover-demo.png" alt="A local demo image" sizes="(max-width: 768px) 100vw, 768px" />
 </div>
 
 No client components are exposed. They would ship JavaScript for every post that
