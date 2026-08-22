@@ -4,7 +4,8 @@ A modern, highly polished personal portfolio website.
 
 ## Features
 
-- **MDX Blog**: Write blog posts using Markdown and React components.
+- **MDX Blog**: GitHub-Flavored Markdown plus React components, with read time, excerpt, and table of contents derived from the post body.
+- **Tag browsing and RSS**: One-tag filtering at `/blog?tag=`, previous/next post navigation, and a feed at `/feed.xml`.
 - **Unified Portfolio**: A single Portfolio hub with three sections — Technology Consulting, Open Source, and Photography — all driven by MDX.
 - **Auto-discovered Galleries**: Photography galleries build their image lists automatically from the filesystem, with a scrollable layout and lightbox.
 - **Incremental content**: Content routes render per request, so a dropped-in file appears with no rebuild and no revalidation window.
@@ -187,6 +188,12 @@ before tagging a new post. Exits non-zero on any error.
    extensions: tables, footnotes, task lists, `~~strikethrough~~`, and bare-URL
    autolinks. `content/blog/markdown-reference.mdx` is a draft post that renders
    every supported feature on one page.
+
+In the body you can use `<Callout type="note|tip|warn" title="…">` and
+`<Figure src alt caption />`, plus the layout components (`Container`, `Surface`,
+`CoverCard`, `CoverImage`, `IconBadge`, `EmptyState`, `PostMeta`). Raw HTML is
+not a feature: `<script>`, `<iframe>`, `<input>` and friends are stripped, images
+must be same-origin, and links are limited to http/https/mailto.
 
 Published posts are also served as RSS at `/feed.xml`, which every page links
 from its `<head>`. Drafts and future-dated posts are excluded, and each post's
