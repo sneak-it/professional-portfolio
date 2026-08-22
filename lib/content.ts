@@ -108,9 +108,15 @@ export function readMdxFile(
   }
 }
 
-/** `draft: true` in frontmatter keeps a file out of every listing. */
+/**
+ * `draft: true`, or a `date` still in the future, keeps a file out of every
+ * listing. A missing or unparseable date is not a draft, matching `byDateDesc`,
+ * which sorts those last rather than treating them as special.
+ */
 export function isDraft(data: Record<string, unknown>): boolean {
-  return data.draft === true;
+  if (data.draft === true) return true;
+  const at = Date.parse(typeof data.date === 'string' ? data.date : '');
+  return Number.isFinite(at) && at > Date.now();
 }
 
 /**

@@ -102,3 +102,19 @@ void test('isDraft only accepts the literal true', () => {
   assert.equal(isDraft({ draft: 1 }), false);
   assert.equal(isDraft({}), false);
 });
+
+void test('isDraft treats a future date as not yet published', () => {
+  const year = new Date().getUTCFullYear();
+  assert.equal(isDraft({ date: `${year + 5}-01-01` }), true);
+  assert.equal(isDraft({ date: `${year - 5}-01-01` }), false);
+  // A published post stays published; an explicit draft flag still wins.
+  assert.equal(isDraft({ date: `${year - 5}-01-01`, draft: true }), true);
+});
+
+// Same posture as byDateDesc, which sorts these last rather than special-casing.
+void test('isDraft ignores a missing or unparseable date', () => {
+  assert.equal(isDraft({ date: 'not a date' }), false);
+  assert.equal(isDraft({ date: '' }), false);
+  assert.equal(isDraft({ date: 20991231 }), false);
+  assert.equal(isDraft({ date: new Date(9e15) }), false);
+});

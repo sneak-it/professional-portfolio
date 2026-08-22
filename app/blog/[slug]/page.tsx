@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { isDraft } from '@/lib/content';
 import { getPostBySlug } from '@/lib/mdx';
 import BlogPostContent from '@/components/BlogPostContent';
 import { CachedMDX } from '@/components/MDXComponents';
@@ -31,8 +32,9 @@ export async function generateMetadata({
     description: excerpt,
     ...(tags.length > 0 && { keywords: tags }),
     alternates: { canonical: url },
-    // Drafts stay reachable for preview, so keep crawlers off them.
-    ...(post.meta.draft === true && {
+    // Drafts and not-yet-published posts stay reachable for preview, so keep
+    // crawlers off them. Same predicate the listings filter on.
+    ...(isDraft(post.meta) && {
       robots: { index: false, follow: false },
     }),
     openGraph: {
