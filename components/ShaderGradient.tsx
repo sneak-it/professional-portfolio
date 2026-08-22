@@ -18,8 +18,17 @@ import { Renderer, Triangle, Program, Mesh } from 'ogl';
 
    Efficiency: trivial vertex stage (one full-screen triangle), a single
    3-octave noise field per pixel, capped DPR, shader-based anti-aliasing (no
-   MSAA), and the rAF pauses while the tab is hidden.
+   MSAA), a 30 fps render cap, an opaque drawing buffer with no depth
+   attachment, and the rAF pauses while the tab is hidden.
 --------------------------------------------------------------------------- */
+
+/* Render cap. The height field drifts at `uTime * 0.035`, so a frame advances
+   the terrain by a fraction of a contour width and 30 fps is indistinguishable
+   from 120 — at a quarter of the fill rate on a high-refresh display. Raise
+   this if the drift term is ever sped up. */
+const TARGET_FPS = 30;
+
+const FRAME_MS = 1000 / TARGET_FPS;
 
 interface Rgb {
   r: number;
@@ -175,12 +184,19 @@ export default function ShaderGradient() {
     if (!container) return;
 
     // Cap DPR low — contour lines are shader-anti-aliased, so high retina
-    // resolution is wasted fill rate. No MSAA needed (no geometry edges).
+    // resolution is wasted fill rate. Not 1.0: the lines are ~1 *device* pixel
+    // wide, so downsampling makes the compositor upscale them into a soft blur
+    // on exactly the displays that can afford the pixels. The fps cap above is
+    // the cheaper lever.
     const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
     const renderer = new Renderer({
       dpr,
-      alpha: true,
-      premultipliedAlpha: true,
+      // The shader writes alpha 1.0 over an opaque wrapper, so an alpha channel
+      // buys only a per-pixel compositor blend that never does anything. One
+      // full-screen triangle means no depth testing and no geometry edges, so
+      // the depth attachment and MSAA go too.
+      alpha: false,
+      depth: false,
       antialias: false,
       powerPreference: 'low-power',
       // WebGL2 (default). The shaders are GLSL ES 3.00 (#version 300 es), where
@@ -245,11 +261,24 @@ export default function ShaderGradient() {
     let rafId = 0;
     let running = true;
     const start = performance.now();
+    // Deadlines advance on a fixed grid rather than resetting to `now`, so vsync
+    // quantisation cancels out instead of accumulating. That holds the average on
+    // target at any refresh rate, variable ones included; resetting to `now`
+    // needs a fudge factor and still drifts to 25-33 fps depending on the panel.
+    let due = 0;
     const loop = (now: number) => {
       if (!running) return;
+      // Re-arm first, so a skipped frame still schedules the next one.
+      rafId = requestAnimationFrame(loop);
+      if (now < due) return;
+      due += FRAME_MS;
+      // Stalled (hidden tab, long task): skip ahead instead of rendering every
+      // frame to catch up. Nothing here is frame-sequential.
+      if (due < now) due = now + FRAME_MS;
+      // Wall-clock elapsed, not a frame counter, so the cap changes GPU cost
+      // and not the speed of the drift.
       time.value = (now - start) / 1000;
       renderer.render({ scene: mesh });
-      rafId = requestAnimationFrame(loop);
     };
     rafId = requestAnimationFrame(loop);
 
