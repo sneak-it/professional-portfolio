@@ -64,7 +64,7 @@ export default function BlogList({
         </nav>
       )}
 
-      <div className="space-y-12">
+      <div className="space-y-4">
         {posts.map((post, index) => (
           <m.article
             key={post.slug}
