@@ -74,6 +74,56 @@ const rendered = compileMDX({ source, ...mdxRenderProps });
 
 A horizontal rule sits above this line.
 
+## Callouts
+
+Three types, each with its own icon and colour. The colours are semantic rather
+than brand accents, so a note and a warning never look alike.
+
+<Callout>
+  The default. Written as `<Callout>` with no attributes, or `type="note"`.
+</Callout>
+
+<Callout type="tip">
+  Use `type="tip"` for something worth doing but optional.
+</Callout>
+
+<Callout type="warn">
+  Use `type="warn"` for a footgun. This one has a `title` override available too.
+</Callout>
+
+<Callout type="bogus">
+  An unrecognised `type` falls back to a note rather than breaking the post, so a
+  typo costs you a colour and nothing more.
+</Callout>
+
+<Callout type="tip" title="Custom heading">
+  `title` replaces the default label when the type name is not what you want to
+  say.
+</Callout>
+
+## Other components
+
+Besides `Figure` and `Callout`, the site's own server components are available
+in a post body. `Surface` is the frosted reading panel:
+
+<Surface>
+  A nested panel, useful for setting a block apart from the surrounding prose.
+</Surface>
+
+`EmptyState` is the dashed placeholder, and `IconBadge` the circular chip:
+
+<EmptyState>Nothing here yet.</EmptyState>
+
+`CoverImage` fills its parent, so it needs a sized, positioned wrapper — without
+one it collapses to nothing:
+
+<div className="relative aspect-video rounded-2xl overflow-hidden not-prose">
+  <CoverImage src="/images/blog/inline-demo.svg" alt="A local demo image" sizes="(max-width: 768px) 100vw, 768px" />
+</div>
+
+No client components are exposed. They would ship JavaScript for every post that
+mentioned them, and nothing here needs interactivity.
+
 ## Raw HTML is not a feature
 
 Authored HTML is filtered, not rendered. The two elements below are in the body of this file and produce nothing at all:

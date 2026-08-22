@@ -2,6 +2,14 @@ import path from 'path';
 import type { ComponentPropsWithoutRef, ReactElement } from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
+import { Info, Lightbulb, TriangleAlert } from 'lucide-react';
+import Container from '@/components/Container';
+import CoverCard from '@/components/CoverCard';
+import CoverImage from '@/components/CoverImage';
+import EmptyState from '@/components/EmptyState';
+import IconBadge from '@/components/IconBadge';
+import PostMeta from '@/components/PostMeta';
+import Surface from '@/components/Surface';
 import { imageDimensions, isLocalSrc } from '@/lib/image';
 import { isSafeHref } from '@/lib/href';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
@@ -103,6 +111,58 @@ function Figure({
   );
 }
 
+// Semantic colors rather than the brand accents: the palette is two warm
+// tones, so a coral "note" and a red "warning" would be indistinguishable.
+const CALLOUTS = {
+  note: {
+    Icon: Info,
+    label: 'Note',
+    tone: 'border-sky-500 bg-sky-500/10',
+    text: 'text-sky-700 dark:text-sky-300',
+  },
+  tip: {
+    Icon: Lightbulb,
+    label: 'Tip',
+    tone: 'border-emerald-500 bg-emerald-500/10',
+    text: 'text-emerald-700 dark:text-emerald-300',
+  },
+  warn: {
+    Icon: TriangleAlert,
+    label: 'Warning',
+    tone: 'border-amber-500 bg-amber-500/10',
+    text: 'text-amber-700 dark:text-amber-300',
+  },
+} as const;
+
+/**
+ * Aside for MDX bodies: `<Callout type="tip">…</Callout>`. An unknown `type`
+ * falls back to `note`, so a typo still renders the post.
+ */
+function Callout({
+  type = 'note',
+  title,
+  children,
+}: {
+  type?: string;
+  title?: string;
+  children?: React.ReactNode;
+}) {
+  const { Icon, label, tone, text } =
+    CALLOUTS[type as keyof typeof CALLOUTS] ?? CALLOUTS.note;
+  return (
+    <div className={`my-6 rounded-r-2xl border-l-4 px-5 py-4 ${tone}`}>
+      <div
+        className={`flex items-center gap-2 font-mono text-xs uppercase tracking-wider ${text}`}
+      >
+        <Icon size={16} aria-hidden /> {title ?? label}
+      </div>
+      <div className="[&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // GFM task lists compile to <input type="checkbox">, and `input` is blocked.
 // This re-admits just that checkbox; lib/harden.ts drops authored <input>.
 function TaskCheckbox({ type, ...rest }: ComponentPropsWithoutRef<'input'>) {
@@ -116,6 +176,15 @@ export const mdxComponents = {
   MdxRawLink: SafeLink,
   MdxRawImage: SafeImage,
   Figure,
+  Callout,
+  // Server components only: a client one would ship JS per post for no gain.
+  Container,
+  CoverCard,
+  CoverImage,
+  EmptyState,
+  IconBadge,
+  PostMeta,
+  Surface,
   ...Object.fromEntries(BLOCKED_TAGS.map((tag) => [tag, Blocked])),
   // After the spread: the one blocked tag with a safe narrow case.
   input: TaskCheckbox,
