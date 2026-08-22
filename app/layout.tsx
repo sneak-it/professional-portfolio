@@ -24,6 +24,8 @@ const ogImage = `/brand/opengraph-image?v=${BRAND_VERSION}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
+  generator:
+    'professional-portfolio (https://github.com/sneak-it/professional-portfolio)',
   title: {
     default: siteConfig.title,
     // Per-route titles inherit this template: "About | Professional Portfolio".
