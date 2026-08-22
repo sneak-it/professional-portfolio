@@ -1,47 +1,49 @@
 import { Calendar, Clock, PencilLine } from 'lucide-react';
+import TagList from '@/components/TagList';
 import { formatDate } from '@/lib/date';
 
 /**
- * The category · date · read-time meta row shown above a blog post, on both the
- * list card and the article header. `updated` adds a trailing revision line and
- * is only shown where there is room for it (the article header, not the card).
+ * The meta block above a blog post, on both the list card and the article
+ * header: a date · read-time · updated row, with the tag chips on their own line
+ * beneath it. `maxTags` caps the chips on the card, where a long tag list wraps
+ * badly; the article header shows all of them.
  */
 export default function PostMeta({
-  category,
+  tags = [],
+  maxTags,
+  linkTags = false,
   date,
   readTime,
   updated,
   className = '',
 }: {
-  category?: string;
+  tags?: string[];
+  maxTags?: number;
+  linkTags?: boolean;
   date: string;
   readTime?: string;
   updated?: string;
   className?: string;
 }) {
   return (
-    <div
-      className={`flex items-center gap-4 text-sm font-mono text-gray-500 dark:text-gray-400 ${className}`}
-    >
-      {category && (
-        <span className="text-accent font-medium font-mono uppercase tracking-wider">
-          {category}
-        </span>
-      )}
-      <span className="flex items-center gap-1">
-        <Calendar size={14} /> <time dateTime={date}>{formatDate(date)}</time>
-      </span>
-      {readTime && (
+    <div className={`flex flex-col gap-3 ${className}`}>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-mono text-gray-500 dark:text-gray-400">
         <span className="flex items-center gap-1">
-          <Clock size={14} /> {readTime}
+          <Calendar size={14} /> <time dateTime={date}>{formatDate(date)}</time>
         </span>
-      )}
-      {updated && (
-        <span className="flex items-center gap-1">
-          <PencilLine size={14} /> Updated{' '}
-          <time dateTime={updated}>{formatDate(updated)}</time>
-        </span>
-      )}
+        {readTime && (
+          <span className="flex items-center gap-1">
+            <Clock size={14} /> {readTime}
+          </span>
+        )}
+        {updated && (
+          <span className="flex items-center gap-1">
+            <PencilLine size={14} /> Updated{' '}
+            <time dateTime={updated}>{formatDate(updated)}</time>
+          </span>
+        )}
+      </div>
+      <TagList tags={tags} max={maxTags} link={linkTags} />
     </div>
   );
 }

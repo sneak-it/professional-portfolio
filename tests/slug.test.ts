@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { safeSlug } from '../lib/slug.ts';
+import { safeSlug, slugify } from '../lib/slug.ts';
 
 // safeSlug is the only thing between a route param and a filesystem path
 // (lib/content.ts builds `${dir}/${slug}.mdx` from its return value), so these
@@ -49,4 +49,24 @@ void test('safeSlug rejects anything that is not a bare slug', () => {
   ]) {
     assert.equal(safeSlug(slug), null, JSON.stringify(slug));
   }
+});
+
+void test('slugify lowercases and collapses non-alphanumerics', () => {
+  assert.equal(slugify('Next.js'), 'next-js');
+  assert.equal(slugify('Web Development'), 'web-development');
+  assert.equal(slugify('C++ / Rust'), 'c-rust');
+  assert.equal(slugify('  spaced  out  '), 'spaced-out');
+  assert.equal(slugify('AI'), 'ai');
+});
+
+// Distinct spellings that do NOT merge: the reason check:content lints them.
+void test('slugify does not merge punctuation variants', () => {
+  assert.notEqual(slugify('Next.js'), slugify('NextJS'));
+  assert.equal(slugify('NextJS'), 'nextjs');
+});
+
+void test('slugify returns empty for input with no alphanumerics', () => {
+  assert.equal(slugify('---'), '');
+  assert.equal(slugify(''), '');
+  assert.equal(slugify('!!!'), '');
 });

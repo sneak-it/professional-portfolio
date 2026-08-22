@@ -24,7 +24,8 @@ export default function BlogPostContent({
       <Surface as="div" padding="lg" className="mt-6">
         <header className="mb-10">
           <PostMeta
-            category={post.meta.category}
+            tags={post.meta.tags}
+            linkTags
             date={post.meta.date}
             readTime={post.meta.readTime}
             updated={post.meta.updated}

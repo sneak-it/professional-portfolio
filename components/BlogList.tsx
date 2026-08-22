@@ -7,25 +7,62 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '@/components/Container';
 import PageHeader from '@/components/PageHeader';
 import PostMeta from '@/components/PostMeta';
+import TagList, { chipClass } from '@/components/TagList';
 import { fadeInUpOnView } from '@/lib/motion';
-import type { BlogPostSummary } from '@/lib/mdx';
+import type { BlogPostSummary, Tag } from '@/lib/mdx';
 
-const pageHref = (page: number) => (page <= 1 ? '/blog' : `/blog?page=${page}`);
+// Chips shown inline; the rest of the vocabulary lives on the all-tags page.
+const CHIP_LIMIT = 12;
 
 export default function BlogList({
   posts,
   description,
   currentPage,
   totalPages,
+  tags,
+  activeTag,
 }: {
   posts: BlogPostSummary[];
   description: string;
   currentPage: number;
   totalPages: number;
+  tags: Tag[];
+  activeTag?: string;
 }) {
+  // Carries the filter, or paging out of a filtered view silently drops it.
+  const pageHref = (page: number) => {
+    const params = new URLSearchParams();
+    if (activeTag) params.set('tag', activeTag);
+    if (page > 1) params.set('page', String(page));
+    const query = params.toString();
+    return query ? `/blog?${query}` : '/blog';
+  };
+
   return (
     <Container size="md">
       <PageHeader title="Blog" description={description} />
+
+      {tags.length > 0 && (
+        <nav
+          className="mb-12 flex flex-wrap items-center gap-2"
+          aria-label="Filter posts by tag"
+        >
+          <Link
+            href="/blog"
+            aria-current={activeTag ? undefined : 'page'}
+            className={chipClass(!activeTag)}
+          >
+            All
+          </Link>
+          <TagList
+            tags={tags}
+            max={CHIP_LIMIT}
+            link
+            counts
+            activeSlug={activeTag}
+          />
+        </nav>
+      )}
 
       <div className="space-y-12">
         {posts.map((post, index) => (
@@ -47,7 +84,9 @@ export default function BlogList({
 
             <div className="flex flex-col flex-grow justify-center h-full py-2">
               <PostMeta
-                category={post.meta.category}
+                tags={post.meta.tags}
+                maxTags={3}
+                linkTags
                 date={post.meta.date}
                 readTime={post.meta.readTime}
                 className="mb-4"

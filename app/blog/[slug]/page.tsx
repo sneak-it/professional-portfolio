@@ -23,12 +23,13 @@ export async function generateMetadata({
     return {};
   }
 
-  const { title, excerpt, image, date } = post.meta;
+  const { title, excerpt, image, date, tags } = post.meta;
   const url = `/blog/${post.slug}`;
 
   return {
     title,
     description: excerpt,
+    ...(tags.length > 0 && { keywords: tags }),
     alternates: { canonical: url },
     // Drafts stay reachable for preview, so keep crawlers off them.
     ...(post.meta.draft === true && {
@@ -73,7 +74,7 @@ export default async function BlogPost({
     image: post.meta.image,
     datePublished: post.meta.date,
     dateModified: post.meta.updated || post.meta.date,
-    articleSection: post.meta.category,
+    keywords: post.meta.tags.join(', '),
     author: { '@type': 'Person', name: siteConfig.author },
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
   };

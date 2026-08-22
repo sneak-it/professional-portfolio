@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { SITEMAP_CACHE_TTL_MS } from '@/lib/config';
 import { toDate } from '@/lib/date';
-import { getAllPostMeta } from '@/lib/mdx';
+import { TAG_INDEX_MIN_POSTS, getAllPostMeta, getTags } from '@/lib/mdx';
 import {
   PORTFOLIO_SECTIONS,
   getProjectItems,
@@ -108,8 +108,14 @@ function buildRoutes(): Route[] {
     { path: '/blog', lastModified: latest(postItems.map((i) => i.date)) },
   ];
 
+  // Thin tag views are omitted rather than listed and then noindex-ed.
+  const tagRoutes: Route[] = getTags()
+    .filter((tag) => tag.count >= TAG_INDEX_MIN_POSTS)
+    .map((tag) => ({ path: `/blog?tag=${tag.slug}` }));
+
   return [
     ...staticRoutes,
+    ...tagRoutes,
     ...sectionRoutes,
     ...posts,
     ...photography,

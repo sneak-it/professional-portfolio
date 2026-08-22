@@ -1,7 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { BLOG_POSTS_PER_PAGE as POSTS_PER_PAGE } from '@/lib/config';
-import { getAllPostMeta } from '@/lib/mdx';
+import {
+  TAG_INDEX_MIN_POSTS,
+  getAllPostMeta,
+  getPostsByTag,
+  getTags,
+  type Tag,
+} from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
 
 // Rendered per request so content added, edited, or removed in the bind-mounted
@@ -29,54 +35,92 @@ function resolvePage(
   return parsed > totalPages ? null : parsed;
 }
 
-function totalPageCount(): number {
-  return Math.max(1, Math.ceil(getAllPostMeta().length / POSTS_PER_PAGE));
+/**
+ * The requested tag, or null when the param is present but unknown — same
+ * posture as `resolvePage`: 404 rather than silently listing everything, which
+ * would make every typo another indexable copy of /blog.
+ *
+ * ponytail: single tag; intersect a comma-split list if browsing needs it.
+ */
+function resolveTag(tag: string | undefined, tags: Tag[]): Tag | null {
+  if (tag === undefined) return null;
+  return tags.find((t) => t.slug === tag) ?? null;
+}
+
+/** The list a request renders, and the tag that narrowed it. */
+function resolveView(params: { page?: string; tag?: string }) {
+  const tags = getTags();
+  const tag = resolveTag(params.tag, tags);
+  const missingTag = params.tag !== undefined && tag === null;
+  const posts = tag ? getPostsByTag(tag.slug) : getAllPostMeta();
+  const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
+  return {
+    tags,
+    tag,
+    missingTag,
+    posts,
+    totalPages,
+    currentPage: resolvePage(params.page, totalPages),
+  };
+}
+
+function canonicalFor(tag: Tag | null, page: number | null): string {
+  const search = new URLSearchParams();
+  if (tag) search.set('tag', tag.slug);
+  if (page && page > 1) search.set('page', String(page));
+  const query = search.toString();
+  return query ? `/blog?${query}` : '/blog';
 }
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; tag?: string }>;
 }): Promise<Metadata> {
-  const { page } = await searchParams;
-  const currentPage = resolvePage(page, totalPageCount());
+  const { tag, missingTag, posts, currentPage } = resolveView(
+    await searchParams,
+  );
+  if (missingTag) return {};
+
+  const title = tag ? `Posts tagged ${tag.name}` : 'Blog';
+  const description = tag ? `Every post tagged ${tag.name}.` : DESCRIPTION;
   // Out-of-range pages 404 (see default export); still give them a self-canonical.
-  const canonical =
-    currentPage && currentPage > 1 ? `/blog?page=${currentPage}` : '/blog';
+  const canonical = canonicalFor(tag, currentPage);
 
   return {
-    title: 'Blog',
-    description: DESCRIPTION,
+    title,
+    description,
     alternates: { canonical },
-    openGraph: {
-      title: 'Blog',
-      description: DESCRIPTION,
-      url: canonical,
-    },
+    // A one- or two-post tag view is thin content, and there will be many of
+    // them; `follow` still lets the posts themselves be discovered.
+    ...(tag &&
+      posts.length < TAG_INDEX_MIN_POSTS && {
+        robots: { index: false, follow: true },
+      }),
+    openGraph: { title, description, url: canonical },
   };
 }
 
 export default async function Blog({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; tag?: string }>;
 }) {
-  const { page } = await searchParams;
-  const posts = getAllPostMeta();
-  const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
-
-  const currentPage = resolvePage(page, totalPages);
-  if (currentPage === null) notFound();
+  const { tags, tag, missingTag, posts, totalPages, currentPage } = resolveView(
+    await searchParams,
+  );
+  if (missingTag || currentPage === null) notFound();
 
   const start = (currentPage - 1) * POSTS_PER_PAGE;
-  const paginatedPosts = posts.slice(start, start + POSTS_PER_PAGE);
 
   return (
     <BlogList
-      posts={paginatedPosts}
+      posts={posts.slice(start, start + POSTS_PER_PAGE)}
       description={DESCRIPTION}
       currentPage={currentPage}
       totalPages={totalPages}
+      tags={tags}
+      activeTag={tag?.slug}
     />
   );
 }
