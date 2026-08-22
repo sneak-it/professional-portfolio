@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { SITEMAP_CACHE_TTL_MS } from '@/lib/config';
+import { SITEMAP_CACHE_TTL_MS, ttlCached } from '@/lib/config';
 import { toDate } from '@/lib/date';
 import { TAG_INDEX_MIN_POSTS, getAllPostMeta, getTags } from '@/lib/mdx';
 import {
@@ -116,20 +116,8 @@ function buildRoutes(): Route[] {
   ];
 }
 
-// SITEMAP_CACHE_TTL_MS trades sitemap freshness against content-tree walks.
-// Pages render per request, so it only affects sitemap.xml.
-
-let routeCache: { at: number; routes: Route[] } | null = null;
-
-/** Cached `buildRoutes()` — one filesystem scan per TTL, per container. */
-function getRoutes(): Route[] {
-  const now = Date.now();
-  if (routeCache && now - routeCache.at < SITEMAP_CACHE_TTL_MS)
-    return routeCache.routes;
-  const routes = buildRoutes();
-  routeCache = { at: now, routes };
-  return routes;
-}
+// Pages render per request, so the TTL only affects sitemap.xml and feed.xml.
+const getRoutes = ttlCached(SITEMAP_CACHE_TTL_MS, buildRoutes);
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return getRoutes().map((r) => entry(absoluteUrl(r.path), r.lastModified));

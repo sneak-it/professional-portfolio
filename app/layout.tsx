@@ -34,6 +34,7 @@ export const metadata: Metadata = {
   authors: [{ name: siteConfig.author }],
   alternates: {
     canonical: '/',
+    types: { 'application/rss+xml': '/feed.xml' },
   },
   icons: {
     icon: `/brand/icon?v=${BRAND_VERSION}`,

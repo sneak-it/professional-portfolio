@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
       // browsers still revalidate. Cloudflare needs a Cache Rule (CLOUDFLARE.md).
       {
         source:
-          '/:path(|about|contact|blog|portfolio|robots\\.txt|sitemap\\.xml|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
+          '/:path(|about|contact|blog|portfolio|robots\\.txt|sitemap\\.xml|feed\\.xml|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
         headers: [
           {
             key: 'Cache-Control',

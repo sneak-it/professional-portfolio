@@ -146,8 +146,8 @@ preview it, served with `noindex, nofollow` so crawlers leave it alone.
 A `date` in the future does the same thing, so a post publishes itself once that
 date arrives — no flag to remember to remove. Nothing is scheduled server-side:
 each request re-reads the file, so the post simply starts appearing. The sitemap
-lags by `SITEMAP_CACHE_TTL_MS` (default 5 minutes), so check the page rather
-than `sitemap.xml` when confirming.
+and the RSS feed lag by `SITEMAP_CACHE_TTL_MS` (default 5 minutes), so check the
+page rather than `sitemap.xml` or `feed.xml` when confirming.
 
 ### Checking content
 
@@ -187,6 +187,11 @@ before tagging a new post. Exits non-zero on any error.
    extensions: tables, footnotes, task lists, `~~strikethrough~~`, and bare-URL
    autolinks. `content/blog/markdown-reference.mdx` is a draft post that renders
    every supported feature on one page.
+
+Published posts are also served as RSS at `/feed.xml`, which every page links
+from its `<head>`. Drafts and future-dated posts are excluded, and each post's
+tags become its `<category>` entries. Like the sitemap, the item list is cached
+for `SITEMAP_CACHE_TTL_MS`.
 
 Tags are the only taxonomy, and they do double duty: `/blog?tag=<slug>` filters
 the listing to one tag at a time, and the same list becomes the post's
