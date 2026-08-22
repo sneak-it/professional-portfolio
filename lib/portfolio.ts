@@ -1,13 +1,13 @@
 import path from 'path';
-import { imageDimensions } from './image';
+import { imageDimensions } from './image.ts';
 import {
   isDraft,
   listDir,
   listMdxFiles,
   readMdxFile,
   type MdxFile,
-} from './content';
-import { byDateDesc } from './sort';
+} from './content.ts';
+import { byDateDesc } from './sort.ts';
 
 /**
  * Unified, MDX-driven Portfolio data layer.

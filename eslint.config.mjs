@@ -107,6 +107,12 @@ export default defineConfig(
     },
   },
 
+  // CLI scripts: stdout is the product, not a stray debug statement.
+  {
+    files: ["scripts/**/*.ts"],
+    rules: { "no-console": "off" },
+  },
+
   // Disable ESLint rules that conflict with Prettier formatting.
   // Must come last so it overrides formatting rules from the configs above.
   prettier,

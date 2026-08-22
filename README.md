@@ -137,29 +137,60 @@ docker run -p 3000:3000 \
 
 All content is MDX. Site-wide metadata (name, description, social links) lives in `lib/site.ts`.
 
-### Drafts
+### Drafts and scheduled posts
 
 Add `draft: true` to the frontmatter of any `.mdx` file, blog post or portfolio item. It drops out of
 the listings, the section counts, and the sitemap, but stays reachable at its own URL so you can
 preview it, served with `noindex, nofollow` so crawlers leave it alone.
 
+A `date` in the future does the same thing, so a post publishes itself once that
+date arrives — no flag to remember to remove. Nothing is scheduled server-side:
+each request re-reads the file, so the post simply starts appearing. The sitemap
+lags by `SITEMAP_CACHE_TTL_MS` (default 5 minutes), so check the page rather
+than `sitemap.xml` when confirming.
+
+### Checking content
+
+```bash
+npm run check:content
+```
+
+Lints every file under `content/`: missing required fields, unknown keys (a
+typo'd `catgeory:` otherwise does nothing at all), unparseable dates, a `draft`
+that is the string `'true'` rather than a boolean, a cover image with no file
+under `public/`, and tag spellings that collide. It also prints the full tag
+vocabulary with counts, which is the fastest way to see what you already use
+before tagging a new post. Exits non-zero on any error.
+
 ### Adding a Blog Post
 
 1. Create a new `.mdx` file in `content/blog/`. The filename becomes the URL slug.
-2. Add the required frontmatter:
+2. Add the frontmatter. Only `title` and `date` are required:
 
    ```mdx
    ---
    title: 'Your Post Title'
    date: 'YYYY-MM-DD'
-   excerpt: 'A short summary.'
-   image: 'https://example.com/cover.jpg'
-   category: 'Category'
-   readTime: 'X min read'
+   tags:
+     - 'Tag One'
+     - 'Tag Two'
+   image: '/images/blog/cover.jpg'
    ---
    ```
 
-3. Write your content below using Markdown.
+   Optional: `excerpt` and `readTime` (both derived from the body when omitted),
+   `updated: 'YYYY-MM-DD'` to show a revision date, and `draft: true`.
+
+3. Write your content below using Markdown, which includes the GitHub-Flavored
+   extensions: tables, footnotes, task lists, `~~strikethrough~~`, and bare-URL
+   autolinks. `content/blog/markdown-reference.mdx` is a draft post that renders
+   every supported feature on one page.
+
+Tags are the only taxonomy, and they do double duty: `/blog?tag=<slug>` filters
+the listing to one tag at a time, and the same list becomes the post's
+`keywords`. Run `npm run check:content` before committing — it catches a tag
+spelled two ways (`Next.js` vs `NextJS`), which is what fragments a vocabulary
+over a few dozen posts.
 
 ### Portfolio
 
