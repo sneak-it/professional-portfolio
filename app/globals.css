@@ -61,6 +61,14 @@
   background-color: rgb(10 12 16 / 0.8);
   border-color: rgb(255 255 255 / 0.12);
 }
+/* Near-opaque variant for long-form reading, where the moving background
+   showing through the panel is distracting. */
+.surface-opaque {
+  background-color: rgb(255 255 255 / 0.99);
+}
+.dark .surface-opaque {
+  background-color: rgb(10 12 16 / 0.98);
+}
 
 /* Shared class strings; @utility keeps them composable with variants. */
 @utility gradient-text {

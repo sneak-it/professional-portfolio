@@ -32,7 +32,7 @@ export default function BlogPostContent({
     <Container as="article" size="xl">
       <BackButton href="/blog" label="Back to Blog" />
 
-      <Surface as="div" padding="lg" className="mt-6">
+      <Surface as="div" padding="lg" className="surface-opaque mt-6">
         <header className="mb-10">
           <div className="mb-6 flex items-start justify-between gap-4">
             <TagList tags={post.meta.tags} link />
