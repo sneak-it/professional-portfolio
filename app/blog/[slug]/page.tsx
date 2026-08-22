@@ -72,7 +72,7 @@ export default async function BlogPost({
     description: post.meta.excerpt,
     image: post.meta.image,
     datePublished: post.meta.date,
-    dateModified: post.meta.date,
+    dateModified: post.meta.updated || post.meta.date,
     articleSection: post.meta.category,
     author: { '@type': 'Person', name: siteConfig.author },
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },

@@ -47,7 +47,7 @@ function entry(url: string, lastModified?: Date): Entry {
 function buildRoutes(): Route[] {
   const postItems = getAllPostMeta().map((post) => ({
     path: `/blog/${post.slug}`,
-    date: toDate(post.meta.date),
+    date: latest([toDate(post.meta.date), toDate(post.meta.updated)]),
   }));
 
   const photographyItems = getPhotographyGalleries().map((gallery) => ({

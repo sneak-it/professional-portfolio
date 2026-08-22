@@ -1,20 +1,22 @@
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar, Clock, PencilLine } from 'lucide-react';
 import { formatDate } from '@/lib/date';
 
 /**
  * The category · date · read-time meta row shown above a blog post, on both the
- * list card and the article header. `readTime` is optional — a post without one
- * simply omits the clock rather than rendering a dangling icon.
+ * list card and the article header. `updated` adds a trailing revision line and
+ * is only shown where there is room for it (the article header, not the card).
  */
 export default function PostMeta({
   category,
   date,
   readTime,
+  updated,
   className = '',
 }: {
   category?: string;
   date: string;
   readTime?: string;
+  updated?: string;
   className?: string;
 }) {
   return (
@@ -32,6 +34,12 @@ export default function PostMeta({
       {readTime && (
         <span className="flex items-center gap-1">
           <Clock size={14} /> {readTime}
+        </span>
+      )}
+      {updated && (
+        <span className="flex items-center gap-1">
+          <PencilLine size={14} /> Updated{' '}
+          <time dateTime={updated}>{formatDate(updated)}</time>
         </span>
       )}
     </div>

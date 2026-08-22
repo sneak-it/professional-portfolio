@@ -27,6 +27,7 @@ export default function BlogPostContent({
             category={post.meta.category}
             date={post.meta.date}
             readTime={post.meta.readTime}
+            updated={post.meta.updated}
             className="mb-6"
           />
 
