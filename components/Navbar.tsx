@@ -227,6 +227,8 @@ export default function Navbar({ monogram }: { monogram: string }) {
         </div>
       </div>
 
+      <div aria-hidden className="nav-progress" />
+
       {/* Mobile Navigation */}
       <AnimatePresence>
         {isOpen && (

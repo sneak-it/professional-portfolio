@@ -254,3 +254,38 @@
     animation: none !important;
   }
 }
+
+/* Scroll progress bar under the navbar */
+.nav-progress {
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 2px;
+  z-index: 1;
+  pointer-events: none;
+  transform-origin: 0 50%;
+  scale: 0 1;
+  background: linear-gradient(
+    to right,
+    var(--accent-from),
+    var(--accent-via),
+    var(--accent-to)
+  );
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-progress {
+      animation-name: nav-progress;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
+@keyframes nav-progress {
+  to {
+    scale: 1 1;
+  }
+}
