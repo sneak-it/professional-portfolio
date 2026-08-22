@@ -1,25 +1,19 @@
 import path from 'path';
-import type { ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithoutRef, ReactElement } from 'react';
+import { compileMDX } from 'next-mdx-remote/rsc';
 import { imageDimensions, isLocalSrc } from '@/lib/image';
 import { isSafeHref } from '@/lib/href';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
 
 /**
- * Defense-in-depth allowlist for MDX rendering.
+ * Defense-in-depth allowlist for MDX rendering, on top of next-mdx-remote's
+ * `blockJS`: no referrer or `window.opener` leak on cross-origin navigation, no
+ * href outside http/https/mailto, no image src that is not same-origin.
  *
- * Blog content is filesystem-sourced today, so the risk is low — but this keeps
- * the rendering surface explicit so adding content later can't introduce a
- * foot-gun. next-mdx-remote already strips JavaScript expressions and
- * import/export statements by default (`blockJS`); this layer additionally:
- *   - hardens links and images so cross-origin navigations can't leak the
- *     referrer or grant the opened page access to `window.opener`,
- *   - refuses any href outside the http/https/mailto allowlist, and
- *   - refuses any image src that is not same-origin, matching `img-src 'self'`.
- *
- * SCOPE. This map only governs elements MDX generates from *markdown* syntax:
- * author-written HTML compiles to an intrinsic JSX element that never resolves
- * through it. lib/harden.ts covers that path. Consume both halves together via
- * `mdxRenderProps`; the sanitization is incomplete with either one alone.
+ * SCOPE. Only governs elements MDX generates from *markdown* syntax; authored
+ * HTML compiles to an intrinsic element that never resolves through this map,
+ * which is what lib/harden.ts covers. `CachedMDX` consumes both halves, and the
+ * sanitization is incomplete with either one alone.
  */
 
 const Blocked = () => null;
@@ -130,11 +124,33 @@ export const mdxComponents = {
 } as const;
 
 /**
- * Spread into every `<MDXRemote>`: `{...mdxRenderProps}`. Bundles the components
- * map with the remark plugin so a call site cannot wire up one without the other
- * and silently lose raw-HTML sanitization.
+ * The components map and the remark plugin, kept together so a call site cannot
+ * wire up one without the other and lose raw-HTML sanitization. `CachedMDX` is
+ * the only consumer.
  */
-export const mdxRenderProps = {
+const mdxRenderProps = {
   components: mdxComponents,
   options: { mdxOptions: { remarkPlugins: [hardenRawHtml] } },
 };
+
+// Keyed by body text, so an edit lands on a new key and needs no revalidation.
+// Old entries are dead weight, hence the cap.
+const compileCache = new Map<string, ReactElement>();
+const COMPILE_CACHE_MAX = 64;
+
+/**
+ * Renders MDX, compiling each distinct body once per container rather than once
+ * per request. Use instead of `<MDXRemote>`: the element `compileMDX` returns is
+ * an immutable descriptor, so React can be handed the same one every request.
+ */
+export async function CachedMDX({ source }: { source: string }) {
+  const cached = compileCache.get(source);
+  if (cached) return cached;
+
+  const { content } = await compileMDX({ source, ...mdxRenderProps });
+
+  // Cleared, not evicted: refilling this content tree costs a few ms.
+  if (compileCache.size >= COMPILE_CACHE_MAX) compileCache.clear();
+  compileCache.set(source, content);
+  return content;
+}

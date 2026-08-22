@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import GalleryView from '@/components/GalleryView';
 import JsonLd from '@/components/JsonLd';
-import { mdxRenderProps } from '@/components/MDXComponents';
+import { CachedMDX } from '@/components/MDXComponents';
 import {
   getSection,
   getProjectItem,
@@ -142,7 +141,7 @@ export default async function PortfolioItemPage({
 
         {project.content && project.content.trim() && (
           <div className={`surface p-8 md:p-12 mt-16 ${PROSE}`}>
-            <MDXRemote source={project.content} {...mdxRenderProps} />
+            <CachedMDX source={project.content} />
           </div>
         )}
       </Container>

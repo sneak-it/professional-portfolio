@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import Typewriter from './Typewriter';
-import { mdxRenderProps } from '@/components/MDXComponents';
+import { CachedMDX } from '@/components/MDXComponents';
 import { getHome } from '@/lib/home';
 import styles from './page.module.css';
 
@@ -49,7 +48,7 @@ export default function Home() {
               className={`${styles.surface} surface mt-4 max-w-2xl mx-auto mb-10 p-6`}
             >
               <div className="text-xl text-gray-800 dark:text-gray-200 font-medium">
-                <MDXRemote source={content} {...mdxRenderProps} />
+                <CachedMDX source={content} />
               </div>
             </div>
 

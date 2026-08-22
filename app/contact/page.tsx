@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import ContactClient from './ContactClient';
-import { mdxRenderProps } from '@/components/MDXComponents';
+import { CachedMDX } from '@/components/MDXComponents';
 import { getContact } from '@/lib/contact';
 import { siteConfig } from '@/lib/site';
 
@@ -35,7 +34,7 @@ export default function ContactPage() {
       heading={heading}
       highlight={highlight}
     >
-      <MDXRemote source={content} {...mdxRenderProps} />
+      <CachedMDX source={content} />
     </ContactClient>
   );
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import AboutClient from './AboutClient';
-import { mdxRenderProps } from '@/components/MDXComponents';
+import { CachedMDX } from '@/components/MDXComponents';
 import { getAbout } from '@/lib/about';
 import { avatarSrc, siteConfig } from '@/lib/site';
 
@@ -46,7 +45,7 @@ export default function AboutPage() {
       interestsHeading={interestsHeading}
       interestsBlurb={interestsBlurb}
     >
-      <MDXRemote source={content} {...mdxRenderProps} />
+      <CachedMDX source={content} />
     </AboutClient>
   );
 }
