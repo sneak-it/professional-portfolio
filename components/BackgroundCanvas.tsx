@@ -1,7 +1,8 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
+import { Pause, Play } from 'lucide-react';
 import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 
 /* Site-wide background, mounted once in app/layout.tsx, and the bundle-size
@@ -14,6 +15,27 @@ import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 const ShaderGradient = dynamic(() => import('./ShaderGradient'), {
   ssr: false,
 });
+
+const PAUSED_KEY = 'bg-animation-paused';
+
+/* The pause preference outlives a reload. localStorage access throws outright in
+   some privacy modes, so both sides fall back to "playing". */
+function readPaused(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(PAUSED_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function savePaused(paused: boolean) {
+  try {
+    localStorage.setItem(PAUSED_KEY, paused ? '1' : '0');
+  } catch {
+    // Preference is cosmetic; dropping it is fine.
+  }
+}
 
 /** False on the server and through hydration, true once mounted on the client. */
 function useHydrated() {
@@ -63,6 +85,37 @@ export default function BackgroundCanvas() {
   const { tier } = useMotionEnabled();
 
   const hydrated = useHydrated();
+  // Read once on first render, so a returning visitor never sees a frame of
+  // animation they paused. BackgroundCanvas is mounted in the root layout, so
+  // in-session navigation keeps this state without touching storage.
+  const [paused, setPaused] = useState(readPaused);
 
-  return hydrated && tier === 'full' ? <ShaderGradient /> : <StaticGradient />;
+  if (!hydrated || tier !== 'full') return <StaticGradient />;
+
+  return (
+    <>
+      <ShaderGradient paused={paused} />
+      <button
+        type="button"
+        onClick={() => {
+          setPaused(!paused);
+          savePaused(!paused);
+        }}
+        aria-pressed={paused}
+        aria-label={
+          paused ? 'Resume background animation' : 'Pause background animation'
+        }
+        title={
+          paused ? 'Resume background animation' : 'Pause background animation'
+        }
+        className="fixed bottom-4 right-4 z-40 inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 bg-background/80 text-gray-600 backdrop-blur transition-colors hover:bg-gray-200 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/10"
+      >
+        {paused ? (
+          <Play className="h-[1.1rem] w-[1.1rem]" />
+        ) : (
+          <Pause className="h-[1.1rem] w-[1.1rem]" />
+        )}
+      </button>
+    </>
+  );
 }

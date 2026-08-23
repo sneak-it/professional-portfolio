@@ -159,8 +159,17 @@ const fragment = /* glsl */ `#version 300 es
   }
 `;
 
-export default function ShaderGradient() {
+export default function ShaderGradient({
+  paused = false,
+}: {
+  paused?: boolean;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
+  // Read inside the rAF loop, so pausing doesn't tear down the GL context.
+  const pausedRef = useRef(paused);
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -212,11 +221,19 @@ export default function ShaderGradient() {
 
     const mesh = new Mesh(gl, { geometry: new Triangle(gl), program });
 
+    // Paused, the canvas holds the last drawn frame, so anything that changes
+    // what a frame looks like (or clears it, as setSize does) redraws here.
+    // Without this a visitor who arrives already-paused sees a blank canvas.
+    const draw = () => {
+      renderer.render({ scene: mesh });
+    };
+
     const resize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       renderer.setSize(w, h);
       resolution.value = [w, h];
+      draw();
     };
     resize();
 
@@ -227,6 +244,7 @@ export default function ShaderGradient() {
       colorC.value = hexToRgb01(readVar('--accent-to', '#4f7cff'));
       dark.value = document.documentElement.classList.contains('dark') ? 1 : 0;
       bg.value = hexToRgb01(readVar('--background-deep', '#050505'));
+      draw();
     };
     const themeObserver = new MutationObserver(refreshTheme);
     themeObserver.observe(document.documentElement, {
@@ -240,10 +258,22 @@ export default function ShaderGradient() {
     // Deadlines advance on a fixed grid, so vsync quantisation cancels out and
     // the average holds on target at any refresh rate, variable ones included.
     let due = 0;
+    // Paused wall-clock, excluded from the drift clock so resuming doesn't jump.
+    let pausedSince: number | null = null;
+    let pausedTotal = 0;
     const loop = (now: number) => {
       if (!running) return;
       // Re-arm first, so a skipped frame still schedules the next one.
       rafId = requestAnimationFrame(loop);
+      if (pausedRef.current) {
+        pausedSince ??= now;
+        return;
+      }
+      if (pausedSince !== null) {
+        pausedTotal += now - pausedSince;
+        pausedSince = null;
+        due = now;
+      }
       if (now < due) return;
       due += FRAME_MS;
       // Stalled (hidden tab, long task): skip ahead. Nothing here is
@@ -251,8 +281,8 @@ export default function ShaderGradient() {
       if (due < now) due = now + FRAME_MS;
       // Wall-clock elapsed, so the cap changes GPU cost and leaves the drift
       // speed alone.
-      time.value = (now - start) / 1000;
-      renderer.render({ scene: mesh });
+      time.value = (now - start - pausedTotal) / 1000;
+      draw();
     };
     rafId = requestAnimationFrame(loop);
 
