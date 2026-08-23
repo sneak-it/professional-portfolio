@@ -1,7 +1,8 @@
 # Content management
 
-All content is MDX under `content/`. Under Docker Compose, `content/` and `public/` are
-bind-mounted read-only, so new and edited files are served immediately with no rebuild.
+All content is MDX under `content/`, and images live under `media/`. Under Docker
+Compose both are bind-mounted read-only, so new and edited files are served immediately
+with no rebuild.
 
 ## Special pages
 
@@ -67,7 +68,7 @@ npm run check:content
 Lints every blog post and portfolio entry (the special pages above are not checked):
 missing required fields, unknown keys (a typo'd `catgeory:` otherwise does nothing),
 unparseable dates, a `draft` that is the string `'true'` rather than a boolean, a cover
-image with no file under `public/`, and colliding tag spellings. Also prints the full tag
+image with no file under `media/`, and colliding tag spellings. Also prints the full tag
 vocabulary with counts. Exits non-zero on error.
 
 ## Drafts and scheduled posts
@@ -91,7 +92,7 @@ is scheduled server-side: each request re-reads the file. The sitemap and RSS fe
    tags:
      - 'Tag One'
      - 'Tag Two'
-   image: '/images/blog/cover.jpg'
+   image: '/media/images/blog/cover.jpg'
    ---
    ```
 
@@ -163,22 +164,6 @@ copy one, rename it, edit.
 
 ### Adding a photography gallery
 
-1. Create a `.mdx` file in `content/portfolio/photography/` (e.g. `my-trip.mdx`).
-2. Add frontmatter:
-
-   ```mdx
-   ---
-   title: 'My Trip'
-   description: 'Gallery description.'
-   coverImage: 'https://example.com/cover.jpg' # optional; falls back to the first image
-   alt: # optional; screen-reader description per image file
-     dsc_0142.jpg: 'Fog lifting off the ridge at sunrise'
-   ---
-   ```
-
-   Images without an `alt:` entry fall back to "<gallery title>, photo N of M". That is a
-   position, not a description, so write real `alt` text for photos that carry meaning.
-
-3. Create `public/portfolio/photography/<same-name>/`.
-4. Drop `.jpg`, `.jpeg`, `.png`, `.webp`, or `.gif` files inside. Dimensions are read
-   automatically and the images render with a lightbox. An empty folder shows placeholders.
+Galleries have their own document: [PHOTOGRAPHY.md](PHOTOGRAPHY.md). It covers the MDX
+file and its matching `media/` folder, alt text, supported formats, and what the server
+strips from a photograph before serving it.

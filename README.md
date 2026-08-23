@@ -7,7 +7,7 @@ A modern, highly polished personal portfolio/blog. This is aimed at self-hosters
 - **MDX Blog**: GitHub-Flavored Markdown plus React components, with read time, excerpt, and table of contents derived from the post body. See [CONTENT.md](CONTENT.md) for details.
 - **Tag browsing and RSS**: One-tag filtering at the Blog, previous/next post navigation, and an RSS feed at `/feed.xml`.
 - **Unified Portfolio**: Technology Consulting, Open Source, and Photography, all driven by MDX.
-- **Auto-discovered Galleries**: Photography galleries build their image lists from the filesystem, with a scrollable layout and lightbox.
+- **Auto-discovered Galleries**: Photography galleries build their image lists from the filesystem, with a scrollable layout and lightbox. Every image is re-encoded on the way out, so EXIF data never reaches a visitor. See [PHOTOGRAPHY.md](PHOTOGRAPHY.md).
 - **Incremental content**: Content routes render per request, so a dropped-in file appears with no rebuild.
 - **Fully Responsive**: Optimized for all screen sizes.
 - **Light/Dark/System Mode Support**: Color scheme adapts to user preference.
@@ -20,7 +20,7 @@ A modern, highly polished personal portfolio/blog. This is aimed at self-hosters
 2. `docker compose up -d`
 3. Open http://localhost:3000
 
-`content/` and `public/` are mounted read-only, so blog posts, projects, and photos added
+`content/` and `media/` are mounted read-only, so blog posts, projects, and photos added
 on the host are served immediately.
 
 ### Environment variables
