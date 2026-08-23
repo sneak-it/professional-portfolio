@@ -42,9 +42,11 @@ Changing either requires a rebuild, using a build `ARG` if the value varies per 
 
 This matters for `SITE_AVATAR_URL`. Images are same-origin only (no
 `images.remotePatterns`, and the CSP sets `img-src 'self'`), so a remote URL will not
-load. Point it at a path under `/media/images/` and mount the file into `media/images/`.
-A path outside `images.localPatterns` returns 400 from the optimizer while the page
-still returns 200, so the portrait goes blank with no error.
+load. Point it at a path under `/media/images/`, and uncomment the `./media/images` mount
+in `docker-compose.yml` so your file is there. That mount replaces the shipped assets
+wholesale, so include a file for every path your content references. A path outside
+`images.localPatterns` returns 400 from the optimizer while the page still returns 200,
+so the portrait goes blank with no error.
 
 ## Caching
 

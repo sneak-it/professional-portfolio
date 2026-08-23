@@ -138,15 +138,36 @@ Be clear-eyed about the limits:
 
 ## Adding photos to a running site
 
-Under Docker Compose, `./media` is bind-mounted read-only at `/app/media`, so copying a
-file into the host folder publishes it. No rebuild, no restart, no container write access.
+Compose bind-mounts `./media/portfolio/photography` read-only, creating it on the host on
+first run, so copying a file in publishes it. No rebuild, no restart, no container write
+access.
 
 ```bash
+mkdir -p ./media/portfolio/photography/iceland
 cp ~/Pictures/iceland/*.jpg ./media/portfolio/photography/iceland/
 ```
 
+Only the per-gallery folder is yours to create; Compose makes everything above it.
+
 Because the container cannot write to that mount, stripping happens on the way out rather
 than in place, which is why a file dropped in this way is still safe.
+
+`media/images/` is deliberately *not* mounted, so the shipped avatar and blog assets work
+on a first run with an empty host tree. To supply your own, uncomment the `./media/images`
+mount in `docker-compose.yml`; it replaces the shipped ones wholesale.
+
+### Photographs are not committed
+
+`media/portfolio/` is gitignored, so a clone of this repository contains no photographs
+and every gallery renders empty until you add your own.
+
+That is deliberate. Committing a photograph would publish the full-resolution original
+that the route withholds, and git would keep it after any later unpublish. Back
+photographs up somewhere that is not git.
+
+A local `docker build .` still picks them up, since `.dockerignore` does not exclude
+`media/`. Only a build from a clean checkout, which is what the release workflow does,
+leaves them out.
 
 ## Checks
 
@@ -160,11 +181,11 @@ rather than merely documented:
 
 - **Nothing image-shaped in `public/`.** That directory *is* served verbatim by Next, so a
   photo there would bypass stripping entirely. Putting one there fails the build.
-- **No committed photo carries metadata.** Stripping on the way out does not help if the
-  original is also downloadable from the git repository, and git keeps it forever.
+- **No committed image carries metadata.** `media/portfolio/` is gitignored, but anything
+  else under `media/` can still be committed, a blog cover for instance. Stripping on the
+  way out does not help if the original is also downloadable from the repository.
 
-If the second one fails, the fix is to strip the file before committing, or to keep photos
-out of git and deliver them through the bind mount only.
+If the second one fails, strip that file before committing it.
 
 ## Replacing and removing
 

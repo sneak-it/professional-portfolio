@@ -27,7 +27,7 @@ Only `title` and `date` are required. This file sets all of them:
 | `title` | `Authoring Reference` | Required. The `<h1>` and the `<title>` |
 | `date` | `2026-08-18` | Required. Sorts the archive; a future date schedules the post |
 | `updated` | `2026-08-21` | Shows a revision line, sets `dateModified` |
-| `image` | `cover-demo.png` | Cover, under `public/`. Raster only, see below |
+| `image` | `cover-demo.png` | Cover, under `media/`. Raster only, see below |
 | `tags` | four of them | The only taxonomy: filter chips plus `keywords` |
 | `excerpt` | overridden | Derived from the first paragraph when omitted |
 | `readTime` | `12 min read` | Derived from the word count when omitted |
@@ -84,7 +84,7 @@ Without `caption` it is just a block-level image with figure spacing:
 
 <Figure src="/media/images/blog/cover-demo.png" alt="The cover image, inline" />
 
-Images must be same-origin, under `public/`. An off-site `src` renders nothing
+Images must be same-origin, under `media/`. An off-site `src` renders nothing
 at all rather than leaking a request:
 
 ![Nothing renders here](https://example.com/remote.png)

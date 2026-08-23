@@ -8,3 +8,7 @@ coverage/
 plans/
 *.tsbuildinfo
 next-env.d.ts
+media/portfolio/*
+!media/portfolio/photography/
+media/portfolio/photography/*
+!media/portfolio/photography/.gitkeep

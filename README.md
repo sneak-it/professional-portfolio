@@ -20,8 +20,13 @@ A modern, highly polished personal portfolio/blog. This is aimed at self-hosters
 2. `docker compose up -d`
 3. Open http://localhost:3000
 
-`content/` and `media/` are mounted read-only, so blog posts, projects, and photos added
-on the host are served immediately.
+Compose creates `./content` and `./media/portfolio/photography` on the host if they are
+missing, and mounts them read-only, so blog posts, projects, and photographs added there
+are served immediately with no rebuild. Starting with an empty host tree is fine: the
+image ships its own avatar and demo assets, and the site renders with no content.
+
+Cloning the repository and running Compose from it instead serves the bundled example
+content, since the mounts then point at the repository's own `content/`.
 
 ### Environment variables
 
