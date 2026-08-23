@@ -1,4 +1,3 @@
-import path from 'path';
 import { isValidElement } from 'react';
 import type { ComponentPropsWithoutRef, ReactElement, ReactNode } from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
@@ -11,7 +10,7 @@ import EmptyState from '@/components/EmptyState';
 import IconBadge from '@/components/IconBadge';
 import PostMeta from '@/components/PostMeta';
 import Surface from '@/components/Surface';
-import { imageDimensions, isLocalSrc } from '@/lib/image';
+import { imageDimensions, isLocalSrc, mediaFilePath } from '@/lib/image';
 import { isSafeHref } from '@/lib/href';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
 import { slugify } from '@/lib/slug';
@@ -46,25 +45,27 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   );
 }
 
-// Extensions whose headers `imageDimensions` can read.
+// Extensions `imageDimensions` can measure.
 const LOCAL_IMAGE_RE = /\.(jpe?g|png|webp|gif|svg)$/i;
 
 /**
- * Intrinsic width/height for a local (public/) image, read on the server to
- * reserve layout space. Null for an unreadable file or unparsed extension.
+ * Intrinsic width/height for a local (media/) image, read on the server to
+ * reserve layout space. Null for an unreadable file or unmeasurable extension.
  */
-function localImageDimensions(
+async function localImageDimensions(
   src: string,
-): { width: number; height: number } | null {
+): Promise<{ width: number; height: number } | null> {
   if (!LOCAL_IMAGE_RE.test(src)) return null;
+  const file = mediaFilePath(src);
+  if (file === null) return null;
   try {
-    return imageDimensions(path.join(process.cwd(), 'public', src));
+    return await imageDimensions(file);
   } catch {
     return null;
   }
 }
 
-function SafeImage({
+async function SafeImage({
   src,
   alt = '',
   ...rest
@@ -73,9 +74,9 @@ function SafeImage({
   // authoring. The CSP (`img-src 'self'`) blocks them in the browser too.
   if (!isLocalSrc(src)) return null;
 
-  // Plain <img>, so `images.localPatterns` doesn't apply. Dimensions come from
-  // disk at render time (server-only) to avoid layout shift.
-  const dims = localImageDimensions(src);
+  // Plain <img>, so `images.localPatterns` doesn't apply; app/media strips
+  // metadata regardless. Dimensions come from disk to avoid layout shift.
+  const dims = await localImageDimensions(src);
   // `dims` then `rest` so an explicit width/height in MDX still wins, then the
   // security attributes last so authored ones cannot override them.
   return (

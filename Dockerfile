@@ -37,14 +37,16 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY --from=builder /app/public ./public
+# Not traced by Next: read at runtime by app/media/[...path].
+COPY --from=builder /app/media ./media
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 #
 # The standalone tree is nonroot-owned because ISR writes revalidated pages back
 # into .next/server/app, not just into .next/cache; leaving it root-owned makes
-# revalidation fail with EACCES. public/, .next/static and @img below are never
-# written at runtime, so they stay root-owned and read-only to the app.
+# revalidation fail with EACCES. public/, media/, .next/static and @img below are
+# never written at runtime, so they stay root-owned and read-only to the app.
 COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 

@@ -1,82 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { isLocalSrc, publicFilePath, readSize } from '../lib/image.ts';
-
-function png(w: number, h: number) {
-  const b = Buffer.alloc(24);
-  b.writeUInt32BE(0x89504e47, 0);
-  b.writeUInt32BE(w, 16);
-  b.writeUInt32BE(h, 20);
-  return b;
-}
-
-function gif(w: number, h: number) {
-  const b = Buffer.alloc(13);
-  b.write('GIF89a', 0, 'ascii');
-  b.writeUInt16LE(w, 6);
-  b.writeUInt16LE(h, 8);
-  return b;
-}
-
-function webpLossy(w: number, h: number) {
-  const b = Buffer.alloc(30);
-  b.write('RIFF', 0, 'ascii');
-  b.write('WEBP', 8, 'ascii');
-  b.write('VP8 ', 12, 'ascii');
-  b.writeUInt16LE(w, 26);
-  b.writeUInt16LE(h, 28);
-  return b;
-}
-
-/** JPEG with one APP0 segment the walker must skip before reaching SOF0. */
-function jpeg(w: number, h: number, app0Len = 16) {
-  const b = Buffer.alloc(2 + 2 + app0Len + 9);
-  b.writeUInt16BE(0xffd8, 0);
-  b.writeUInt16BE(0xffe0, 2);
-  b.writeUInt16BE(app0Len, 4);
-  const sof = 4 + app0Len;
-  b.writeUInt16BE(0xffc0, sof);
-  b.writeUInt16BE(11, sof + 2);
-  b.writeUInt16BE(h, sof + 5);
-  b.writeUInt16BE(w, sof + 7);
-  return b;
-}
-
-void test('reads raster header dimensions', () => {
-  assert.deepEqual(readSize(png(1, 1)), { width: 1, height: 1 });
-  assert.deepEqual(readSize(png(4000, 3000)), { width: 4000, height: 3000 });
-  assert.deepEqual(readSize(gif(2, 3)), { width: 2, height: 3 });
-  assert.deepEqual(readSize(webpLossy(640, 480)), { width: 640, height: 480 });
-  assert.deepEqual(readSize(jpeg(800, 1200)), { width: 800, height: 1200 });
-});
-
-void test('reads svg from width/height, else viewBox', () => {
-  assert.deepEqual(
-    readSize(Buffer.from('<svg xmlns="..." width="120px" height="60">')),
-    { width: 120, height: 60 },
-  );
-  assert.deepEqual(
-    readSize(Buffer.from('<svg xmlns="..." viewBox="0 0 100.5 40">')),
-    { width: 101, height: 40 },
-  );
-});
-
-void test('rejects malformed input instead of hanging or over-reading', () => {
-  // Truncated PNG: magic present, IHDR missing.
-  assert.throws(() => readSize(png(10, 10).subarray(0, 18)));
-  // Zero-length JPEG segment: exercises the progress check.
-  assert.throws(() => readSize(jpeg(10, 10, 0)));
-  // No SOF within the window.
-  assert.throws(() => readSize(Buffer.concat([Buffer.from([0xff, 0xd8])])));
-  // Unknown magic.
-  assert.throws(() => readSize(Buffer.alloc(64)));
-});
+import { isLocalSrc, mediaFilePath } from '../lib/image.ts';
 
 void test('isLocalSrc accepts only same-origin paths', () => {
   for (const src of [
     '/a.png',
-    '/images/blog/x.webp',
-    '/portfolio/p/1.jpg',
+    '/media/images/blog/x.webp',
+    '/media/portfolio/p/1.jpg',
     '/',
   ]) {
     assert.equal(isLocalSrc(src), true, src);
@@ -87,7 +17,7 @@ void test('isLocalSrc accepts only same-origin paths', () => {
     '//evil.example/x.png', // protocol-relative
     'data:image/svg+xml;base64,PHN2Zy8+',
     'javascript:alert(1)',
-    'images/blog/x.png', // relative, resolves off the current route
+    'media/images/x.png', // relative, resolves off the current route
     '',
     undefined,
     null,
@@ -97,19 +27,23 @@ void test('isLocalSrc accepts only same-origin paths', () => {
   }
 });
 
-void test('publicFilePath keeps env-supplied URLs inside public/', () => {
-  const root = '/srv/app/public';
+void test('mediaFilePath keeps env- and URL-supplied paths inside media/', () => {
+  const root = '/srv/app';
   assert.equal(
-    publicFilePath('/images/a.png', root),
-    '/srv/app/public/images/a.png',
+    mediaFilePath('/media/images/a.png', root),
+    '/srv/app/media/images/a.png',
   );
-  assert.equal(publicFilePath('/', root), root);
+  assert.equal(mediaFilePath('/media', root), '/srv/app/media');
 
-  // Escapes, non-local sources, and non-strings all resolve to nothing.
-  assert.equal(publicFilePath('/../../etc/passwd', root), null);
-  assert.equal(publicFilePath('/images/../../etc/passwd', root), null);
-  assert.equal(publicFilePath('//evil.example/x.png', root), null);
-  assert.equal(publicFilePath('https://evil.example/x.png', root), null);
-  assert.equal(publicFilePath('images/a.png', root), null);
-  assert.equal(publicFilePath(undefined, root), null);
+  // Anything resolving outside media/ resolves to nothing, including the
+  // sibling directory Next *does* serve verbatim.
+  assert.equal(mediaFilePath('/public/images/a.png', root), null);
+  assert.equal(mediaFilePath('/images/a.png', root), null);
+  assert.equal(mediaFilePath('/media/../public/a.png', root), null);
+  assert.equal(mediaFilePath('/media/../../etc/passwd', root), null);
+  assert.equal(mediaFilePath('/../../etc/passwd', root), null);
+  assert.equal(mediaFilePath('//evil.example/x.png', root), null);
+  assert.equal(mediaFilePath('https://evil.example/x.png', root), null);
+  assert.equal(mediaFilePath('media/images/a.png', root), null);
+  assert.equal(mediaFilePath(undefined, root), null);
 });

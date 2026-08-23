@@ -13,7 +13,7 @@ import { byDateDesc } from './sort.ts';
  * MDX-driven Portfolio data layer. Three sections, each a folder of `.mdx`
  * under `content/portfolio/<section>/`: 'technology-consulting' and
  * 'open-source' render as project write-ups, 'photography' as a gallery whose
- * images are scanned from `public/portfolio/photography/<slug>/`. Adding an
+ * images are scanned from `media/portfolio/photography/<slug>/`. Adding an
  * item is dropping an MDX file in the matching folder.
  */
 
@@ -101,9 +101,9 @@ export interface SectionSummary {
 }
 
 const portfolioDirectory = path.join(process.cwd(), 'content/portfolio');
-const publicPhotographyDirectory = path.join(
+const mediaPhotographyDirectory = path.join(
   process.cwd(),
-  'public/portfolio/photography',
+  'media/portfolio/photography',
 );
 
 /** Look up a section by slug; validates a dynamic route param. */
@@ -157,7 +157,7 @@ const IMAGE_FILE_RE = /\.(jpe?g|png|webp|gif)$/i;
 
 /** Image filenames in a gallery's folder. */
 function listGalleryImageFiles(slug: string): string[] {
-  return listDir(path.join(publicPhotographyDirectory, slug)).filter((file) =>
+  return listDir(path.join(mediaPhotographyDirectory, slug)).filter((file) =>
     IMAGE_FILE_RE.test(file),
   );
 }
@@ -169,7 +169,7 @@ function listGalleryImageFiles(slug: string): string[] {
 function galleryCoverSrc(slug: string, coverImage: unknown): string {
   if (typeof coverImage === 'string' && coverImage) return coverImage;
   const first = listGalleryImageFiles(slug)[0];
-  return first ? `/portfolio/photography/${slug}/${first}` : '';
+  return first ? `/media/portfolio/photography/${slug}/${first}` : '';
 }
 
 /**
@@ -189,41 +189,46 @@ function altMap(value: unknown): Record<string, string> {
   );
 }
 
-function scanImages(
+async function scanImages(
   slug: string,
   alt: Record<string, string>,
-): PortfolioImage[] {
-  const imagesDir = path.join(publicPhotographyDirectory, slug);
-  const images: PortfolioImage[] = [];
+): Promise<PortfolioImage[]> {
+  const imagesDir = path.join(mediaPhotographyDirectory, slug);
 
-  for (const file of listGalleryImageFiles(slug)) {
-    const imagePath = path.join(imagesDir, file);
-    try {
-      const { width, height } = imageDimensions(imagePath);
-      images.push({
-        id: file,
-        src: `/portfolio/photography/${slug}/${file}`,
-        // Filled in by the caller when frontmatter has nothing: a filename is
-        // worse than useless read aloud.
-        alt: alt[file] ?? '',
-        width,
-        height,
-      });
-    } catch (e) {
-      console.error(`Error reading image dimensions for ${imagePath}`, e);
-    }
-  }
+  // `Promise.all` keeps the readdir order; an unreadable file drops out.
+  const scanned = await Promise.all(
+    listGalleryImageFiles(slug).map(async (file) => {
+      const imagePath = path.join(imagesDir, file);
+      try {
+        const { width, height } = await imageDimensions(imagePath);
+        return {
+          id: file,
+          src: `/media/portfolio/photography/${slug}/${file}`,
+          // Filled in by the caller when frontmatter has nothing: a filename is
+          // worse than useless read aloud.
+          alt: alt[file] ?? '',
+          width,
+          height,
+        };
+      } catch (e) {
+        console.error(`Error reading image dimensions for ${imagePath}`, e);
+        return null;
+      }
+    }),
+  );
 
-  return images;
+  return scanned.filter((image): image is PortfolioImage => image !== null);
 }
 
-export function getPhotographyGallery(slug: string): GalleryItem | null {
+export async function getPhotographyGallery(
+  slug: string,
+): Promise<GalleryItem | null> {
   const file = readMdxFile(sectionDir('photography'), slug);
   if (file === null) return null;
 
   const { data } = file;
   const title = (data.title as string) || file.slug;
-  const images = scanImages(file.slug, altMap(data.alt)).map(
+  const images = (await scanImages(file.slug, altMap(data.alt))).map(
     (image, i, all) => ({
       ...image,
       alt: image.alt || `${title}, photo ${i + 1} of ${all.length}`,

@@ -15,25 +15,27 @@ Every post has two distinct kinds of images: the cover shown in the header, and 
 
 ## The cover image
 
-The cover is not written in the body. It comes from the `image` field in the frontmatter above, and renders through `next/image`. This post ships without one, so the header shows the accent-gradient fallback instead; set `image: '/images/blog/cover.jpg'` to use a real file.
+The cover is not written in the body. It comes from the `image` field in the frontmatter above, and renders through `next/image`. This post ships without one, so the header shows the accent-gradient fallback instead; set `image: '/media/images/blog/cover.jpg'` to use a real file.
 
-Covers must sit under `/images/` or `/portfolio/` and carry no query string, which is what `images.localPatterns` in `next.config.ts` permits. Anything else gets a 400 from the optimizer rather than being rendered. Note also that `next/image` refuses SVG unless `dangerouslyAllowSVG` is enabled, which it is not, so covers need a raster format.
+Covers must sit under `/media/` and carry no query string, which is what `images.localPatterns` in `next.config.ts` permits. Anything else gets a 400 from the optimizer rather than being rendered. Note also that `next/image` refuses SVG unless `dangerouslyAllowSVG` is enabled, which it is not, so covers need a raster format.
 
 ## Inline images
 
-Inline images use plain Markdown syntax and render through the `SafeImage` component. The recommended approach is a local file under `public/`, referenced with a root-relative path:
+Inline images use plain Markdown syntax and render through the `SafeImage` component. The recommended approach is a local file under `media/`, referenced with a root-relative path:
 
-![Placeholder diagram served from the public directory](/images/blog/inline-demo.svg)
+![Placeholder diagram served from the media directory](/media/images/blog/inline-demo.svg)
 
-The file above lives at `public/images/blog/inline-demo.svg` and is served at `/images/blog/inline-demo.svg`. Local paths satisfy the `img-src 'self'` rule in the Content Security Policy, so they need no configuration changes.
+The file above lives at `media/images/blog/inline-demo.svg` and is served at `/media/images/blog/inline-demo.svg`. Local paths satisfy the `img-src 'self'` rule in the Content Security Policy, so they need no configuration changes.
+
+Note that `media/` is not `public/`. Nothing in `media/` is served as a file: the route at `app/media/[...path]` re-encodes every raster on the way out, which is what strips EXIF (camera, timestamps, GPS) from photographs. Both the plain `<img>` above and `/_next/image` read through it, so there is no URL that returns your original file.
 
 ## Captions
 
 Bare Markdown images have no caption. For that, use the `Figure` component, which wraps the same hardened image in a semantic `<figure>`/`<figcaption>`:
 
 <Figure
-  src="/images/blog/inline-demo.svg"
-  alt="Placeholder diagram served from the public directory"
+  src="/media/images/blog/inline-demo.svg"
+  alt="Placeholder diagram served from the media directory"
   caption="Figure 1. A local image with a caption, rendered via the Figure component."
 />
 
@@ -45,6 +47,6 @@ Every image on this site comes from this origin. The CSP sets `img-src 'self'` w
 
 That is deliberate. It keeps the image optimizer from acting as a server-side fetcher that anonymous requests can aim at other hosts, and it removes a whole class of confusion where a cover silently renders blank because the remote host redirected somewhere the CSP does not list.
 
-The practical rule: put the file under `public/images/` (or `public/portfolio/` for galleries) and reference it root-relative. Inline images may be SVG, since they render as a plain `<img>`; covers go through `next/image` and must be raster.
+The practical rule: put the file under `media/images/` (or `media/portfolio/` for galleries) and reference it root-relative. Inline images may be SVG, since they render as a plain `<img>`; covers go through `next/image` and must be raster.
 
 Always write meaningful alt text; it is passed straight through to the rendered image.

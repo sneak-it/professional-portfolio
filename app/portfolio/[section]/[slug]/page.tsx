@@ -30,7 +30,7 @@ export async function generateMetadata({
 
   const item =
     config.type === 'gallery'
-      ? getPhotographyGallery(slug)
+      ? await getPhotographyGallery(slug)
       : getProjectItem(config.slug, slug);
   if (!item) return {};
 
@@ -77,7 +77,7 @@ export default async function PortfolioItemPage({
 
   // Photography: scrollable gallery + lightbox.
   if (config.type === 'gallery') {
-    const gallery = getPhotographyGallery(slug);
+    const gallery = await getPhotographyGallery(slug);
     if (!gallery) notFound();
 
     const url = absoluteUrl(`/portfolio/${config.slug}/${gallery.slug}`);
@@ -88,8 +88,9 @@ export default async function PortfolioItemPage({
       description: gallery.description,
       url,
       datePublished: gallery.date || undefined,
-      // Gallery srcs are always site-relative (scanned out of public/), so
-      // JSON-LD just needs the origin prepended.
+      // Gallery srcs are always site-relative (scanned out of media/), so
+      // JSON-LD just needs the origin prepended. They point at the stripping
+      // route, so Google Images caches sanitized copies.
       image: gallery.images.map((img) => absoluteUrl(img.src)),
     };
 

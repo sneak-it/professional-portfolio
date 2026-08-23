@@ -36,6 +36,19 @@ change moves the URL instead of leaving a stale image behind it. An old token
 still renders current bytes, so a cached page holding a stale href degrades to
 old-but-valid rather than breaking.
 
+The stripped images under `/media/` send their own header, set in
+`app/media/[...path]/route.ts`:
+
+```
+Cache-Control: public, max-age=3600, s-maxage=604800, stale-while-revalidate=604800
+```
+
+Every origin hit there is a re-encode (that is what removes the EXIF), so the
+shared TTL matches `images.minimumCacheTTL` and lets the CDN absorb direct hits,
+share-card scrapers and crawlers. Unlike `/brand/`, these URLs carry no version
+token, so replacing a file under the same name needs a purge; the `ETag` means a
+revalidating client costs a `stat` rather than a re-encode.
+
 Three things to note about these headers:
 
 - `s-maxage` applies to shared caches only. On the pages there is no `max-age`,

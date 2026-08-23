@@ -6,7 +6,7 @@
 import fs from 'fs';
 import path from 'path';
 import { isDraft, listMdxSlugs, readMdxFile } from '../lib/content.ts';
-import { publicFilePath } from '../lib/image.ts';
+import { mediaFilePath } from '../lib/image.ts';
 import { PORTFOLIO_SECTIONS } from '../lib/portfolio.ts';
 import { slugify } from '../lib/slug.ts';
 
@@ -57,7 +57,7 @@ const PROJECT: Schema = {
 
 const GALLERY: Schema = {
   required: ['title', 'description'],
-  known: ['title', 'description', 'date', 'coverImage', 'draft'],
+  known: ['title', 'description', 'date', 'coverImage', 'alt', 'draft'],
   image: 'coverImage',
   tags: false,
 };
@@ -148,14 +148,11 @@ function checkFile(dir: string, slug: string, schema: Schema) {
 
   const src = data[schema.image];
   if (typeof src === 'string' && src.trim() !== '') {
-    const full = publicFilePath(src);
+    const full = mediaFilePath(src);
     if (full === null) {
-      error(
-        file,
-        `${schema.image} "${src}" is not a site-relative public path`,
-      );
+      error(file, `${schema.image} "${src}" is not a site-relative media path`);
     } else if (!fs.existsSync(full)) {
-      error(file, `${schema.image} "${src}" has no file under public/`);
+      error(file, `${schema.image} "${src}" has no file under media/`);
     }
   }
 

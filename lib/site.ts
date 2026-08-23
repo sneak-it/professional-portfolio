@@ -1,7 +1,7 @@
 import 'server-only';
 import fs from 'fs';
 import { ACCENT_BAR, ACCENT_DIAGONAL } from './brand';
-import { publicFilePath } from './image';
+import { mediaFilePath } from './image';
 import { brandVersion, monogram, siteUrl } from './site-env';
 
 /**
@@ -35,9 +35,10 @@ export const siteConfig = {
   // BCP 47 tag for <html lang>; callers convert to the OG underscore form.
   locale: process.env.SITE_LOCALE?.trim() || 'en-US',
   // Site-relative, inside images.localPatterns (next.config.ts): point this at
-  // a file mounted under public/images/.
+  // a file mounted under media/images/.
   avatarUrl:
-    process.env.SITE_AVATAR_URL?.trim() || '/images/avatar-placeholder.png',
+    process.env.SITE_AVATAR_URL?.trim() ||
+    '/media/images/avatar-placeholder.png',
   // `??`: an empty value blanks the link out (callers hide it), an unset one
   // keeps the placeholder. `email` has no placeholder.
   social: {
@@ -58,16 +59,16 @@ export function absoluteUrl(path: string): string {
   return `${siteConfig.url}${path}`;
 }
 
-const AVATAR_FALLBACK = '/images/avatar-placeholder.png';
+const AVATAR_FALLBACK = '/media/images/avatar-placeholder.png';
 const missingAvatars = new Set<string>();
 
 /**
  * The avatar to render, or null when no file backs it. Resolved per call:
- * public/ is bind-mounted, so the file can appear or vanish live.
+ * media/ is bind-mounted, so the file can appear or vanish live.
  */
 export function avatarSrc(): string | null {
   for (const src of new Set([siteConfig.avatarUrl, AVATAR_FALLBACK])) {
-    const file = publicFilePath(src);
+    const file = mediaFilePath(src);
     if (file !== null && fs.existsSync(file)) return src;
     if (!missingAvatars.has(src)) {
       missingAvatars.add(src);

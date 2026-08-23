@@ -9,11 +9,9 @@ const nextConfig: NextConfig = {
 
   images: {
     // Local patterns only, so `/_next/image` serves same-origin paths, and
-    // `search: ''` forbids a query string.
-    localPatterns: [
-      { pathname: '/images/**', search: '' },
-      { pathname: '/portfolio/**', search: '' },
-    ],
+    // `search: ''` forbids a query string. `/media/**` alone: nothing outside
+    // it strips metadata.
+    localPatterns: [{ pathname: '/media/**', search: '' }],
     formats: ['image/webp'],
     minimumCacheTTL: 604800,
     qualities: [80],

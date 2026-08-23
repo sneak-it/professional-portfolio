@@ -38,8 +38,8 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      // `brand`: PNG responses, no nonce to inject.
-      source: '/((?!api|brand|_next/static|_next/image|favicon.ico).*)',
+      // `brand` and `media`: image responses, no nonce to inject.
+      source: '/((?!api|brand|media|_next/static|_next/image|favicon.ico).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },

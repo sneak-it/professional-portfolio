@@ -16,11 +16,13 @@ services:
     env_file:
       - path: .env
         required: false
-    # Mounting ./public shadows the copy shipped in the image, so the host tree is
+    # Mounting ./media shadows the copy shipped in the image, so the host tree is
     # what gets served: it needs the SITE_AVATAR_URL file (default
-    # public/images/avatar-placeholder.png) or the portrait renders blank.
+    # media/images/avatar-placeholder.png) or the portrait renders blank. Nothing
+    # here is served verbatim; app/media/[...path] strips EXIF on the way out.
     volumes:
       - ./content:/app/content:ro
+      - ./media:/app/media:ro
       - ./public:/app/public:ro
       # Persist the Next.js image optimizer cache
       - images-cache:/app/.next/cache/images

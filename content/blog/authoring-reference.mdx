@@ -2,7 +2,7 @@
 title: 'Authoring Reference'
 date: '2026-08-18'
 updated: '2026-08-21'
-image: '/images/blog/cover-demo.png'
+image: '/media/images/blog/cover-demo.png'
 tags:
   - 'MDX'
   - 'Markdown'
@@ -70,19 +70,19 @@ only `http`, `https`, and `mailto` survive. Fragments stay in the tab, so a
 A plain Markdown image, sized from the file on disk so nothing shifts as it
 loads:
 
-![A local demo image](/images/blog/inline-demo.svg)
+![A local demo image](/media/images/blog/inline-demo.svg)
 
 `Figure` adds a caption:
 
 <Figure
-  src="/images/blog/inline-demo.svg"
+  src="/media/images/blog/inline-demo.svg"
   alt="The same image, captioned"
   caption="A caption sits under the image, centred and muted."
 />
 
 Without `caption` it is just a block-level image with figure spacing:
 
-<Figure src="/images/blog/cover-demo.png" alt="The cover image, inline" />
+<Figure src="/media/images/blog/cover-demo.png" alt="The cover image, inline" />
 
 Images must be same-origin, under `public/`. An off-site `src` renders nothing
 at all rather than leaking a request:
@@ -227,7 +227,7 @@ description, and a `sizes` hint:
 
 <CoverCard
   href="/blog"
-  coverImage="/images/blog/cover-demo.png"
+  coverImage="/media/images/blog/cover-demo.png"
   title="A cover card"
   description="Links somewhere, fills its own aspect ratio."
   sizes="(max-width: 768px) 100vw, 768px"
@@ -239,7 +239,7 @@ Without one it collapses to nothing:
 
 <div className="relative aspect-video overflow-hidden rounded-2xl not-prose">
   <CoverImage
-    src="/images/blog/cover-demo.png"
+    src="/media/images/blog/cover-demo.png"
     alt="A cover image inside a sized wrapper"
     sizes="(max-width: 768px) 100vw, 768px"
   />
