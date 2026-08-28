@@ -63,7 +63,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4.2.0
+        uses: docker/setup-buildx-action@v4.3.0
 
       # Building `production` builds `production-nonroot` as its parent stage, so
       # one build validates both published variants. They differ only by USER, so
