@@ -15,7 +15,7 @@ Two variants are published from the same layers:
 Neither variant needs a permission step. `cap_drop: ALL` strips `DAC_OVERRIDE`, so
 both read the mounts under the same rules, satisfied by a default umask. If a tree
 genuinely is unreadable, the site renders empty and logs
-`Cannot read content dir "<path>"`. Fix with `chmod -R a+rX content public`.
+`Cannot read content dir "<path>"`. Fix with `chmod -R a+rX content media`.
 
 ## Building manually
 
@@ -26,9 +26,14 @@ docker build -t portfolio-app .
 docker run -p 3000:3000 \
   -e SITE_URL=https://your-domain \
   -v "$(pwd)/content:/app/content:ro" \
-  -v "$(pwd)/public:/app/public:ro" \
+  -v "$(pwd)/media/portfolio/photography:/app/media/portfolio/photography:ro" \
   portfolio-app
 ```
+
+Those are the same two mounts Compose uses. Add
+`-v "$(pwd)/media/images:/app/media/images:ro"` only to replace the shipped avatar and blog
+assets; it shadows them wholesale. Create each host path yourself before the first run, or
+Docker creates it root-owned.
 
 ## Runtime vs build time
 
