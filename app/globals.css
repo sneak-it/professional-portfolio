@@ -113,9 +113,10 @@
   --tw-prose-pre-code: #e6edf3;
 }
 
-/* Post text column: 36rem keeps lines near 65 characters. Code, tables,
-   figures, and not-prose components keep the full width. */
-.measure > :not(pre, table, figure, .not-prose, :has(> pre)) {
+/* Post text column: 36rem keeps lines near 65 characters; media stay full width.
+   ponytail: :only-child ignores text, so a sentence with one inline image goes wide. */
+.measure
+  > :not(pre, table, figure, .not-prose, :has(> pre), :has(> img:only-child)) {
   @apply mx-auto max-w-xl;
 }
 

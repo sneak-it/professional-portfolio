@@ -31,7 +31,7 @@ export default function CoverCard({
   return (
     <Link
       href={href}
-      className={`group block relative rounded-3xl overflow-hidden ${aspect} bg-gray-100 dark:bg-gray-900`}
+      className={`not-prose group block relative rounded-3xl overflow-hidden ${aspect} bg-gray-100 dark:bg-gray-900`}
     >
       <CoverImage
         src={coverImage}
