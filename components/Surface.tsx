@@ -6,8 +6,8 @@ import type { ReactNode } from 'react';
  * the standard inner padding and forwards `className` / `as`.
  */
 const PADDING = {
-  md: 'p-8 md:p-10',
-  lg: 'p-8 md:p-12',
+  md: 'p-6 sm:p-8 md:p-10',
+  lg: 'p-6 sm:p-8 md:p-12',
 } as const;
 
 type Tag = 'div' | 'article' | 'section';

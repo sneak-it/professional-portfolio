@@ -113,6 +113,12 @@
   --tw-prose-pre-code: #e6edf3;
 }
 
+/* Post text column: 36rem keeps lines near 65 characters. Code, tables,
+   figures, and not-prose components keep the full width. */
+.measure > :not(pre, table, figure, .not-prose, :has(> pre)) {
+  @apply mx-auto max-w-xl;
+}
+
 /* Shiki emits both themes per token; the toggle's class picks one. */
 .shiki span {
   color: var(--shiki-light);

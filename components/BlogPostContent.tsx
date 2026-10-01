@@ -4,7 +4,7 @@ import CoverImage from '@/components/CoverImage';
 import Surface from '@/components/Surface';
 import BackButton from '@/components/BackButton';
 import ShareButton from '@/components/ShareButton';
-import { PostDate, PostReadTime, PostUpdated } from '@/components/PostMeta';
+import PostMeta from '@/components/PostMeta';
 import TagList from '@/components/TagList';
 import PostNav from '@/components/PostNav';
 import { headings } from '@/lib/markdown';
@@ -29,25 +29,24 @@ export default function BlogPostContent({
   const showToc =
     typeof post.meta.toc === 'boolean' ? post.meta.toc : toc.length >= 4;
   return (
-    <Container as="article" size="xl">
+    <Container as="article" size="md">
       <BackButton href="/blog" label="Back to Blog" />
 
       <Surface as="div" padding="lg" className="surface-opaque mt-6">
         <header className="mb-10">
-          <div className="mb-6 flex items-start justify-between gap-4">
-            <TagList tags={post.meta.tags} link />
-            <div className="flex shrink-0 flex-col items-end gap-1">
-              <PostDate date={post.meta.date} />
-              {post.meta.updated && <PostUpdated date={post.meta.updated} />}
-            </div>
-          </div>
+          <div className="mx-auto max-w-xl">
+            <TagList tags={post.meta.tags} link className="mb-6" />
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-4">
-            {post.meta.title}
-          </h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-4">
+              {post.meta.title}
+            </h1>
 
-          <div className="mb-10">
-            <PostReadTime readTime={post.meta.readTime} />
+            <PostMeta
+              date={post.meta.date}
+              readTime={post.meta.readTime}
+              updated={post.meta.updated}
+              className="mb-10"
+            />
           </div>
 
           <div className="relative aspect-video rounded-3xl overflow-hidden mb-10">
@@ -55,13 +54,13 @@ export default function BlogPostContent({
               src={post.meta.image}
               alt={post.meta.title}
               priority
-              sizes="(max-width: 1280px) 100vw, 1280px"
+              sizes="(max-width: 896px) 100vw, 736px"
             />
           </div>
         </header>
 
         {showToc && toc.length > 0 && (
-          <details className="mb-10 card-surface p-5">
+          <details className="mx-auto mb-10 max-w-xl card-surface p-5">
             <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Contents
             </summary>
@@ -83,7 +82,7 @@ export default function BlogPostContent({
           </details>
         )}
 
-        <div className={`${PROSE} ${PROSE_CODE}`}>{children}</div>
+        <div className={`${PROSE} ${PROSE_CODE} measure`}>{children}</div>
 
         <footer className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800">
           <div className="flex justify-between items-center">

@@ -6,7 +6,7 @@ const tagHref = (slug: string) => `/blog?tag=${slug}`;
 // accent-2 keeps tags on their own axis from links and pagination. Amber fails
 // contrast as text, so a chip is a tint plus a per-theme text colour.
 const BASE =
-  'font-mono text-xs uppercase tracking-wider rounded-full border px-3 py-1 transition-colors';
+  'inline-flex whitespace-nowrap font-mono text-xs uppercase tracking-wider rounded-full border px-3 py-1 transition-colors';
 const IDLE =
   'border-accent-2/40 bg-accent-2/10 text-gray-700 dark:text-accent-2 hover:bg-accent-2/20 hover:border-accent-2';
 const ACTIVE = 'border-accent-2 bg-accent-2 text-gray-900';

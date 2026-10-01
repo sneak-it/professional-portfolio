@@ -4,8 +4,7 @@ import { formatDate } from '@/lib/date';
 const ITEM =
   'flex items-center gap-1 text-sm font-mono text-gray-500 dark:text-gray-400';
 
-/** The three meta items, exported so the article header can rearrange them. */
-export function PostDate({ date }: { date: string }) {
+function PostDate({ date }: { date: string }) {
   return (
     <span className={ITEM}>
       <Calendar size={14} /> <time dateTime={date}>{formatDate(date)}</time>
@@ -13,7 +12,7 @@ export function PostDate({ date }: { date: string }) {
   );
 }
 
-export function PostUpdated({ date }: { date: string }) {
+function PostUpdated({ date }: { date: string }) {
   return (
     <span className={ITEM}>
       <PencilLine size={14} /> Updated{' '}
@@ -22,7 +21,7 @@ export function PostUpdated({ date }: { date: string }) {
   );
 }
 
-export function PostReadTime({ readTime }: { readTime: string }) {
+function PostReadTime({ readTime }: { readTime: string }) {
   return (
     <span className={ITEM}>
       <Clock size={14} /> {readTime}
@@ -30,7 +29,7 @@ export function PostReadTime({ readTime }: { readTime: string }) {
   );
 }
 
-/** The date · read-time · updated row, used on the blog list cards. */
+/** The date · read-time · updated row, for blog list cards and the post header. */
 export default function PostMeta({
   date,
   readTime,
