@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { Info, Lightbulb, TriangleAlert } from 'lucide-react';
 import BarChart, { Bar, Marker } from '@/components/BarChart';
 import Container from '@/components/Container';
+import CopyButton from '@/components/CopyButton';
 import CoverCard from '@/components/CoverCard';
 import CoverImage from '@/components/CoverImage';
 import EmptyState from '@/components/EmptyState';
@@ -17,6 +18,7 @@ import Timeline, { Milestone } from '@/components/Timeline';
 import { imageDimensions, isLocalSrc, mediaFilePath } from '@/lib/image';
 import { isSafeHref } from '@/lib/href';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
+import { rehypeHighlight } from '@/lib/highlight';
 import { remarkMermaid } from '@/lib/mermaid';
 import { slugify } from '@/lib/slug';
 
@@ -180,21 +182,46 @@ function flatten(node: ReactNode): string {
 }
 
 /**
- * Anchorable heading, with the id `headings()` predicts. An authored id wins:
- * GFM's footnote section emits `id="footnote-label"` that its backrefs target.
+ * Anchorable heading with a `#` link, under the id `headings()` predicts. An
+ * authored id is GFM's hidden footnote heading: kept for its backrefs, unlinked.
  */
 function heading(Tag: 'h2' | 'h3') {
   return function Heading({
     children,
     id,
+    className,
     ...rest
   }: ComponentPropsWithoutRef<'h2'>) {
+    const anchor = id ? undefined : slugify(flatten(children)) || undefined;
     return (
-      <Tag {...rest} id={(id ?? slugify(flatten(children))) || undefined}>
+      <Tag
+        {...rest}
+        id={id ?? anchor}
+        className={`group/heading ${className ?? ''}`.trim()}
+      >
         {children}
+        {anchor && (
+          <a
+            href={`#${anchor}`}
+            aria-label="Link to this section"
+            className="not-prose ms-2 font-normal text-gray-500 opacity-0 transition-opacity hover:text-accent focus-visible:opacity-100 group-hover/heading:opacity-100 dark:text-gray-400"
+          >
+            #
+          </a>
+        )}
       </Tag>
     );
   };
+}
+
+/** Code block with a copy button over its top-right corner. */
+function CodeBlock(props: ComponentPropsWithoutRef<'pre'>) {
+  return (
+    <div className="group/code relative">
+      <pre {...props} />
+      <CopyButton />
+    </div>
+  );
 }
 
 // GFM task lists compile to <input type="checkbox">, and `input` is blocked.
@@ -213,6 +240,8 @@ export const mdxComponents = {
   Callout,
   h2: heading('h2'),
   h3: heading('h3'),
+  // The one client piece in a post body: its copy button.
+  pre: CodeBlock,
   // Server components only: a client one would ship JS per post for no gain.
   Container,
   CoverCard,
@@ -240,7 +269,10 @@ export const mdxComponents = {
 const mdxRenderProps = {
   components: mdxComponents,
   options: {
-    mdxOptions: { remarkPlugins: [remarkGfm, remarkMermaid, hardenRawHtml] },
+    mdxOptions: {
+      remarkPlugins: [remarkGfm, remarkMermaid, hardenRawHtml],
+      rehypePlugins: [rehypeHighlight],
+    },
   },
 };
 

@@ -122,6 +122,11 @@ Charts and diagrams render on the server and follow the theme toggle: `<Stats>` 
 class, and ER). The "Charts and diagrams" section of the authoring reference shows each
 one, with its syntax.
 
+Code fences are highlighted on the server in both themes and get a copy button. `{1,3-4}`
+after the language highlights those lines, and a `[!code ++]` or `[!code --]` comment marks
+a line as added or removed. An unknown language renders as plain text. `##` and `###`
+headings show a `#` link on hover.
+
 ### Tags and RSS
 
 Tags are the only taxonomy. `/blog?tag=<slug>` filters the listing to one tag, and the

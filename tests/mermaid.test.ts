@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import { hardenRawHtml } from '../lib/harden.ts';
+import { rehypeHighlight } from '../lib/highlight.ts';
 import { cleanSvg, remarkMermaid, renderDiagram } from '../lib/mermaid.ts';
 
 const ID = '_S_1_';
@@ -18,7 +19,10 @@ async function render(source: string) {
         createElement('figure', { 'data-chart': chart }),
     },
     options: {
-      mdxOptions: { remarkPlugins: [remarkGfm, remarkMermaid, hardenRawHtml] },
+      mdxOptions: {
+        remarkPlugins: [remarkGfm, remarkMermaid, hardenRawHtml],
+        rehypePlugins: [rehypeHighlight],
+      },
     },
   });
   return renderToStaticMarkup(content);
@@ -59,9 +63,9 @@ void test('a mermaid fence reaches the Mermaid component as its source', async (
 });
 
 void test('other fences stay code blocks', async () => {
-  assert.equal(
+  assert.match(
     await render('```ts\nconst x = 1;\n```\n'),
-    '<pre><code class="language-ts">const x = 1;\n</code></pre>',
+    /^<pre class="shiki [^"]*"[^>]*><code>.*const.*<\/code><\/pre>$/s,
   );
 });
 
