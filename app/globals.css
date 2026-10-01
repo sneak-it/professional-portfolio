@@ -24,6 +24,15 @@
      matches .surface-opaque, the panel posts render on. */
   --diagram-bg: #ffffff;
   --diagram-fg: #111827;
+  /* Post text column: about 75 characters per line at 16px, and at 18px from
+     md up (lib/prose.ts switches the body size at the same breakpoint). */
+  --measure: 33rem;
+}
+
+@media (width >= 48rem) {
+  :root {
+    --measure: 39rem;
+  }
 }
 
 .dark {
@@ -50,6 +59,7 @@
   --color-accent-from: var(--accent-from);
   --color-accent-via: var(--accent-via);
   --color-accent-to: var(--accent-to);
+  --container-measure: var(--measure);
 }
 
 /* Frosted-glass reading surface. Consumed via components/Surface.tsx. */
@@ -113,11 +123,11 @@
   --tw-prose-pre-code: #e6edf3;
 }
 
-/* Post text column: 36rem keeps lines near 65 characters; media stay full width.
+/* Text is capped at --measure; media stay full width.
    ponytail: :only-child ignores text, so a sentence with one inline image goes wide. */
 .measure
   > :not(pre, table, figure, .not-prose, :has(> pre), :has(> img:only-child)) {
-  @apply mx-auto max-w-xl;
+  @apply mx-auto max-w-measure;
 }
 
 /* Shiki emits both themes per token; the toggle's class picks one. */

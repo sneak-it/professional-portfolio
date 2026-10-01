@@ -34,7 +34,7 @@ export default function BlogPostContent({
 
       <Surface as="div" padding="lg" className="surface-opaque mt-6">
         <header className="mb-10">
-          <div className="mx-auto max-w-xl">
+          <div className="mx-auto max-w-measure">
             <TagList tags={post.meta.tags} link className="mb-6" />
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-4">
@@ -60,7 +60,7 @@ export default function BlogPostContent({
         </header>
 
         {showToc && toc.length > 0 && (
-          <details className="mx-auto mb-10 max-w-xl card-surface p-5">
+          <details className="mx-auto mb-10 max-w-measure card-surface p-5">
             <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Contents
             </summary>
