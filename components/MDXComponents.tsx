@@ -3,16 +3,21 @@ import type { ComponentPropsWithoutRef, ReactElement, ReactNode } from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import { Info, Lightbulb, TriangleAlert } from 'lucide-react';
+import BarChart, { Bar, Marker } from '@/components/BarChart';
 import Container from '@/components/Container';
 import CoverCard from '@/components/CoverCard';
 import CoverImage from '@/components/CoverImage';
 import EmptyState from '@/components/EmptyState';
 import IconBadge from '@/components/IconBadge';
+import Mermaid from '@/components/Mermaid';
 import PostMeta from '@/components/PostMeta';
+import Stats, { Stat } from '@/components/Stats';
 import Surface from '@/components/Surface';
+import Timeline, { Milestone } from '@/components/Timeline';
 import { imageDimensions, isLocalSrc, mediaFilePath } from '@/lib/image';
 import { isSafeHref } from '@/lib/href';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
+import { remarkMermaid } from '@/lib/mermaid';
 import { slugify } from '@/lib/slug';
 
 /**
@@ -216,6 +221,16 @@ export const mdxComponents = {
   IconBadge,
   PostMeta,
   Surface,
+  // `Bar`, `Marker`, and `Stat` only mean something inside their parent.
+  Stats,
+  Stat,
+  BarChart,
+  Bar,
+  Marker,
+  Timeline,
+  Milestone,
+  // What a ```mermaid fence becomes (lib/mermaid.ts); also usable directly.
+  Mermaid,
   ...Object.fromEntries(BLOCKED_TAGS.map((tag) => [tag, Blocked])),
   // After the spread: the one blocked tag with a safe narrow case.
   input: TaskCheckbox,
@@ -224,7 +239,9 @@ export const mdxComponents = {
 /** Both sanitization halves, kept together. `CachedMDX` is the only consumer. */
 const mdxRenderProps = {
   components: mdxComponents,
-  options: { mdxOptions: { remarkPlugins: [remarkGfm, hardenRawHtml] } },
+  options: {
+    mdxOptions: { remarkPlugins: [remarkGfm, remarkMermaid, hardenRawHtml] },
+  },
 };
 
 // Keyed by body text, so an edit lands on a new key. Capped, since a

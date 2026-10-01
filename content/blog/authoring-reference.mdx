@@ -248,6 +248,89 @@ Without one it collapses to nothing:
 `not-prose` on a wrapper opts its subtree out of the typography styles, which is
 what keeps a component's own spacing intact.
 
+## Charts and diagrams
+
+All four render on the server from the MDX itself, so they follow the theme
+toggle, reflow on a phone, and ship no JavaScript. Props are strings, since
+expressions are stripped, so a chart's data goes in child elements.
+
+### Stat tiles
+
+<Stats>
+  <Stat value="1.25M+" label="unique players" note="since October 2015" />
+  <Stat value="~200" label="countries and territories" />
+  <Stat value="10" label="years online" />
+</Stats>
+
+`value` renders exactly as written, and `note` is optional. Tiles take one
+column on a phone, two on a tablet, and one each, up to four, on a desktop.
+
+### Bar charts
+
+<BarChart title="Active players per year" note="2026 runs through September.">
+  <Bar label="2019" value="380,875" show />
+  <Bar label="2023" value="185,566" show />
+  <Marker after="2023" label="CS2 released" note="September 2023" />
+  <Bar label="2024" value="6,137" show />
+</BarChart>
+
+Each `<Bar>` takes a `label` and a `value`, commas allowed. Columns are the
+default, and only bars marked `show` print their value. `<Marker after="2023">`
+draws a labelled rule after the bar with that label. Every chart has a table of
+its numbers under it.
+
+<BarChart title="Hours played by game mode" orientation="horizontal">
+  <Bar label="Surf" value="2380786" />
+  <Bar label="KZ" value="581741" />
+</BarChart>
+
+`orientation="horizontal"` gives one row per bar with every value at its tip.
+Once a bar reaches a million, the whole chart switches to `2.38M` style.
+
+### Timelines
+
+<Timeline>
+  <Milestone date="October 2015" title="First servers" />
+  <Milestone date="2019" title="Peak year">380,875 active players.</Milestone>
+  <Milestone date="September 2023" title="CS2 released">
+    Most servers went quiet within the month. The **KZ** servers kept a
+    [steady crowd](/blog).
+  </Milestone>
+</Timeline>
+
+Children are optional and take ordinary Markdown.
+
+### Diagrams
+
+A fence with the language `mermaid` becomes a diagram:
+
+```mermaid
+flowchart LR
+  server[Proxmox server] -->|over WireGuard| nas[TrueNAS at home]
+  nas -->|backed up| drive[External drive, off-site]
+```
+
+~~~md
+```mermaid
+flowchart LR
+  server[Proxmox server] -->|over WireGuard| nas[TrueNAS at home]
+  nas -->|backed up| drive[External drive, off-site]
+```
+~~~
+
+Flowcharts, state, sequence, class, and ER diagrams are supported:
+
+```mermaid
+sequenceDiagram
+  Reader->>Server: GET /blog/post
+  Server->>Server: Render the diagram
+  Server-->>Reader: HTML with the SVG inline
+```
+
+Screen readers get a diagram's labels but not its shape, so say what it shows
+in the prose around it. A diagram wider than the column scrolls sideways rather
+than shrinking its text.
+
 ## Headings and the table of contents
 
 `##` and `###` headings become Contents entries and get anchor ids from their
@@ -293,6 +376,25 @@ and never becomes `4`.
 Client components are not exposed at all. `GalleryView`, `ShareButton`, and the
 rest would ship JavaScript for every post that mentioned them, and a reference
 page needs none of it.
+
+A Mermaid diagram type the renderer doesn't support, or a first line it can't
+read, shows the source as a code block instead:
+
+```mermaid
+pie
+  "Surf" : 80
+  "KZ" : 20
+```
+
+Inside a diagram, a line the renderer can't read is dropped without a warning,
+so check that every node and edge made it onto the page.
+
+A chart value that isn't a number replaces the chart with an error naming the
+bar, rather than breaking the post:
+
+<BarChart title="A typo">
+  <Bar label="2019" value="38O,875" />
+</BarChart>
 
 [^one]: The first footnote. Definitions can sit anywhere in the file; they are
     always collected here, in reference order.

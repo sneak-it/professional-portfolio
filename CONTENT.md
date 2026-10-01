@@ -115,6 +115,13 @@ Components available in the body: `<Callout type="note|tip|warn" title="…">`,
 `<input>` and friends are stripped, images must be same-origin, links are limited to
 http/https/mailto.
 
+Charts and diagrams render on the server and follow the theme toggle: `<Stats>` with
+`<Stat value label note />` tiles, `<BarChart title note orientation>` with
+`<Bar label value show />` and `<Marker after label note />` children, `<Timeline>` with
+`<Milestone date title>` entries, and ` ```mermaid ` fences (flowchart, state, sequence,
+class, and ER). The "Charts and diagrams" section of the authoring reference shows each
+one, with its syntax.
+
 ### Tags and RSS
 
 Tags are the only taxonomy. `/blog?tag=<slug>` filters the listing to one tag, and the

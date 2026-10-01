@@ -20,11 +20,17 @@
 
   --background: #f5f5f5;
   --background-deep: #f5f5f5;
+  /* Mermaid diagrams (lib/mermaid.ts). bg also fills edge-label boxes, so it
+     matches .surface-opaque, the panel posts render on. */
+  --diagram-bg: #ffffff;
+  --diagram-fg: #111827;
 }
 
 .dark {
   --background: #0f1115;
   --background-deep: #050505;
+  --diagram-bg: #0a0c10;
+  --diagram-fg: #e5e7eb;
 }
 
 @theme {
