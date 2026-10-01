@@ -1,5 +1,4 @@
-import path from 'path';
-import { list, readMdxFile, text } from './content';
+import { contentDir, list, readMdxFile, text } from './content';
 
 /**
  * About-page content from `content/about.mdx`, bind-mount editable. `icon` is a
@@ -37,7 +36,7 @@ export interface About {
 
 /** Returns default content if `content/about.mdx` is missing or unparseable. */
 export function getAbout(fallbackDescription: string): About {
-  const file = readMdxFile(path.join(process.cwd(), 'content'), 'about');
+  const file = readMdxFile(contentDir(), 'about');
   const data = file?.data ?? {};
   return {
     skills: list<SkillGroup>(data.skills),

@@ -8,6 +8,17 @@ import { safeSlug } from './slug.ts';
  * one read/parse (with its traversal guard and try/catch) behind both.
  */
 
+/**
+ * `sub` under `CONTENT_DIR` (absolute, or relative to the cwd), else ./content.
+ * Only the default is traced into the build; an override lives outside it.
+ */
+export function contentDir(sub = '', raw = process.env.CONTENT_DIR): string {
+  const dir = raw?.trim();
+  return dir
+    ? path.resolve(/*turbopackIgnore: true*/ dir, sub)
+    : path.join(process.cwd(), 'content', sub);
+}
+
 export interface MdxFile {
   slug: string;
   data: Record<string, unknown>;

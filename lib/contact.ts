@@ -1,5 +1,4 @@
-import path from 'path';
-import { readMdxFile, text } from './content';
+import { contentDir, readMdxFile, text } from './content';
 
 /** Contact-page copy, read from `content/contact.mdx`. Mirrors lib/home.ts. */
 export interface Contact {
@@ -14,7 +13,7 @@ export interface Contact {
 
 /** Returns defaults if `content/contact.mdx` is missing or unparseable. */
 export function getContact(fallbackDescription: string): Contact {
-  const file = readMdxFile(path.join(process.cwd(), 'content'), 'contact');
+  const file = readMdxFile(contentDir(), 'contact');
   const data = file?.data ?? {};
   return {
     heading: text(data.heading, 'Say'),

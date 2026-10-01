@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import {
+  contentDir,
   isDraft,
   list,
   listDir,
@@ -115,4 +116,12 @@ void test('isDraft ignores a missing or unparseable date', () => {
   assert.equal(isDraft({ date: '' }), false);
   assert.equal(isDraft({ date: 20991231 }), false);
   assert.equal(isDraft({ date: new Date(9e15) }), false);
+});
+
+void test('contentDir defaults to ./content and resolves CONTENT_DIR', () => {
+  assert.equal(contentDir('', undefined), path.resolve('content'));
+  assert.equal(contentDir('blog', ''), path.resolve('content/blog'));
+  assert.equal(contentDir('blog', '   '), path.resolve('content/blog'));
+  assert.equal(contentDir('blog', ' /srv/site '), '/srv/site/blog');
+  assert.equal(contentDir('', '../private'), path.resolve('../private'));
 });

@@ -5,7 +5,12 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { isDraft, listMdxSlugs, readMdxFile } from '../lib/content.ts';
+import {
+  contentDir,
+  isDraft,
+  listMdxSlugs,
+  readMdxFile,
+} from '../lib/content.ts';
 import { mediaFilePath } from '../lib/image.ts';
 import { PORTFOLIO_SECTIONS } from '../lib/portfolio.ts';
 import { slugify } from '../lib/slug.ts';
@@ -215,11 +220,11 @@ function reportTagVocabulary() {
   }
 }
 
-const blogDir = path.join(process.cwd(), 'content/blog');
+const blogDir = contentDir('blog');
 for (const slug of listMdxSlugs(blogDir)) checkFile(blogDir, slug, BLOG);
 
 for (const section of PORTFOLIO_SECTIONS) {
-  const dir = path.join(process.cwd(), 'content/portfolio', section.slug);
+  const dir = path.join(contentDir('portfolio'), section.slug);
   const schema = section.type === 'gallery' ? GALLERY : PROJECT;
   for (const slug of listMdxSlugs(dir)) checkFile(dir, slug, schema);
 }

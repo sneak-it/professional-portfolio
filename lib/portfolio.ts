@@ -1,6 +1,7 @@
 import path from 'path';
 import { imageDimensions } from './image.ts';
 import {
+  contentDir,
   isDraft,
   listDir,
   listMdxFiles,
@@ -100,7 +101,7 @@ export interface SectionSummary {
   coverImage: string | null;
 }
 
-const portfolioDirectory = path.join(process.cwd(), 'content/portfolio');
+const portfolioDirectory = contentDir('portfolio');
 const mediaPhotographyDirectory = path.join(
   process.cwd(),
   'media/portfolio/photography',

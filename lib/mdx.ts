@@ -1,5 +1,5 @@
-import path from 'path';
 import {
+  contentDir,
   listMdxFiles,
   readMdxFile,
   strings,
@@ -10,7 +10,7 @@ import { firstParagraph, readTime } from './markdown.ts';
 import { slugify } from './slug.ts';
 import { byDateDesc } from './sort.ts';
 
-const postsDirectory = path.join(process.cwd(), 'content/blog');
+const postsDirectory = contentDir('blog');
 
 export interface BlogPostMeta {
   title: string;

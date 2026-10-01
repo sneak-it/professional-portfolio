@@ -51,6 +51,7 @@ optional, a missing or misplaced `.env` is not an error: the container logs
 | `SITE_GITHUB_URL` | GitHub profile link. Empty hides it. | `https://github.com/your-username` |
 | `SITE_LINKEDIN_URL` | LinkedIn profile link. Empty hides it. | `https://linkedin.com/in/your-profile` |
 | `SITE_EMAIL` | Contact email. Unset omits the contact card. | unset |
+| `CONTENT_DIR` | Content tree to serve when running from source, absolute or relative to the working directory. Leave unset under Docker and mount over `/app/content` instead. | `./content` |
 | `BLOG_POSTS_PER_PAGE` | Posts per page on `/blog`. | `3` |
 | `SITEMAP_CACHE_TTL_MS` | How long `sitemap.xml` and `feed.xml` reuse a scanned content list. Pages render per request and are unaffected. | `300000` |
 | `IMAGE_DIMENSION_CACHE_MAX` | Entries in the image dimension cache, one per distinct image path rendered. | `2000` |
