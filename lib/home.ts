@@ -23,7 +23,7 @@ export function getHome(): Home {
   const data = file?.data ?? {};
   const words = strings(data.words);
   return {
-    eyebrow: text(data.eyebrow, 'Building things, on and off the clock'),
+    eyebrow: text(data.eyebrow, 'Portfolio and blog'),
     headline: text(data.headline, 'Creating'),
     // Non-empty: the gradient span needs at least one word.
     words: words.length > 0 ? (words as [string, ...string[]]) : DEFAULT_WORDS,

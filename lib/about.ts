@@ -41,13 +41,10 @@ export function getAbout(fallbackDescription: string): About {
   return {
     skills: list<SkillGroup>(data.skills),
     interests: list<Interest>(data.interests),
-    skillsHeading: text(data.skillsHeading, 'Technical Arsenal'),
-    skillsBlurb: text(data.skillsBlurb, 'The tools I reach for.'),
-    interestsHeading: text(data.interestsHeading, 'Off the Clock'),
-    interestsBlurb: text(
-      data.interestsBlurb,
-      'What I get up to away from a keyboard.',
-    ),
+    skillsHeading: text(data.skillsHeading, 'Skills'),
+    skillsBlurb: text(data.skillsBlurb, 'The tools I use most.'),
+    interestsHeading: text(data.interestsHeading, 'Interests'),
+    interestsBlurb: text(data.interestsBlurb, 'What I do outside work.'),
     description: text(data.description, fallbackDescription),
     content: file?.content ?? '',
   };

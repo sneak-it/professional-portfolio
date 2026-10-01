@@ -18,7 +18,7 @@ The homepage hero.
 
 | Field | Purpose | Default |
 | --- | --- | --- |
-| `eyebrow` | Small line above the headline. | `Building things, on and off the clock` |
+| `eyebrow` | Small line above the headline. | `Portfolio and blog` |
 | `headline` | Static first word of the hero. | `Creating` |
 | `words` | List cycled by the typewriter after the headline. An empty list falls back. | `Experiences`, `Opportunities`, `Connections`, `Solutions` |
 
@@ -29,11 +29,11 @@ Body: the bio paragraph under the hero.
 | Field | Purpose | Default |
 | --- | --- | --- |
 | `description` | Meta description. | Derived from `SITE_NAME` |
-| `skillsHeading` | Heading over the skills grid. | `Technical Arsenal` |
-| `skillsBlurb` | Line under that heading. | `The tools I reach for.` |
+| `skillsHeading` | Heading over the skills grid. | `Skills` |
+| `skillsBlurb` | Line under that heading. | `The tools I use most.` |
 | `skills` | Grouped skill list; see below. | none (section empty) |
-| `interestsHeading` | Heading over the interests grid. | `Off the Clock` |
-| `interestsBlurb` | Line under that heading. | `What I get up to away from a keyboard.` |
+| `interestsHeading` | Heading over the interests grid. | `Interests` |
+| `interestsBlurb` | Line under that heading. | `What I do outside work.` |
 | `interests` | Interest cards; see below. | none (section empty) |
 
 ```mdx
