@@ -12,6 +12,7 @@ import {
   Tag as TagIcon,
 } from 'lucide-react';
 import Container from '@/components/Container';
+import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import PostMeta from '@/components/PostMeta';
 import TagList, { chipClass } from '@/components/TagList';
@@ -98,6 +99,8 @@ export default function BlogList({
           )
         }
       />
+
+      {posts.length === 0 && <EmptyState>Nothing here yet.</EmptyState>}
 
       <div className="space-y-4">
         {posts.map((post, index) => (
