@@ -8,9 +8,9 @@ default: the shipped avatar and blog assets are used until you uncomment the
 
 ## Special pages
 
-Three files at the top of `content/` hold the copy for the fixed pages. Each is optional:
+Four files at the top of `content/` hold the copy for the fixed pages. Each is optional:
 a missing or unparseable file falls back to built-in defaults, as does any individual
-frontmatter field. In all three, the MDX body is the page's prose.
+frontmatter field. In home, about, and contact, the MDX body is the page's prose.
 
 ### `content/home.mdx`
 
@@ -60,6 +60,15 @@ Body: the bio paragraphs.
 | `description` | Meta description. | Derived from `SITE_NAME` |
 
 Body: the intro paragraph. The email card only appears when `SITE_EMAIL` is set.
+
+### `content/not-found.mdx`
+
+The 404 page, under the large `404`. Frontmatter only; the body is ignored.
+
+| Field | Purpose | Default |
+| --- | --- | --- |
+| `title` | Heading. | `Page not found.` |
+| `message` | Line under the heading. | `The page you are looking for cannot be found.` |
 
 ## Checking content
 
