@@ -125,8 +125,7 @@ export default function BlogPostContent({
   // article right instead of dropping the rail.
   return (
     <div className="lg:grid lg:grid-cols-[minmax(13rem,1fr)_minmax(0,56rem)_minmax(0,1fr)]">
-      <TableOfContents items={toc} />
-      {article}
+      <TableOfContents items={toc}>{article}</TableOfContents>
     </div>
   );
 }

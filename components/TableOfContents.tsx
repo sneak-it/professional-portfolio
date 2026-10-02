@@ -18,7 +18,13 @@ function reveal(list: HTMLElement | null, index: number) {
 }
 
 /** Post contents marking the section in view: a rail from lg, a button below. */
-export default function TableOfContents({ items }: { items: Heading[] }) {
+export default function TableOfContents({
+  items,
+  children,
+}: {
+  items: Heading[];
+  children: React.ReactNode;
+}) {
   const [active, setActive] = useState(-1);
   const navRef = useRef<HTMLElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -90,16 +96,19 @@ export default function TableOfContents({ items }: { items: Heading[] }) {
     </>
   );
 
-  // The button sits outside the nav: the nav's blur would pin it to the rail.
+  // `children` is the article: the button and list follow it in the Tab order.
   return (
-    <aside className="lg:col-start-1 lg:row-start-1 lg:justify-self-end lg:pt-40 lg:pb-20">
-      <nav
-        ref={navRef}
-        aria-label="Table of contents"
-        className="surface sticky top-28 hidden w-48 max-h-[calc(100dvh-8rem)] overflow-y-auto p-5 lg:block"
-      >
-        {contents}
-      </nav>
+    <>
+      <div className="lg:col-start-1 lg:row-start-1 lg:justify-self-end lg:pt-40 lg:pb-20">
+        <nav
+          ref={navRef}
+          aria-label="Table of contents"
+          className="surface sticky top-28 hidden w-48 max-h-[calc(100dvh-8rem)] overflow-y-auto p-5 lg:block"
+        >
+          {contents}
+        </nav>
+      </div>
+      {children}
       <button
         type="button"
         popoverTarget={popoverId}
@@ -122,6 +131,6 @@ export default function TableOfContents({ items }: { items: Heading[] }) {
       >
         {contents}
       </div>
-    </aside>
+    </>
   );
 }
