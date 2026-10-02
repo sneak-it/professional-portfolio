@@ -228,7 +228,7 @@ function CodeBlock(props: ComponentPropsWithoutRef<'pre'>) {
 // This re-admits just that checkbox; lib/harden.ts drops authored <input>.
 function TaskCheckbox({ type, ...rest }: ComponentPropsWithoutRef<'input'>) {
   if (type !== 'checkbox') return null;
-  return <input {...rest} type="checkbox" disabled />;
+  return <input {...rest} type="checkbox" disabled aria-label="Done" />;
 }
 
 export const mdxComponents = {
