@@ -123,6 +123,49 @@
 @utility card-surface {
   @apply bg-white dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10;
 }
+/* Pointer-following glow for cards that aren't links (lib/spotlight.ts sets
+   --x, --y): ::before lights the 1px border, ::after tints the fill. */
+@utility spotlight {
+  --x: 50%;
+  --y: 50%;
+  isolation: isolate;
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    @apply transition-opacity duration-300 ease-out;
+  }
+  &::before {
+    padding: 1px;
+    background: radial-gradient(
+      12rem circle at var(--x) var(--y),
+      var(--accent-via),
+      transparent
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+  &::after {
+    z-index: -1;
+    background: radial-gradient(
+      20rem circle at var(--x) var(--y),
+      color-mix(in srgb, var(--accent-via) 12%, transparent),
+      transparent
+    );
+  }
+  @variant hover {
+    &::before,
+    &::after {
+      opacity: 1;
+    }
+  }
+}
 
 /* Halo for titles over the bare background: a page-coloured shadow for local
    contrast against the moving contour lines. */

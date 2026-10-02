@@ -6,6 +6,7 @@ import Container from '@/components/Container';
 import IconBadge from '@/components/IconBadge';
 import { LinkedInIcon } from '@/components/icons/BrandIcons';
 import { fadeInUp } from '@/lib/motion';
+import { moveSpotlight } from '@/lib/spotlight';
 
 export default function ContactClient({
   email,
@@ -90,18 +91,17 @@ export default function ContactClient({
           <m.div
             {...fadeInUp}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
+            onPointerMove={moveSpotlight}
+            className="group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 spotlight relative"
           >
             <IconBadge
               color="secondary"
               size="lg"
-              className="mb-6 transition-transform duration-300 group-hover:scale-110"
+              className="mb-6 transition-transform duration-300 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6"
             >
               <MapPin size={32} />
             </IconBadge>
-            <h3 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent-text">
-              Location
-            </h3>
+            <h3 className="text-xl font-bold mb-2">Location</h3>
             <p className="text-gray-600 dark:text-gray-400">{location}</p>
           </m.div>
         </div>

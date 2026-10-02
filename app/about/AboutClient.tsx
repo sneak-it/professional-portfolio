@@ -24,6 +24,7 @@ import type {
   SkillGroup,
   SkillIcon,
 } from '@/lib/about';
+import { moveSpotlight } from '@/lib/spotlight';
 
 const SKILL_ICONS: Record<SkillIcon, React.ReactNode> = {
   ops: <Cloud size={24} />,
@@ -137,9 +138,14 @@ export default function AboutClient({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="surface p-6 hover:border-accent/50 transition-colors"
+                onPointerMove={moveSpotlight}
+                className="surface p-6 spotlight relative group"
               >
-                <IconBadge size="md" shape="xl" className="mb-6">
+                <IconBadge
+                  size="md"
+                  shape="xl"
+                  className="mb-6 transition-transform duration-300 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6"
+                >
                   {/* Unrecognized key falls back: about.mdx is hand-edited. */}
                   {SKILL_ICONS[skillGroup.icon] ?? <Wrench size={24} />}
                 </IconBadge>
@@ -189,9 +195,14 @@ export default function AboutClient({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="surface p-6 hover:border-accent/50 transition-colors"
+                onPointerMove={moveSpotlight}
+                className="surface p-6 spotlight relative group"
               >
-                <IconBadge size="md" shape="xl" className="mb-6">
+                <IconBadge
+                  size="md"
+                  shape="xl"
+                  className="mb-6 transition-transform duration-300 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6"
+                >
                   {INTEREST_ICONS[interest.icon]}
                 </IconBadge>
                 <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
