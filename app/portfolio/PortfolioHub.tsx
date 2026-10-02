@@ -48,7 +48,7 @@ export default function PortfolioHub({
               sizes="(max-width: 768px) 100vw, 33vw"
               badge={<ArrowUpRight size={20} />}
               meta={
-                <p className="text-white/70 mb-2 text-sm font-medium font-mono uppercase tracking-wider">
+                <p className="text-white/90 mb-2 text-sm font-medium font-mono uppercase tracking-wider">
                   {countLabel(section.slug, section.count)}
                 </p>
               }

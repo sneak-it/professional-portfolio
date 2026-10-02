@@ -47,7 +47,7 @@ export default function SectionGalleryList({
                 priority={index === 0}
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 meta={
-                  <div className="flex items-center gap-2 text-white/80 mb-2 text-sm font-medium">
+                  <div className="flex items-center gap-2 text-white/90 mb-2 text-sm font-medium">
                     <ImageIcon size={16} />
                     <span>{gallery.imageCount} Photos</span>
                     {gallery.date && (
