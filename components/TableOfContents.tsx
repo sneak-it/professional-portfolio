@@ -80,7 +80,7 @@ export default function TableOfContents({
             <a
               href={`#${item.id}`}
               aria-current={i === active ? 'location' : undefined}
-              className="block border-l-2 border-transparent py-1 pl-3 text-sm text-gray-600 transition-colors hover:text-accent-text aria-[current=location]:border-accent aria-[current=location]:text-gray-900 dark:text-gray-400 dark:aria-[current=location]:text-white"
+              className="block border-l-2 border-transparent py-1 pl-3 text-sm wrap-break-word text-gray-600 transition-colors hover:text-accent-text aria-[current=location]:border-accent aria-[current=location]:text-gray-900 dark:text-gray-400 dark:aria-[current=location]:text-white"
             >
               {item.text}
             </a>
