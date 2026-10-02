@@ -8,11 +8,16 @@
    override applies at runtime. The accent trio is mirrored in lib/brand.ts for
    the app/brand/* next/og routes. */
 :root {
-  /* ===== RESKIN HERE. Every accent in the site reads from these six hexes;
+  /* ===== RESKIN HERE. Every accent in the site reads from these ten hexes;
      mirror --accent-from/via/to into lib/brand.ts. ===== */
   --accent: #ff4d6d; /* primary   — coral-rose (vivid, warm)      */
   --accent-2: #ffb400; /* secondary — amber-gold                   */
   --accent-text: #be123c; /* text accent; needs 4.5:1 on light backgrounds */
+  /* Light-mode gradient text (3:1, large); .dark maps each to its accent. */
+  --accent-2-text: #b45309;
+  --accent-from-text: #b45309;
+  --accent-via-text: #c2410c;
+  --accent-to-text: #be123c;
   /* Gradient stops (text/CTAs) — "Solar Flare" warm sunset, amber→coral→rose. */
   --accent-from: #ffb400; /* amber gold      (low elevation)  */
   --accent-via: #ff6b3d; /* vivid coral     (mid)            */
@@ -38,6 +43,10 @@
 
 .dark {
   --accent-text: var(--accent);
+  --accent-2-text: var(--accent-2);
+  --accent-from-text: var(--accent-from);
+  --accent-via-text: var(--accent-via);
+  --accent-to-text: var(--accent-to);
   --background: #0f1115;
   --background-deep: #050505;
   --diagram-bg: #0a0c10;
@@ -59,6 +68,10 @@
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
   --color-accent-text: var(--accent-text);
+  --color-accent-2-text: var(--accent-2-text);
+  --color-accent-from-text: var(--accent-from-text);
+  --color-accent-via-text: var(--accent-via-text);
+  --color-accent-to-text: var(--accent-to-text);
   --color-accent-from: var(--accent-from);
   --color-accent-via: var(--accent-via);
   --color-accent-to: var(--accent-to);
@@ -91,7 +104,12 @@
 
 /* Shared class strings; @utility keeps them composable with variants. */
 @utility gradient-text {
-  @apply text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-2;
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-accent-text to-accent-2-text;
+  /* An inherited halo paints over clipped glyphs, so light mode drops it. */
+  text-shadow: none;
+  @variant dark {
+    text-shadow: inherit;
+  }
 }
 /* Pills leave padding and font size to the caller: one utility can't reliably
    override another's. Hover text darkens: white on the sweep is under 3:1. */

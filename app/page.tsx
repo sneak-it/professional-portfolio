@@ -35,7 +35,7 @@ export default function Home() {
               <span className={`${styles.word} inline-block`}>{headline}</span>
               <div className="w-full h-0" />
               <span
-                className={`${styles.word} ${styles.word2} text-transparent bg-clip-text bg-gradient-to-r from-accent-from via-accent-via to-accent-to inline-block`}
+                className={`${styles.word} ${styles.word2} text-transparent bg-clip-text bg-gradient-to-r from-accent-from-text via-accent-via-text to-accent-to-text inline-block`}
               >
                 <Typewriter words={words} />
                 <span
