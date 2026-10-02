@@ -436,6 +436,13 @@
   animation-name: page-enter-left;
 }
 
+/* The root (navbar, footer, background) swaps at once: a cross-fade shows two
+   active nav links and blends a frozen frame of the background with the live one. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
 /* Let clicks reach the live page while the transition overlay is up. */
 ::view-transition {
   pointer-events: none;
