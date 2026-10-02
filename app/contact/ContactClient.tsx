@@ -54,9 +54,9 @@ export default function ContactClient({
               >
                 <Mail size={32} />
               </IconBadge>
-              <h3 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent-text">
+              <h2 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent-text">
                 Email
-              </h3>
+              </h2>
               <span className="text-gray-600 dark:text-gray-400 transition-colors group-hover:text-accent-text break-all">
                 {email}
               </span>
@@ -79,9 +79,9 @@ export default function ContactClient({
               >
                 <LinkedInIcon size={32} />
               </IconBadge>
-              <h3 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent-text">
+              <h2 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent-text">
                 LinkedIn
-              </h3>
+              </h2>
               <span className="text-gray-600 dark:text-gray-400 transition-colors group-hover:text-accent-text">
                 Connect with me
               </span>
@@ -101,7 +101,7 @@ export default function ContactClient({
             >
               <MapPin size={32} />
             </IconBadge>
-            <h3 className="text-xl font-bold mb-2">Location</h3>
+            <h2 className="text-xl font-bold mb-2">Location</h2>
             <p className="text-gray-600 dark:text-gray-400">{location}</p>
           </m.div>
         </div>
