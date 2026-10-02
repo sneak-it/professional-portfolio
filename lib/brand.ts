@@ -1,8 +1,8 @@
 /**
  * Palette mirrored out of CSS for consumers that cannot read custom properties:
  * the app/brand/ `next/og` routes, the `viewport` export, and the lib/site.ts
- * version token. `app/globals.css` is the source of truth; `--accent` and
- * `--accent-2` are absent because nothing outside CSS reads them.
+ * version token. `app/globals.css` is the source of truth; `--accent`,
+ * `--accent-2`, and `--accent-text` are absent: nothing outside CSS reads them.
  */
 export const ACCENT = {
   from: '#ffb400', // --accent-from, amber gold

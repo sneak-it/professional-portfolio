@@ -27,7 +27,7 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className={styles.enter}>
             <p
-              className={`${styles.eyebrow} text-sm md:text-base font-semibold tracking-widest text-accent uppercase font-mono mb-4`}
+              className={`${styles.eyebrow} text-sm md:text-base font-semibold tracking-widest text-accent-text uppercase font-mono mb-4`}
             >
               {eyebrow}
             </p>

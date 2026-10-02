@@ -127,7 +127,7 @@ export default function BlogList({
                 className="mb-4"
               />
 
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-accent transition-colors">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-accent-text transition-colors">
                 <Link href={`/blog/${post.slug}`}>
                   <span className="absolute inset-0" />
                   {post.meta.title}
@@ -138,7 +138,7 @@ export default function BlogList({
                 {post.meta.excerpt}
               </p>
 
-              <div className="mt-auto flex items-center text-accent font-medium">
+              <div className="mt-auto flex items-center text-accent-text font-medium">
                 Read Article{' '}
                 <ArrowRight
                   size={16}
@@ -160,7 +160,7 @@ export default function BlogList({
               href={pageHref(currentPage - 1)}
               rel="prev"
               aria-label="Previous page"
-              className="flex items-center justify-center h-10 w-10 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-accent/50 hover:text-accent transition-colors"
+              className="flex items-center justify-center h-10 w-10 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-accent/50 hover:text-accent-text transition-colors"
             >
               <ChevronLeft size={18} />
             </Link>
@@ -183,8 +183,8 @@ export default function BlogList({
                 aria-current={isActive ? 'page' : undefined}
                 className={`flex items-center justify-center h-10 w-10 rounded-full border text-sm font-medium transition-colors ${
                   isActive
-                    ? 'border-accent bg-accent text-white'
-                    : 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-accent/50 hover:text-accent'
+                    ? 'border-accent-text bg-accent-text text-white dark:text-gray-950'
+                    : 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-accent/50 hover:text-accent-text'
                 }`}
               >
                 {page}
@@ -197,7 +197,7 @@ export default function BlogList({
               href={pageHref(currentPage + 1)}
               rel="next"
               aria-label="Next page"
-              className="flex items-center justify-center h-10 w-10 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-accent/50 hover:text-accent transition-colors"
+              className="flex items-center justify-center h-10 w-10 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-accent/50 hover:text-accent-text transition-colors"
             >
               <ChevronRight size={18} />
             </Link>

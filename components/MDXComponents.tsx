@@ -204,7 +204,7 @@ function heading(Tag: 'h2' | 'h3') {
           <a
             href={`#${anchor}`}
             aria-label="Link to this section"
-            className="not-prose ms-2 font-normal text-gray-500 opacity-0 transition-opacity hover:text-accent focus-visible:opacity-100 group-hover/heading:opacity-100 dark:text-gray-400"
+            className="not-prose ms-2 font-normal text-gray-500 opacity-0 transition-opacity hover:text-accent-text focus-visible:opacity-100 group-hover/heading:opacity-100 dark:text-gray-400"
           >
             #
           </a>

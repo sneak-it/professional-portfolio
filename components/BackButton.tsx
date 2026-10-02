@@ -15,7 +15,7 @@ export default function BackButton({
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors mb-8"
+      className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-accent-text transition-colors mb-8"
     >
       <ArrowLeft size={16} /> {label}
     </Link>

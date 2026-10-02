@@ -192,7 +192,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
                       }}
                       className={`relative px-4 py-2 text-sm font-medium transition-colors rounded-full ${
                         isActive
-                          ? 'text-accent'
+                          ? 'text-accent-text'
                           : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                       }`}
                     >
@@ -250,7 +250,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
                   }}
                   className={`block px-3 py-3 text-base font-medium rounded-md ${
                     pathname === link.href
-                      ? 'text-accent bg-accent/10 dark:bg-accent/10'
+                      ? 'text-accent-text bg-accent/10 dark:bg-accent/10'
                       : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
                   }`}
                 >

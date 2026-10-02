@@ -22,7 +22,7 @@ export default function ProjectDetailClient({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
         <m.div {...fadeInUp}>
           <Surface padding="lg">
-            <span className="text-accent font-medium font-mono uppercase tracking-wider text-sm mb-4 block">
+            <span className="text-accent-text font-medium font-mono uppercase tracking-wider text-sm mb-4 block">
               {sectionName}
             </span>
             <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
@@ -59,7 +59,7 @@ export default function ProjectDetailClient({
 
             {tech.length > 0 && (
               <div>
-                <h3 className="text-sm font-bold font-mono uppercase tracking-wider text-gray-400 mb-3">
+                <h3 className="text-sm font-bold font-mono uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">
                   Technologies
                 </h3>
                 <div className="flex flex-wrap gap-2">

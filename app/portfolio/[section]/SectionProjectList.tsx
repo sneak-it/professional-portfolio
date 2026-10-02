@@ -82,7 +82,7 @@ export default function SectionProjectList({
                 )}
 
                 <div className="p-6 flex flex-col flex-grow">
-                  <h2 className="text-xl font-bold mb-2 group-hover:text-accent transition-colors">
+                  <h2 className="text-xl font-bold mb-2 group-hover:text-accent-text transition-colors">
                     <Link
                       href={`/portfolio/${project.section}/${project.slug}`}
                     >

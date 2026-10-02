@@ -33,7 +33,7 @@ function PostNavLink({
       >
         <Icon size={14} /> {isPrev ? 'Older' : 'Newer'}
       </span>
-      <span className="font-bold line-clamp-2 group-hover:text-accent transition-colors">
+      <span className="font-bold line-clamp-2 group-hover:text-accent-text transition-colors">
         {post.meta.title}
       </span>
     </Link>

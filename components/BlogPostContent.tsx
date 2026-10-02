@@ -72,7 +72,7 @@ export default function BlogPostContent({
                 >
                   <a
                     href={`#${item.id}`}
-                    className="text-gray-700 hover:text-accent dark:text-gray-300 transition-colors"
+                    className="text-gray-700 hover:text-accent-text dark:text-gray-300 transition-colors"
                   >
                     {item.text}
                   </a>

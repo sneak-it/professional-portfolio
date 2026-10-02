@@ -8,10 +8,11 @@
    override applies at runtime. The accent trio is mirrored in lib/brand.ts for
    the app/brand/* next/og routes. */
 :root {
-  /* ===== RESKIN HERE. Every accent in the site reads from these five hexes;
+  /* ===== RESKIN HERE. Every accent in the site reads from these six hexes;
      mirror --accent-from/via/to into lib/brand.ts. ===== */
   --accent: #ff4d6d; /* primary   — coral-rose (vivid, warm)      */
   --accent-2: #ffb400; /* secondary — amber-gold                   */
+  --accent-text: #be123c; /* text accent; needs 4.5:1 on light backgrounds */
   /* Gradient stops (text/CTAs) — "Solar Flare" warm sunset, amber→coral→rose. */
   --accent-from: #ffb400; /* amber gold      (low elevation)  */
   --accent-via: #ff6b3d; /* vivid coral     (mid)            */
@@ -36,6 +37,7 @@
 }
 
 .dark {
+  --accent-text: var(--accent);
   --background: #0f1115;
   --background-deep: #050505;
   --diagram-bg: #0a0c10;
@@ -56,6 +58,7 @@
   --color-background-deep: var(--background-deep);
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
+  --color-accent-text: var(--accent-text);
   --color-accent-from: var(--accent-from);
   --color-accent-via: var(--accent-via);
   --color-accent-to: var(--accent-to);
@@ -110,11 +113,11 @@
     color-mix(in srgb, var(--background-deep) 70%, transparent);
 }
 
-/* Blog prose links follow --accent. Code panels take the Shiki themes' colors
-   (lib/highlight.ts), so the Mermaid fallback block matches. */
+/* Blog prose links follow --accent-text. Code panels take the Shiki themes'
+   colors (lib/highlight.ts), so the Mermaid fallback block matches. */
 .prose {
-  --tw-prose-links: var(--accent);
-  --tw-prose-invert-links: var(--accent);
+  --tw-prose-links: var(--accent-text);
+  --tw-prose-invert-links: var(--accent-text);
   --tw-prose-pre-bg: #ffffff;
   --tw-prose-pre-code: #1f2328;
 }
