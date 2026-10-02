@@ -18,6 +18,12 @@ const TARGET_FPS = 30;
 
 const FRAME_MS = 1000 / TARGET_FPS;
 
+// Line strength and drift speed: full on the home page, calm everywhere else.
+const FULL = { intensity: 1, speed: 1 };
+const CALM = { intensity: 0.38, speed: 0.5 };
+// Time constant of the ease between them: 95% lands in about 0.8 s.
+const EASE_MS = 270;
+
 interface Rgb {
   r: number;
   g: number;
@@ -65,6 +71,7 @@ const fragment = /* glsl */ `#version 300 es
   uniform vec3 uColorC;
   uniform float uDark;
   uniform vec3 uBg;
+  uniform float uIntensity;
   in vec2 vUv;
   out vec4 fragColor;
 
@@ -135,7 +142,7 @@ const fragment = /* glsl */ `#version 300 es
 
     // Right-side emphasis; faint on the left so centred text stays readable.
     float side = mix(0.14, 1.0, smoothstep(0.30, 0.85, vUv.x));
-    float lineAmt = lines * side;
+    float lineAmt = lines * side * uIntensity;
 
     // Composed opaquely in-shader, so every layer is dithered together. Dark
     // mode ADDS the accent over the base; light mode TINTS the base toward it.
@@ -161,15 +168,19 @@ const fragment = /* glsl */ `#version 300 es
 
 export default function ShaderGradient({
   paused = false,
+  calm = false,
 }: {
   paused?: boolean;
+  calm?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  // Read inside the rAF loop, so pausing doesn't tear down the GL context.
+  // Read inside the rAF loop, so a pause or a page change keeps the GL context.
   const pausedRef = useRef(paused);
+  const calmRef = useRef(calm);
   useEffect(() => {
     pausedRef.current = paused;
-  }, [paused]);
+    calmRef.current = calm;
+  }, [paused, calm]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -203,6 +214,9 @@ export default function ShaderGradient({
     };
     const bg = { value: hexToRgb01(readVar('--background-deep', '#050505')) };
     const time = { value: 0 };
+    const goal = () => (calmRef.current ? CALM : FULL);
+    const intensity = { value: goal().intensity };
+    let speed = goal().speed;
     const resolution = { value: [1, 1] as [number, number] };
 
     const program = new Program(gl, {
@@ -216,6 +230,7 @@ export default function ShaderGradient({
         uColorC: colorC,
         uDark: dark,
         uBg: bg,
+        uIntensity: intensity,
       },
     });
 
@@ -254,34 +269,38 @@ export default function ShaderGradient({
 
     let rafId = 0;
     let running = true;
-    const start = performance.now();
     // Deadlines advance on a fixed grid, so vsync quantisation cancels out and
     // the average holds on target at any refresh rate, variable ones included.
     let due = 0;
-    // Paused wall-clock, excluded from the drift clock so resuming doesn't jump.
-    let pausedSince: number | null = null;
-    let pausedTotal = 0;
+    let last = performance.now();
     const loop = (now: number) => {
       if (!running) return;
       // Re-arm first, so a skipped frame still schedules the next one.
       rafId = requestAnimationFrame(loop);
+      const target = goal();
       if (pausedRef.current) {
-        pausedSince ??= now;
+        last = now;
+        // Paused, a page change snaps the frozen frame to its strength.
+        if (Math.abs(intensity.value - target.intensity) > 0.001) {
+          intensity.value = target.intensity;
+          speed = target.speed;
+          draw();
+        }
         return;
-      }
-      if (pausedSince !== null) {
-        pausedTotal += now - pausedSince;
-        pausedSince = null;
-        due = now;
       }
       if (now < due) return;
       due += FRAME_MS;
       // Stalled (hidden tab, long task): skip ahead. Nothing here is
       // frame-sequential.
       if (due < now) due = now + FRAME_MS;
-      // Wall-clock elapsed, so the cap changes GPU cost and leaves the drift
-      // speed alone.
-      time.value = (now - start - pausedTotal) / 1000;
+      // Frame time, at most 100 ms so a stall doesn't jump the drift. The render
+      // cap changes GPU cost and leaves the drift speed alone.
+      const dt = Math.min(now - last, 100);
+      last = now;
+      const ease = 1 - Math.exp(-dt / EASE_MS);
+      intensity.value += (target.intensity - intensity.value) * ease;
+      speed += (target.speed - speed) * ease;
+      time.value += (dt / 1000) * speed;
       draw();
     };
     rafId = requestAnimationFrame(loop);

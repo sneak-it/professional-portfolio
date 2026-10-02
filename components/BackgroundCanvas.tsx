@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
 import { Pause, Play } from 'lucide-react';
 import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 
@@ -89,12 +90,13 @@ export default function BackgroundCanvas() {
   // animation they paused. BackgroundCanvas is mounted in the root layout, so
   // in-session navigation keeps this state without touching storage.
   const [paused, setPaused] = useState(readPaused);
+  const calm = usePathname() !== '/';
 
   if (!hydrated || tier !== 'full') return <StaticGradient />;
 
   return (
     <>
-      <ShaderGradient paused={paused} />
+      <ShaderGradient paused={paused} calm={calm} />
       <button
         type="button"
         onClick={() => {
