@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { compileMDX } from 'next-mdx-remote/rsc';
+import remarkGfm from 'remark-gfm';
 import {
   activeHeading,
   firstParagraph,
   headings,
   readTime,
+  rehypeHeadingIds,
   stripFences,
   wordCount,
 } from '../lib/markdown.ts';
@@ -116,11 +120,30 @@ void test('headings flattens inline markdown the same way the anchor does', () =
   ]);
 });
 
-void test('headings keeps duplicate titles and drops unslugable ones', () => {
-  const dupes = headings('## Setup\n\n## Setup\n');
-  assert.equal(dupes.length, 2);
-  assert.equal(dupes[0]?.id, dupes[1]?.id);
+void test('headings numbers repeated titles and drops unslugable ones', () => {
+  const ids = headings('## Setup\n\n## Setup\n\n## Setup 1\n').map((h) => h.id);
+  assert.deepEqual(ids, ['setup', 'setup-1', 'setup-1-1']);
   assert.deepEqual(headings('##Tight\n\n## ***\n'), []);
+});
+
+void test('compiled h2 and h3 ids match headings()', async () => {
+  const source =
+    '## Setup\n\n### Notes\n\n## Setup\n\n### Notes\n\n## The `code` [bit](/x)\n\nA note.[^1]\n\n[^1]: Footnote.\n';
+  const { content } = await compileMDX({
+    source,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [remarkGfm],
+        rehypePlugins: [rehypeHeadingIds],
+      },
+    },
+  });
+  const html = renderToStaticMarkup(content);
+  const ids = [...html.matchAll(/<h[23][^>]* id="([^"]*)"/g)].map((m) => m[1]);
+  assert.deepEqual(ids, [
+    ...headings(source).map((h) => h.id),
+    'footnote-label',
+  ]);
 });
 
 // Tops are px from the viewport top, in document order; the line is 104px.

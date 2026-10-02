@@ -1,4 +1,4 @@
-import { slugify } from './slug.ts';
+import { slugger } from './slug.ts';
 
 /**
  * Reads an MDX body as text for the frontmatter this project derives. Fenced
@@ -66,11 +66,12 @@ export interface Heading {
 }
 
 /**
- * `##`/`###` headings outside fenced code, in source order. Ids match what the
- * h2/h3 components render, so TOC hrefs cannot drift from the anchors.
+ * `##`/`###` headings outside fenced code, in source order. Ids are numbered as
+ * `rehypeHeadingIds` numbers the rendered ones, so TOC hrefs match the anchors.
  */
 export function headings(source: string): Heading[] {
   const found: Heading[] = [];
+  const slug = slugger();
   for (const [, hashes, raw] of stripFences(source).matchAll(
     /^(#{2,3})[ \t]+(.+)$/gm,
   )) {
@@ -79,10 +80,41 @@ export function headings(source: string): Heading[] {
     found.push({
       depth: hashes?.length === 3 ? 3 : 2,
       text,
-      id: slugify(text),
+      id: slug(text),
     });
   }
   return found;
+}
+
+interface HastNode {
+  type: string;
+  tagName?: string;
+  value?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+}
+
+const hastText = (node: HastNode): string =>
+  node.type === 'text'
+    ? (node.value ?? '')
+    : (node.children ?? []).map(hastText).join('');
+
+/** Rehype plugin: an id on each h2/h3 without one, from its text, as `headings()` numbers it. */
+export function rehypeHeadingIds() {
+  return (tree: HastNode) => {
+    const slug = slugger();
+    const walk = (node: HastNode) => {
+      if (
+        (node.tagName === 'h2' || node.tagName === 'h3') &&
+        node.properties?.id === undefined
+      ) {
+        const id = slug(hastText(node));
+        if (id) node.properties = { ...node.properties, id };
+      }
+      node.children?.forEach(walk);
+    };
+    walk(tree);
+  };
 }
 
 /**

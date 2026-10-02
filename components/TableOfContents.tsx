@@ -31,13 +31,7 @@ export default function TableOfContents({
   const popoverId = useId();
 
   useEffect(() => {
-    // Repeated titles share an id, so each entry takes the next element with it.
-    const seen = new Map<string, number>();
-    const targets = items.map((item) => {
-      const n = seen.get(item.id) ?? 0;
-      seen.set(item.id, n + 1);
-      return document.querySelectorAll(`[id="${item.id}"]`)[n];
-    });
+    const targets = items.map((item) => document.getElementById(item.id));
     let ticking = false;
     const measure = () => {
       ticking = false;

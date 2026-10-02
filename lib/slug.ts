@@ -19,3 +19,19 @@ export function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
+/**
+ * `slugify` for one document's headings: a repeat takes the first free `-1`,
+ * `-2` suffix, as on GitHub.
+ */
+export function slugger(): (text: string) => string {
+  const taken = new Set<string>();
+  return (text) => {
+    const base = slugify(text);
+    if (base === '') return '';
+    let id = base;
+    for (let n = 1; taken.has(id); n++) id = `${base}-${n}`;
+    taken.add(id);
+    return id;
+  };
+}

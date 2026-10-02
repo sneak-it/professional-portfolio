@@ -1,5 +1,4 @@
-import { isValidElement } from 'react';
-import type { ComponentPropsWithoutRef, ReactElement, ReactNode } from 'react';
+import type { ComponentPropsWithoutRef, ReactElement } from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import { Info, Lightbulb, TriangleAlert } from 'lucide-react';
@@ -19,8 +18,8 @@ import { imageDimensions, isLocalSrc, mediaFilePath } from '@/lib/image';
 import { isSafeHref } from '@/lib/href';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
 import { rehypeHighlight } from '@/lib/highlight';
+import { rehypeHeadingIds } from '@/lib/markdown';
 import { remarkMermaid } from '@/lib/mermaid';
-import { slugify } from '@/lib/slug';
 
 /**
  * Defense-in-depth allowlist for MDX rendering, over next-mdx-remote's
@@ -173,17 +172,9 @@ function Callout({
   );
 }
 
-function flatten(node: ReactNode): string {
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(flatten).join('');
-  if (isValidElement(node))
-    return flatten((node.props as { children?: ReactNode }).children);
-  return '';
-}
-
 /**
- * Anchorable heading with a `#` link, under the id `headings()` predicts. An
- * authored id is GFM's hidden footnote heading: kept for its backrefs, unlinked.
+ * Anchorable heading with a `#` link to the id `rehypeHeadingIds` gave it. GFM's
+ * footnote heading keeps its own id for its backrefs, and is hidden: unlinked.
  */
 function heading(Tag: 'h2' | 'h3') {
   return function Heading({
@@ -192,11 +183,11 @@ function heading(Tag: 'h2' | 'h3') {
     className,
     ...rest
   }: ComponentPropsWithoutRef<'h2'>) {
-    const anchor = id ? undefined : slugify(flatten(children)) || undefined;
+    const anchor = className?.split(' ').includes('sr-only') ? undefined : id;
     return (
       <Tag
         {...rest}
-        id={id ?? anchor}
+        id={id}
         className={`group/heading ${className ?? ''}`.trim()}
       >
         {children}
@@ -271,7 +262,7 @@ const mdxRenderProps = {
   options: {
     mdxOptions: {
       remarkPlugins: [remarkGfm, remarkMermaid, hardenRawHtml],
-      rehypePlugins: [rehypeHighlight],
+      rehypePlugins: [rehypeHeadingIds, rehypeHighlight],
     },
   },
 };
