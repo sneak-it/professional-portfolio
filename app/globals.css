@@ -270,11 +270,13 @@
   }
 }
 
-/* On-brand, consistent keyboard focus ring across all interactive elements. */
-:focus-visible {
-  outline: 2px solid var(--accent-from);
-  outline-offset: 2px;
-  border-radius: 3px;
+/* Keyboard focus ring, in base so an element's own radius beats the 3px. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--accent-from);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
 }
 
 /* Route zoom; classes set by components/PageTransition.tsx. The scale is
