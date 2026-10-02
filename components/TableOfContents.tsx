@@ -109,13 +109,16 @@ export default function TableOfContents({
         </nav>
       </div>
       {children}
-      <button
-        type="button"
-        popoverTarget={popoverId}
-        className="pill-solid fixed right-4 bottom-4 z-40 px-4 py-2 text-sm md:bottom-16 lg:hidden"
-      >
-        Contents
-      </button>
+      {/* Sticky, not fixed: it stops where the article ends, above the footer. */}
+      <div className="sticky bottom-4 z-40 h-0 md:bottom-16 lg:hidden">
+        <button
+          type="button"
+          popoverTarget={popoverId}
+          className="pill-solid absolute right-4 bottom-0 px-4 py-2 text-sm"
+        >
+          Contents
+        </button>
+      </div>
       <div
         ref={popoverRef}
         id={popoverId}
