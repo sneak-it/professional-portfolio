@@ -103,7 +103,7 @@ export default function TableOfContents({
         <nav
           ref={navRef}
           aria-label="Table of contents"
-          className="surface sticky top-28 hidden w-48 max-h-[calc(100dvh-8rem)] overflow-y-auto p-5 lg:block"
+          className="surface sticky top-28 hidden w-48 max-h-[calc(100dvh-8rem)] overflow-y-auto contained-scroll p-5 lg:block"
         >
           {contents}
         </nav>
@@ -130,7 +130,7 @@ export default function TableOfContents({
         onToggle={(event) => {
           if (event.newState === 'open') reveal(event.currentTarget, active);
         }}
-        className="card-surface inset-auto right-4 bottom-16 m-0 w-72 max-w-[calc(100vw-2rem)] max-h-[60dvh] overflow-y-auto p-5 shadow-xl md:bottom-28 lg:hidden"
+        className="card-surface inset-auto right-4 bottom-16 m-0 w-72 max-w-[calc(100vw-2rem)] max-h-[60dvh] overflow-y-auto contained-scroll p-5 shadow-xl md:bottom-28 lg:hidden"
       >
         {contents}
       </div>

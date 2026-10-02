@@ -472,3 +472,20 @@
     scale: 1 1;
   }
 }
+
+/* overscroll-contain only while the element overflows (plain contain traps the
+   wheel on a list that fits): a scroll(self) timeline is inactive otherwise. */
+@supports (animation-timeline: scroll()) {
+  .contained-scroll {
+    animation-name: contained-scroll;
+    animation-fill-mode: both;
+    animation-timeline: scroll(self);
+  }
+}
+
+@keyframes contained-scroll {
+  from,
+  to {
+    overscroll-behavior: contain;
+  }
+}
