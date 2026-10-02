@@ -196,9 +196,10 @@ export default function Navbar({ monogram }: { monogram: string }) {
                           : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                       }`}
                     >
-                      <m.span className="block" whileTap={{ scale: 0.9 }}>
+                      {/* whileTap would make this span a second Tab stop. */}
+                      <span className="block transition-transform motion-safe:active:scale-90">
                         {link.name}
-                      </m.span>
+                      </span>
                     </Link>
                   );
                 })}
