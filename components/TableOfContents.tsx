@@ -114,7 +114,7 @@ export default function TableOfContents({
         <button
           type="button"
           popoverTarget={popoverId}
-          className="pill-solid absolute right-4 bottom-0 px-4 py-2 text-sm"
+          className="toc-button pill-solid absolute right-4 bottom-0 px-4 py-2 text-sm"
         >
           Contents
         </button>
@@ -130,7 +130,7 @@ export default function TableOfContents({
         onToggle={(event) => {
           if (event.newState === 'open') reveal(event.currentTarget, active);
         }}
-        className="card-surface inset-auto right-4 bottom-16 m-0 w-72 max-w-[calc(100vw-2rem)] max-h-[60dvh] overflow-y-auto contained-scroll p-5 shadow-xl md:bottom-28 lg:hidden"
+        className="toc-popover card-surface inset-auto right-4 bottom-16 m-0 w-72 max-w-[calc(100vw-2rem)] max-h-[60dvh] overflow-y-auto contained-scroll p-5 shadow-xl md:bottom-28 lg:hidden"
       >
         {contents}
       </div>

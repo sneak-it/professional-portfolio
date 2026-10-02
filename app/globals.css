@@ -510,3 +510,18 @@
     overscroll-behavior: contain;
   }
 }
+
+/* The Contents popover opens above its button wherever the button stops, and
+   below the 5rem header. Without anchor positioning it keeps its fixed place. */
+@supports (position-area: top) {
+  .toc-button {
+    anchor-name: --toc;
+  }
+  .toc-popover {
+    position-anchor: --toc;
+    position-area: top span-left;
+    inset: auto;
+    margin: 6rem 0 0.75rem;
+    max-height: min(60dvh, 100% - 6.75rem);
+  }
+}
