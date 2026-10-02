@@ -153,7 +153,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
                   the pointer leaves the nav. */}
               <span
                 aria-hidden
-                className="pointer-events-none absolute left-0 rounded-full bg-gray-200/50 dark:bg-white/10 transition-[transform,width,opacity] duration-300 ease-out"
+                className="pointer-events-none absolute left-0 rounded-full bg-gray-900/17 dark:bg-white/15 transition-[transform,width,opacity] duration-300 ease-out"
                 style={{
                   transform: `translateX(${pill?.left ?? 0}px)`,
                   top: pill?.top ?? 0,
