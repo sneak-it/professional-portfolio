@@ -7,7 +7,7 @@ export default function NotFound() {
   const { title, message } = getNotFound();
   return (
     <MessagePage display="404" title={title} message={message}>
-      <Link href="/" className="pill-solid">
+      <Link href="/" className="pill-solid px-6 py-3">
         <ArrowLeft size={18} />
         Back home
       </Link>

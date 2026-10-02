@@ -101,7 +101,7 @@ export default function AboutClient({
                   href={linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-full font-medium hover:bg-accent transition-colors"
+                  className="pill-solid px-6 py-3"
                 >
                   <LinkedInIcon size={18} /> View LinkedIn
                 </a>

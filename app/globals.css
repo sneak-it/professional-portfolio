@@ -93,11 +93,32 @@
 @utility gradient-text {
   @apply text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-2;
 }
+/* Pills leave padding and font size to the caller: one utility can't reliably
+   override another's. Hover text darkens: white on the sweep is under 3:1. */
 @utility pill-solid {
-  @apply inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium hover:opacity-90 transition-opacity;
+  @apply inline-flex items-center gap-2 rounded-full bg-gray-900 font-medium text-white duration-300 ease-out dark:bg-white dark:text-gray-900;
+  background-image: linear-gradient(
+    to right,
+    var(--accent-from),
+    var(--accent-via)
+  );
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  transition-property: background-size, color, scale, box-shadow;
+  @variant hover {
+    @apply text-gray-950;
+    background-size: 100% 100%;
+    scale: 1.05;
+    box-shadow: 0 0 40px -4px var(--accent);
+  }
 }
 @utility pill-outline {
-  @apply inline-flex items-center gap-2 px-6 py-3 rounded-full border border-gray-200 dark:border-white/20 font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-colors;
+  @apply inline-flex items-center gap-2 rounded-full border border-gray-400 font-medium duration-300 ease-out dark:border-white/30;
+  transition-property: translate, border-color, box-shadow, background-color;
+  @variant hover {
+    @apply border-accent bg-gray-50 shadow-lg dark:bg-white/5;
+    translate: 0 -2px;
+  }
 }
 @utility card-surface {
   @apply bg-white dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10;

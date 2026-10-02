@@ -58,22 +58,19 @@ export default function Home() {
               <div className="inline-block">
                 <Link
                   href="/portfolio"
-                  className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-black dark:bg-white dark:text-black rounded-full overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_-4px_var(--accent)]"
+                  className="pill-solid group px-8 py-4 text-base"
                 >
-                  <span className="relative z-10 flex items-center gap-2">
-                    View Portfolio{' '}
-                    <ArrowRight
-                      size={18}
-                      className="group-hover:translate-x-1 transition-transform"
-                    />
-                  </span>
-                  <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-accent-from to-accent-via transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out" />
+                  View Portfolio{' '}
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
                 </Link>
               </div>
               <div className="inline-block">
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-black dark:text-white border border-gray-200 dark:border-white/20 rounded-full hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                  className="pill-outline px-8 py-4 text-base"
                 >
                   Contact Me
                 </Link>

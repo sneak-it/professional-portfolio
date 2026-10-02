@@ -39,7 +39,7 @@ export default function ProjectDetailClient({
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white dark:bg-white dark:text-black rounded-full font-medium hover:scale-105 transition-transform"
+                    className="pill-solid px-6 py-3"
                   >
                     Live Demo <ExternalLink size={18} />
                   </a>
@@ -49,7 +49,7 @@ export default function ProjectDetailClient({
                     href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="pill-outline"
+                    className="pill-outline px-6 py-3"
                   >
                     Source Code <GitFork size={18} />
                   </a>

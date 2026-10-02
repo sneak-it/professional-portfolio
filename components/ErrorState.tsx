@@ -24,11 +24,11 @@ export default function ErrorState({
 }) {
   return (
     <MessagePage display="Oops" title={title} message={message}>
-      <button onClick={retry} className="pill-solid">
+      <button onClick={retry} className="pill-solid px-6 py-3">
         <RotateCw size={18} />
         Try again
       </button>
-      <Link href={backHref} className="pill-outline">
+      <Link href={backHref} className="pill-outline px-6 py-3">
         <ArrowLeft size={18} />
         {backLabel}
       </Link>
