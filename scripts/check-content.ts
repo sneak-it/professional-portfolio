@@ -62,7 +62,15 @@ const PROJECT: Schema = {
 
 const GALLERY: Schema = {
   required: ['title', 'description'],
-  known: ['title', 'description', 'date', 'coverImage', 'alt', 'draft'],
+  known: [
+    'title',
+    'description',
+    'cardDescription',
+    'date',
+    'coverImage',
+    'alt',
+    'draft',
+  ],
   image: 'coverImage',
   tags: false,
 };

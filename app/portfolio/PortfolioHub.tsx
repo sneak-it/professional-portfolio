@@ -42,7 +42,7 @@ export default function PortfolioHub({
               href={`/portfolio/${section.slug}`}
               coverImage={section.coverImage}
               title={section.name}
-              description={section.description}
+              description={section.cardDescription}
               aspect="aspect-[4/5]"
               priority={index === 0}
               sizes="(max-width: 768px) 100vw, 33vw"

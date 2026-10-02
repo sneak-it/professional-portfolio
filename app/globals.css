@@ -111,6 +111,27 @@
     text-shadow: inherit;
   }
 }
+/* Cover card text block: 80% to 60% black behind the text, then the "scrim"
+   easing curve over its 4rem top padding: a quick drop, then a long faint tail. */
+@utility cover-scrim {
+  background-image: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.8),
+    rgb(0 0 0 / 0.6) calc(100% - 4rem),
+    rgb(0 0 0 / 0.443) calc(100% - 3.24rem),
+    rgb(0 0 0 / 0.325) calc(100% - 2.64rem),
+    rgb(0 0 0 / 0.229) calc(100% - 2.12rem),
+    rgb(0 0 0 / 0.167) calc(100% - 1.74rem),
+    rgb(0 0 0 / 0.116) calc(100% - 1.4rem),
+    rgb(0 0 0 / 0.076) calc(100% - 1.08rem),
+    rgb(0 0 0 / 0.045) calc(100% - 0.792rem),
+    rgb(0 0 0 / 0.025) calc(100% - 0.556rem),
+    rgb(0 0 0 / 0.013) calc(100% - 0.36rem),
+    rgb(0 0 0 / 0.005) calc(100% - 0.192rem),
+    rgb(0 0 0 / 0.001) calc(100% - 0.072rem),
+    transparent
+  );
+}
 /* Pills leave padding and font size to the caller: one utility can't reliably
    override another's. Hover text darkens: white on the sweep is under 3:1. */
 @utility pill-solid {

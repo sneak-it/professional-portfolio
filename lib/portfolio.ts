@@ -40,7 +40,10 @@ export const PORTFOLIO_SECTIONS = [
   },
 ] as const;
 
-export type PortfolioSection = (typeof PORTFOLIO_SECTIONS)[number];
+/** `cardDescription`, optional: text on the section's hub card. */
+export type PortfolioSection = (typeof PORTFOLIO_SECTIONS)[number] & {
+  cardDescription?: string;
+};
 export type SectionSlug = PortfolioSection['slug'];
 
 export interface PortfolioImage {
@@ -89,13 +92,14 @@ export type ProjectSummary = Omit<ProjectItem, 'content'>;
 
 export type GallerySummary = Omit<GalleryItem, 'images'> & {
   imageCount: number;
+  cardDescription?: string;
 };
 
 /** Hub-card summary for the /portfolio index. */
 export interface SectionSummary {
   slug: SectionSlug;
   name: string;
-  description: string;
+  cardDescription?: string;
   type: PortfolioSection['type'];
   count: number;
   coverImage: string | null;
@@ -262,6 +266,7 @@ export function getPhotographyGalleries(): GallerySummary[] {
         slug: mdx.slug,
         title: (data.title as string) || mdx.slug,
         description: (data.description as string) || '',
+        cardDescription: (data.cardDescription as string) || undefined,
         coverImage: galleryCoverSrc(mdx.slug, data.coverImage),
         date: (data.date as string) || '',
         imageCount: listGalleryImageFiles(mdx.slug).length,
@@ -273,13 +278,13 @@ export function getPhotographyGalleries(): GallerySummary[] {
 // -- Hub ---------------------------------------------------------------------
 
 export function getSectionSummaries(): SectionSummary[] {
-  return PORTFOLIO_SECTIONS.map((section) => {
+  return PORTFOLIO_SECTIONS.map((section: PortfolioSection) => {
     if (section.type === 'gallery') {
       const covers = getPhotographyGalleries();
       return {
         slug: section.slug,
         name: section.name,
-        description: section.description,
+        cardDescription: section.cardDescription,
         type: section.type,
         count: covers.length,
         coverImage: covers[0]?.coverImage ?? null,
@@ -290,7 +295,7 @@ export function getSectionSummaries(): SectionSummary[] {
     return {
       slug: section.slug,
       name: section.name,
-      description: section.description,
+      cardDescription: section.cardDescription,
       type: section.type,
       count: items.length,
       coverImage: items[0]?.coverImage ?? null,

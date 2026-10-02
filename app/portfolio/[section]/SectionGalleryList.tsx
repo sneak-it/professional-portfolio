@@ -42,7 +42,7 @@ export default function SectionGalleryList({
                 href={`/portfolio/photography/${gallery.slug}`}
                 coverImage={gallery.coverImage}
                 title={gallery.title}
-                description={gallery.description}
+                description={gallery.cardDescription}
                 aspect="aspect-square"
                 priority={index === 0}
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
