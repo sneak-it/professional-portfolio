@@ -357,16 +357,18 @@ than shrinking its text.
 ## Headings and the table of contents
 
 `##` and `###` headings become Contents entries and get anchor ids from their
-text. Hovering one shows a `#` link to it, for sharing a section.
+text. Hovering one shows a `#` link to it, for sharing a section. On screens
+1024px and wider the Contents list stays pinned beside the post and highlights
+the section being read; narrower screens show it as a block above the post.
 
 ### A third-level heading
 
-Indented one level in the Contents block above.
+Indented one level in the Contents list.
 
 #### A fourth-level heading
 
 `####` and deeper render normally but never appear in the Contents. Four or more
-`##`/`###` headings adds the block automatically; `toc: true` or `toc: false`
+`##`/`###` headings adds the Contents automatically; `toc: true` or `toc: false`
 overrides the count either way.
 
 ## What deliberately does not work

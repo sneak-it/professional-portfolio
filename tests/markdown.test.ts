@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  activeHeading,
   firstParagraph,
   headings,
   readTime,
@@ -120,4 +121,26 @@ void test('headings keeps duplicate titles and drops unslugable ones', () => {
   assert.equal(dupes.length, 2);
   assert.equal(dupes[0]?.id, dupes[1]?.id);
   assert.deepEqual(headings('##Tight\n\n## ***\n'), []);
+});
+
+// Tops are px from the viewport top, in document order; the line is 104px.
+void test('activeHeading is -1 above the first heading', () => {
+  assert.equal(activeHeading([150, 900, 1600], 104, false), -1);
+});
+
+void test('activeHeading picks the last heading above the line', () => {
+  assert.equal(activeHeading([-400, 40, 600], 104, false), 1);
+});
+
+void test('activeHeading counts a heading exactly on the line', () => {
+  assert.equal(activeHeading([-300, 104, 700], 104, false), 1);
+});
+
+void test('activeHeading picks the last heading at the bottom of the page', () => {
+  assert.equal(activeHeading([-1200, -500, 400], 104, true), 2);
+});
+
+void test('activeHeading is -1 with no headings', () => {
+  assert.equal(activeHeading([], 104, false), -1);
+  assert.equal(activeHeading([], 104, true), -1);
 });

@@ -7,6 +7,7 @@ import ShareButton from '@/components/ShareButton';
 import PostMeta from '@/components/PostMeta';
 import TagList from '@/components/TagList';
 import PostNav from '@/components/PostNav';
+import TableOfContents from '@/components/TableOfContents';
 import { headings } from '@/lib/markdown';
 import { PROSE, PROSE_CODE } from '@/lib/prose';
 import { avatarSrc, siteConfig } from '@/lib/site';
@@ -27,9 +28,15 @@ export default function BlogPostContent({
   const toc = headings(post.content);
   // Fewer than four sections is shorter than the list describing them.
   const showToc =
-    typeof post.meta.toc === 'boolean' ? post.meta.toc : toc.length >= 4;
-  return (
-    <Container as="article" size="md">
+    toc.length > 0 &&
+    (typeof post.meta.toc === 'boolean' ? post.meta.toc : toc.length >= 4);
+  // w-full: auto margins would size the grid item to its widest diagram.
+  const article = (
+    <Container
+      as="article"
+      size="md"
+      className="lg:col-start-2 lg:row-start-1 lg:w-full"
+    >
       <BackButton href="/blog" label="Back to Blog" />
 
       <Surface as="div" padding="lg" className="surface-opaque mt-6">
@@ -59,8 +66,8 @@ export default function BlogPostContent({
           </div>
         </header>
 
-        {showToc && toc.length > 0 && (
-          <details className="mx-auto mb-10 max-w-measure card-surface p-5">
+        {showToc && (
+          <details className="mx-auto mb-10 max-w-measure card-surface p-5 lg:hidden">
             <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Contents
             </summary>
@@ -111,5 +118,15 @@ export default function BlogPostContent({
         </footer>
       </Surface>
     </Container>
+  );
+  if (!showToc) return article;
+
+  // The rail's column never narrows below 13rem: narrow windows shift the
+  // article right instead of dropping the rail.
+  return (
+    <div className="lg:grid lg:grid-cols-[minmax(13rem,1fr)_minmax(0,56rem)_minmax(0,1fr)]">
+      <TableOfContents items={toc} />
+      {article}
+    </div>
   );
 }

@@ -84,3 +84,16 @@ export function headings(source: string): Heading[] {
   }
   return found;
 }
+
+/**
+ * Index of the heading being read, or -1 above the first one. At the bottom of
+ * the page it is the last heading: a short final section never reaches `line`.
+ */
+export function activeHeading(
+  tops: number[],
+  line: number,
+  atBottom: boolean,
+): number {
+  if (atBottom) return tops.length - 1;
+  return tops.findLastIndex((top) => top <= line);
+}
