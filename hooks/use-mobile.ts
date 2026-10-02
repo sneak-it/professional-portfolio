@@ -2,16 +2,20 @@
 
 import * as React from 'react';
 
-const MOBILE_BREAKPOINT = 768;
+// Tailwind's md breakpoint, so this agrees with md: classes at any default
+// font size.
+const MOBILE_QUERY = '(width < 48rem)';
 
 function getIsMobile() {
-  return typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT;
+  return (
+    typeof window !== 'undefined' && window.matchMedia(MOBILE_QUERY).matches
+  );
 }
 
 export function useIsMobile() {
   return React.useSyncExternalStore(
     (onChange) => {
-      const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+      const mql = window.matchMedia(MOBILE_QUERY);
       mql.addEventListener('change', onChange);
       return () => {
         mql.removeEventListener('change', onChange);

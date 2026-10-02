@@ -3,9 +3,9 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { activeHeading, type Heading } from '@/lib/markdown';
 
-// Headings land at scroll-mt-24 (96px); the extra 8px keeps the one just
-// jumped to current.
-const LINE = 104;
+// Past the headings' scroll margin, where a jump lands them, so the one just
+// jumped to is current.
+const SLACK = 8;
 
 /** Scrolls `list` just enough to show its `index`th link, never the page. */
 function reveal(list: HTMLElement | null, index: number) {
@@ -25,18 +25,27 @@ export default function TableOfContents({ items }: { items: Heading[] }) {
   const popoverId = useId();
 
   useEffect(() => {
+    // Repeated titles share an id, so each entry takes the next element with it.
+    const seen = new Map<string, number>();
+    const targets = items.map((item) => {
+      const n = seen.get(item.id) ?? 0;
+      seen.set(item.id, n + 1);
+      return document.querySelectorAll(`[id="${item.id}"]`)[n];
+    });
     let ticking = false;
     const measure = () => {
       ticking = false;
-      const tops = items.map(
-        (item) =>
-          document.getElementById(item.id)?.getBoundingClientRect().top ??
-          Infinity,
+      const tops = targets.map(
+        (target) => target?.getBoundingClientRect().top ?? Infinity,
       );
+      const first = targets.find(Boolean);
+      const margin = first
+        ? parseFloat(getComputedStyle(first).scrollMarginTop)
+        : 0;
       const page = document.documentElement;
       const atBottom =
         window.scrollY + window.innerHeight >= page.scrollHeight - 2;
-      setActive(activeHeading(tops, LINE, atBottom));
+      setActive(activeHeading(tops, margin + SLACK, atBottom));
     };
     const handleScroll = () => {
       if (ticking) return;
