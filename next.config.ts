@@ -42,7 +42,7 @@ const nextConfig: NextConfig = {
         ],
       },
       // Each request is a full rasterize, so let browsers hold them too;
-      // app/layout.tsx versions the URL (lib/site.ts `BRAND_VERSION`).
+      // their URLs are versioned (lib/site.ts `BRAND_VERSION`).
       {
         source: '/brand/:path(icon|apple-icon|opengraph-image)',
         headers: [

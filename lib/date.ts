@@ -3,7 +3,7 @@
  *
  * `timeZone: 'UTC'` is load-bearing: `new Date('2026-06-20')` parses as UTC
  * midnight, and any zone west of UTC prints the 19th. Locale matches the
- * `lang="en"` / `locale: 'en_US'` in app/layout.tsx.
+ * default `SITE_LOCALE` (lib/site.ts).
  */
 const FORMATTER = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',

@@ -3,11 +3,18 @@ import { ArrowRight } from 'lucide-react';
 import Typewriter from './Typewriter';
 import { CachedMDX } from '@/components/MDXComponents';
 import { getHome } from '@/lib/home';
+import { pageMetadata } from '@/lib/metadata';
+import { siteConfig } from '@/lib/site';
 import styles from './page.module.css';
 
 // Per request so metadataBase / OG URL / Person JSON-LD resolve against the
 // runtime SITE_URL.
 export const dynamic = 'force-dynamic';
+
+export const metadata = pageMetadata({
+  description: siteConfig.description,
+  path: '/',
+});
 
 // Server component: the hero paints immediately, with CSS-only entrances
 // (page.module.css) that need no JS. The typewriter is the one client island.

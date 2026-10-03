@@ -9,6 +9,7 @@ import PageTransition from '@/components/PageTransition';
 import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
 import { BRAND_VERSION, siteConfig } from '@/lib/site';
+import { pageMetadata } from '@/lib/metadata';
 import { cspNonce } from '@/lib/nonce';
 import { BACKGROUND } from '@/lib/brand';
 
@@ -19,8 +20,8 @@ const grotesk = Hanken_Grotesk({
   variable: '--font-sans',
 });
 
-// Versioned so a SITE_* change moves the URL; the renderers live in app/brand/.
-const ogImage = `/brand/opengraph-image?v=${BRAND_VERSION}`;
+// Share defaults for routes without their own metadata, such as the 404.
+const share = pageMetadata({ description: siteConfig.description, path: '/' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -34,33 +35,15 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   applicationName: siteConfig.name,
   authors: [{ name: siteConfig.author }],
-  alternates: {
-    canonical: '/',
-    types: { 'application/rss+xml': '/feed.xml' },
-  },
+  // No canonical here: pages set their own, and a 404 should have none.
+  alternates: { types: { 'application/rss+xml': '/feed.xml' } },
   icons: {
     icon: `/brand/icon?v=${BRAND_VERSION}`,
     apple: `/brand/apple-icon?v=${BRAND_VERSION}`,
   },
-  openGraph: {
-    type: 'website',
-    locale: siteConfig.locale.replace('-', '_'),
-    url: siteConfig.url,
-    siteName: siteConfig.name,
-    title: siteConfig.title,
-    description: siteConfig.description,
-    images: [{ url: ogImage, width: 1200, height: 630, alt: siteConfig.title }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: siteConfig.title,
-    description: siteConfig.description,
-    images: [ogImage],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  // No og:url either, for the same reason.
+  openGraph: { ...share.openGraph, url: undefined },
+  twitter: share.twitter,
 };
 
 // Matches browser chrome to the page background.

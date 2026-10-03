@@ -9,6 +9,7 @@ import {
   type Tag,
 } from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
+import { pageMetadata } from '@/lib/metadata';
 
 // Rendered per request: the bind-mounted content/ dir and the runtime site
 // config both apply immediately. See lib/mdx.ts and lib/site.ts.
@@ -81,18 +82,17 @@ export async function generateMetadata({
   // Out-of-range pages 404 (see default export); still give them a self-canonical.
   const canonical = canonicalFor(tag, currentPage);
 
-  return {
+  return pageMetadata({
     title,
     description,
-    alternates: { canonical },
+    path: canonical,
     // A one- or two-post tag view is thin content, and there will be many of
     // them; `follow` still lets the posts themselves be discovered.
     ...(tag &&
       posts.length < TAG_INDEX_MIN_POSTS && {
         robots: { index: false, follow: true },
       }),
-    openGraph: { title, description, url: canonical },
-  };
+  });
 }
 
 export default async function Blog({

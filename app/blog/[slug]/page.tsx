@@ -6,6 +6,7 @@ import { CachedMDX } from '@/components/MDXComponents';
 import JsonLd from '@/components/JsonLd';
 import { absoluteUrl, siteConfig } from '@/lib/site';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
+import { pageMetadata } from '@/lib/metadata';
 import { notFound } from 'next/navigation';
 
 // Rendered per request so posts added, edited, or removed in the bind-mounted
@@ -27,31 +28,19 @@ export async function generateMetadata({
   const { title, excerpt, image, date, tags } = post.meta;
   const url = `/blog/${post.slug}`;
 
-  return {
+  return pageMetadata({
     title,
     description: excerpt,
-    ...(tags.length > 0 && { keywords: tags }),
-    alternates: { canonical: url },
+    path: url,
+    image,
+    published: date,
+    keywords: tags,
     // Drafts and not-yet-published posts stay reachable for preview, so keep
     // crawlers off them. Same predicate the listings filter on.
     ...(isDraft(post.meta) && {
       robots: { index: false, follow: false },
     }),
-    openGraph: {
-      type: 'article',
-      title,
-      description: excerpt,
-      url,
-      publishedTime: date,
-      images: image ? [{ url: image }] : undefined,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description: excerpt,
-      images: image ? [image] : undefined,
-    },
-  };
+  });
 }
 
 export default async function BlogPost({

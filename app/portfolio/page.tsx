@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
 import { getSectionSummaries } from '@/lib/portfolio';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
+import { pageMetadata } from '@/lib/metadata';
 import JsonLd from '@/components/JsonLd';
 import PortfolioHub from './PortfolioHub';
 
@@ -12,16 +12,11 @@ export const dynamic = 'force-dynamic';
 const description =
   'Selected work across technology consulting, photography, and open source.';
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Portfolio',
   description,
-  alternates: { canonical: '/portfolio' },
-  openGraph: {
-    title: 'Portfolio',
-    description,
-    url: '/portfolio',
-  },
-};
+  path: '/portfolio',
+});
 
 export default function PortfolioPage() {
   const sections = getSectionSummaries();

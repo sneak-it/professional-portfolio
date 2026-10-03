@@ -1,7 +1,7 @@
-import type { Metadata } from 'next';
 import AboutClient from './AboutClient';
 import { CachedMDX } from '@/components/MDXComponents';
 import { getAbout } from '@/lib/about';
+import { pageMetadata } from '@/lib/metadata';
 import { avatarSrc, siteConfig } from '@/lib/site';
 
 // Per request so canonical/OG URLs reflect the runtime SITE_URL. See app/page.tsx.
@@ -9,18 +9,9 @@ export const dynamic = 'force-dynamic';
 
 const FALLBACK_DESCRIPTION = `Get to know ${siteConfig.name} and the work behind the site.`;
 
-export function generateMetadata(): Metadata {
+export function generateMetadata() {
   const { description } = getAbout(FALLBACK_DESCRIPTION);
-  return {
-    title: 'About',
-    description,
-    alternates: { canonical: '/about' },
-    openGraph: {
-      title: 'About',
-      description,
-      url: '/about',
-    },
-  };
+  return pageMetadata({ title: 'About', description, path: '/about' });
 }
 
 export default function AboutPage() {

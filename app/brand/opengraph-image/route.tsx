@@ -5,7 +5,7 @@ import { ACCENT_BAR, ACCENT_DIAGONAL } from '@/lib/brand';
 import { siteConfig } from '@/lib/site';
 
 // Default share card, also the twitter:image. See app/brand/icon/route.tsx for
-// why this is a route handler; app/layout.tsx emits the URL and the alt text.
+// why this is a route handler; lib/metadata.ts emits the URL and the alt text.
 export const dynamic = 'force-dynamic';
 
 const size = { width: 1200, height: 630 };

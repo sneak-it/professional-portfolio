@@ -6,6 +6,7 @@ import {
   getPhotographyGalleries,
 } from '@/lib/portfolio';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
+import { pageMetadata } from '@/lib/metadata';
 import JsonLd from '@/components/JsonLd';
 import SectionGalleryList from './SectionGalleryList';
 import SectionProjectList from './SectionProjectList';
@@ -25,16 +26,11 @@ export async function generateMetadata({
 
   const url = `/portfolio/${config.slug}`;
 
-  return {
+  return pageMetadata({
     title: config.name,
     description: config.description,
-    alternates: { canonical: url },
-    openGraph: {
-      title: config.name,
-      description: config.description,
-      url,
-    },
-  };
+    path: url,
+  });
 }
 
 export default async function PortfolioSectionPage({

@@ -13,6 +13,7 @@ import {
 } from '@/lib/portfolio';
 import { absoluteUrl } from '@/lib/site';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
+import { pageMetadata } from '@/lib/metadata';
 import { PROSE } from '@/lib/prose';
 import ProjectDetailClient from './ProjectDetailClient';
 
@@ -37,26 +38,15 @@ export async function generateMetadata({
 
   const url = `/portfolio/${config.slug}/${item.slug}`;
 
-  return {
+  return pageMetadata({
     title: item.title,
     description: item.description,
-    alternates: { canonical: url },
+    path: url,
+    image: item.coverImage || undefined,
+    published: item.date,
     // Drafts stay reachable for preview, so keep crawlers off them.
     ...(item.draft && { robots: { index: false, follow: false } }),
-    openGraph: {
-      type: 'article',
-      title: item.title,
-      description: item.description,
-      url,
-      images: item.coverImage ? [{ url: item.coverImage }] : undefined,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: item.title,
-      description: item.description,
-      images: item.coverImage ? [item.coverImage] : undefined,
-    },
-  };
+  });
 }
 
 export default async function PortfolioItemPage({

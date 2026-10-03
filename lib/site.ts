@@ -79,8 +79,8 @@ export function avatarSrc(): string | null {
 }
 
 /**
- * Version token for the app/brand/* URLs, emitted by app/layout.tsx. Covers the
- * palette as well as the identity, so a lib/brand.ts edit busts the URL too.
+ * Version token for the app/brand/* URLs. Covers the palette as well as the
+ * identity, so a lib/brand.ts edit busts the URL too.
  */
 export const BRAND_VERSION = brandVersion([
   siteConfig.monogram,
