@@ -87,12 +87,14 @@ sufficient; the rule below is the other half.
 4. **Set the match expression.** Use the expression editor and paste:
 
    ```
-   not (http.request.uri.path starts_with "/api/")
+   not starts_with(http.request.uri.path, "/api/") and not (http.request.uri.query contains "_rsc")
    ```
 
    The site has no cookies, no authentication, and no forms, so every other
    response is identical for every visitor and safe to share. Excluding `/api/`
-   keeps the health endpoint and any future API route uncached.
+   keeps the health endpoint uncached. Excluding `_rsc` keeps React Server
+   Component payloads out: they share page URLs and vary by request headers that
+   Cloudflare does not key on. The origin also marks them `private`.
 
 5. **Set cache eligibility** to **Eligible for cache**.
 
@@ -126,6 +128,16 @@ Check that the exclusion works as well. This one must never be cached:
 ```bash
 curl -sI https://yourdomain.tld/api/health | grep -i cf-cache-status
 ```
+
+And a navigation payload must not carry a shared TTL. The random query string
+gives the request its own cache key, so it neither reads nor replaces the cached
+`/blog`:
+
+```bash
+curl -sIL -H 'RSC: 1' "https://yourdomain.tld/blog?verify=$RANDOM" | grep -i cache-control
+```
+
+The output must not contain `s-maxage`.
 
 ### Reading `cf-cache-status`
 
@@ -166,14 +178,22 @@ content-wide update. The `/brand/` images need no purge after a `SITE_*` change,
 because the URL itself moves; they do need one after an edit to a renderer in
 `app/brand/`, which the token does not cover.
 
+## After a deploy
+
+A deploy replaces the hashed files under `/_next/static/`. HTML cached before it
+can name the old ones for up to 15 minutes (`s-maxage` plus
+`stale-while-revalidate`), and a request for one the edge doesn't hold gets a
+404 from the new origin: the page shows but nothing on it responds. Purge
+Everything after each deploy.
+
 ## Notes
 
 - Cloudflare ignores `Vary` other than `Accept-Encoding`, and these responses
-  carry `Vary: rsc, next-router-state-tree, ...`. Next works around this by
-  putting an `_rsc` query parameter in the URL of React Server Component
-  requests, so document responses and payload responses land on separate cache
-  keys. No configuration is needed, but it is worth knowing if you ever debug a
-  page that renders as raw payload text.
+  carry `Vary: rsc, next-router-state-tree, ...`. Next puts an `_rsc` query
+  parameter in the URL of React Server Component requests, but a request for
+  that URL without the `rsc` header gets HTML, so the cache key alone cannot
+  tell the two apart. That is why step 4 excludes `_rsc` URLs. It is worth
+  knowing if you ever debug a page that renders as raw payload text.
 - Any caching reverse proxy works here, not just Cloudflare. nginx
   (`proxy_cache` with `proxy_cache_use_stale updating`), Varnish, and Caddy all
   honor `s-maxage` and `stale-while-revalidate`. Only the dashboard steps above

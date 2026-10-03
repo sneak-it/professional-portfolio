@@ -26,6 +26,14 @@ const nextConfig: NextConfig = {
       {
         source:
           '/:path(|about|contact|blog|portfolio|robots\\.txt|sitemap\\.xml|feed\\.xml|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
+        // RSC payloads, and prefetches that skip proxy.ts (no CSP), share these
+        // URLs; CDNs that ignore Vary must not keep them.
+        missing: [
+          { type: 'header', key: 'rsc' },
+          { type: 'query', key: '_rsc' },
+          { type: 'header', key: 'next-router-prefetch' },
+          { type: 'header', key: 'purpose', value: 'prefetch' },
+        ],
         headers: [
           {
             key: 'Cache-Control',
