@@ -1,9 +1,5 @@
-'use client';
-
 import Image from 'next/image';
-import { m } from 'motion/react';
 import { ExternalLink, GitFork, CheckCircle2 } from 'lucide-react';
-import { fadeInUp, fadeInUpOnView } from '@/lib/motion';
 import Surface from '@/components/Surface';
 import type { ProjectItem } from '@/lib/portfolio';
 
@@ -20,7 +16,7 @@ export default function ProjectDetailClient({
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
-        <m.div {...fadeInUp}>
+        <div className="enter-up">
           <Surface padding="lg">
             <span className="text-accent-text font-medium font-mono uppercase tracking-wider text-sm mb-4 block">
               {sectionName}
@@ -75,14 +71,12 @@ export default function ProjectDetailClient({
               </div>
             )}
           </Surface>
-        </m.div>
+        </div>
 
         {project.coverImage && (
-          <m.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="relative aspect-square lg:aspect-auto lg:h-full rounded-3xl overflow-hidden shadow-2xl"
+          <div
+            style={{ animationDelay: '200ms' }}
+            className="enter-up relative aspect-square lg:aspect-auto lg:h-full rounded-3xl overflow-hidden shadow-2xl"
           >
             <Image
               src={project.coverImage}
@@ -93,14 +87,14 @@ export default function ProjectDetailClient({
               className="object-cover"
               referrerPolicy="no-referrer"
             />
-          </m.div>
+          </div>
         )}
       </div>
 
       {(features.length > 0 || project.challenges) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
           {features.length > 0 && (
-            <m.div {...fadeInUpOnView}>
+            <div className="enter-up">
               <Surface padding="md">
                 <h2 className="text-2xl font-bold mb-6">Key Features</h2>
                 <ul className="space-y-4">
@@ -118,11 +112,11 @@ export default function ProjectDetailClient({
                   ))}
                 </ul>
               </Surface>
-            </m.div>
+            </div>
           )}
 
           {project.challenges && (
-            <m.div {...fadeInUpOnView} transition={{ delay: 0.2 }}>
+            <div className="enter-up" style={{ animationDelay: '200ms' }}>
               <Surface padding="md">
                 <h2 className="text-2xl font-bold mb-6">
                   Challenges & Solutions
@@ -131,7 +125,7 @@ export default function ProjectDetailClient({
                   {project.challenges}
                 </p>
               </Surface>
-            </m.div>
+            </div>
           )}
         </div>
       )}

@@ -1,13 +1,9 @@
-'use client';
-
-import { m } from 'motion/react';
 import { ImageIcon } from 'lucide-react';
 import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import CoverCard from '@/components/CoverCard';
-import { fadeInUpOnView } from '@/lib/motion';
 import { formatDate } from '@/lib/date';
 import type { GallerySummary } from '@/lib/portfolio';
 
@@ -33,10 +29,10 @@ export default function SectionGalleryList({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {galleries.map((gallery, index) => (
-            <m.div
+            <div
               key={gallery.slug}
-              {...fadeInUpOnView}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="enter-up"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <CoverCard
                 href={`/portfolio/photography/${gallery.slug}`}
@@ -61,7 +57,7 @@ export default function SectionGalleryList({
                   </div>
                 }
               />
-            </m.div>
+            </div>
           ))}
         </div>
       )}

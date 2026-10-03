@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import CoverImage from '@/components/CoverImage';
-import { m } from 'motion/react';
 import {
   ArrowRight,
   ChevronDown,
@@ -16,7 +15,6 @@ import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import PostMeta from '@/components/PostMeta';
 import TagList, { chipClass } from '@/components/TagList';
-import { fadeInUpOnView } from '@/lib/motion';
 import type { BlogPostSummary, Tag } from '@/lib/mdx';
 
 export default function BlogList({
@@ -104,11 +102,10 @@ export default function BlogList({
 
       <div className="space-y-4">
         {posts.map((post, index) => (
-          <m.article
+          <article
             key={post.slug}
-            {...fadeInUpOnView}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="group relative flex flex-col md:flex-row gap-8 items-start card-surface p-6 hover:border-accent/50 transition-colors"
+            style={{ animationDelay: `${index * 100}ms` }}
+            className="enter-up group relative flex flex-col md:flex-row gap-8 items-start card-surface p-6 hover:border-accent/50 transition-colors"
           >
             <div className="w-full md:w-2/5 aspect-video md:aspect-square lg:aspect-[4/3] relative rounded-2xl overflow-hidden shrink-0">
               <CoverImage
@@ -146,7 +143,7 @@ export default function BlogList({
                 />
               </div>
             </div>
-          </m.article>
+          </article>
         ))}
       </div>
 

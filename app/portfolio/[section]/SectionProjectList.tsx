@@ -1,15 +1,11 @@
-'use client';
-
 import Link from 'next/link';
 import CoverImage from '@/components/CoverImage';
-import { m } from 'motion/react';
 import { ExternalLink } from 'lucide-react';
 import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
 import { GitHubIcon } from '@/components/icons/BrandIcons';
-import { scaleIn } from '@/lib/motion';
 import type { ProjectSummary } from '@/lib/portfolio';
 
 // Project-style listing (Technology Consulting, Open Source). Cards link to the
@@ -36,11 +32,10 @@ export default function SectionProjectList({
           {projects.map((project, index) => {
             const tech = project.tech ?? [];
             return (
-              <m.div
+              <div
                 key={project.slug}
-                {...scaleIn}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="group flex flex-col bg-white dark:bg-[#111] rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10 shadow-sm hover:shadow-xl transition-all"
+                style={{ animationDelay: `${index * 50}ms` }}
+                className="enter-up group flex flex-col bg-white dark:bg-[#111] rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10 shadow-sm hover:shadow-xl transition-all"
               >
                 <Link
                   href={`/portfolio/${project.section}/${project.slug}`}
@@ -106,7 +101,7 @@ export default function SectionProjectList({
                     </div>
                   )}
                 </div>
-              </m.div>
+              </div>
             );
           })}
         </div>

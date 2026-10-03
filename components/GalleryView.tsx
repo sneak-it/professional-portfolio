@@ -73,14 +73,11 @@ export default function GalleryView({
 
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
         {gallery.images.map((image, index) => (
-          <m.button
+          <button
             type="button"
             key={image.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: (index % 5) * 0.1 }}
-            className="block w-full break-inside-avoid relative group cursor-pointer rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-900"
+            style={{ animationDelay: `${(index % 5) * 100}ms` }}
+            className="enter-up block w-full break-inside-avoid relative group cursor-pointer rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-900"
             onClick={() => {
               setSelectedIndex(index);
             }}
@@ -97,7 +94,7 @@ export default function GalleryView({
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </m.button>
+          </button>
         ))}
       </div>
 

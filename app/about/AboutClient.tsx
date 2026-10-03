@@ -1,7 +1,6 @@
 'use client';
 
 import CoverImage from '@/components/CoverImage';
-import { m } from 'motion/react';
 import {
   Cloud,
   Network,
@@ -67,11 +66,7 @@ export default function AboutClient({
   return (
     <Container>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-        <m.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="enter-up">
           <div className="relative aspect-square max-w-md mx-auto lg:mx-0 rounded-3xl overflow-hidden shadow-2xl">
             <CoverImage
               src={avatarUrl}
@@ -81,13 +76,9 @@ export default function AboutClient({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           </div>
-        </m.div>
+        </div>
 
-        <m.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+        <div className="enter-up" style={{ animationDelay: '200ms' }}>
           <Surface padding="lg">
             <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
               About Me
@@ -109,37 +100,28 @@ export default function AboutClient({
               </div>
             )}
           </Surface>
-        </m.div>
+        </div>
       </div>
 
       {/* Skills section, hidden when about.mdx has none */}
       {skills.length > 0 && (
         <div className="mt-32">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
+          <div className="enter-up text-center mb-16">
             <h2 className="heading-legible text-3xl md:text-4xl font-display font-bold tracking-tight">
               {skillsHeading}
             </h2>
             <p className="heading-legible mt-4 text-gray-600 dark:text-gray-400">
               {skillsBlurb}
             </p>
-          </m.div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {skills.map((skillGroup, index) => (
-              <m.div
+              <div
                 key={skillGroup.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                style={{ animationDelay: `${index * 100}ms` }}
                 onPointerMove={moveSpotlight}
-                className="surface p-6 spotlight relative group"
+                className="enter-up surface p-6 spotlight relative group"
               >
                 <IconBadge
                   size="md"
@@ -163,7 +145,7 @@ export default function AboutClient({
                     </li>
                   ))}
                 </ul>
-              </m.div>
+              </div>
             ))}
           </div>
         </div>
@@ -172,31 +154,22 @@ export default function AboutClient({
       {/* Personal interests, hidden when about.mdx has none */}
       {interests.length > 0 && (
         <div className="mt-32">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
+          <div className="enter-up text-center mb-16">
             <h2 className="heading-legible text-3xl md:text-4xl font-display font-bold tracking-tight">
               {interestsHeading}
             </h2>
             <p className="heading-legible mt-4 max-w-2xl mx-auto text-gray-600 dark:text-gray-400">
               {interestsBlurb}
             </p>
-          </m.div>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {interests.map((interest, index) => (
-              <m.div
+              <div
                 key={interest.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                style={{ animationDelay: `${index * 100}ms` }}
                 onPointerMove={moveSpotlight}
-                className="surface p-6 spotlight relative group"
+                className="enter-up surface p-6 spotlight relative group"
               >
                 <IconBadge
                   size="md"
@@ -211,7 +184,7 @@ export default function AboutClient({
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                   {interest.blurb}
                 </p>
-              </m.div>
+              </div>
             ))}
           </div>
         </div>

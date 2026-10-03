@@ -1,11 +1,9 @@
 'use client';
 
-import { m } from 'motion/react';
 import { Mail, MapPin } from 'lucide-react';
 import Container from '@/components/Container';
 import IconBadge from '@/components/IconBadge';
 import { LinkedInIcon } from '@/components/icons/BrandIcons';
-import { fadeInUp } from '@/lib/motion';
 import { moveSpotlight } from '@/lib/spotlight';
 
 export default function ContactClient({
@@ -26,11 +24,7 @@ export default function ContactClient({
 }) {
   return (
     <Container size="sm" className="text-center">
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
+      <div className="enter-up">
         <h1 className="heading-legible text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
           {heading} <span className="gradient-text">{highlight}</span>!
         </h1>
@@ -41,11 +35,10 @@ export default function ContactClient({
         {/* One to three cards, depending on which SITE_* values are set. */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {email && (
-            <m.a
-              {...fadeInUp}
-              transition={{ duration: 0.6, delay: 0.1 }}
+            <a
+              style={{ animationDelay: '100ms' }}
               href={`mailto:${email}`}
-              className="group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
+              className="enter-up group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
             >
               <IconBadge
                 color="primary"
@@ -60,17 +53,16 @@ export default function ContactClient({
               <span className="text-gray-600 dark:text-gray-400 transition-colors group-hover:text-accent-text break-all">
                 {email}
               </span>
-            </m.a>
+            </a>
           )}
 
           {linkedin && (
-            <m.a
-              {...fadeInUp}
-              transition={{ duration: 0.6, delay: 0.2 }}
+            <a
+              style={{ animationDelay: '200ms' }}
               href={linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
+              className="enter-up group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
             >
               <IconBadge
                 color="primary"
@@ -85,14 +77,13 @@ export default function ContactClient({
               <span className="text-gray-600 dark:text-gray-400 transition-colors group-hover:text-accent-text">
                 Connect with me
               </span>
-            </m.a>
+            </a>
           )}
 
-          <m.div
-            {...fadeInUp}
-            transition={{ duration: 0.6, delay: 0.3 }}
+          <div
+            style={{ animationDelay: '300ms' }}
             onPointerMove={moveSpotlight}
-            className="group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 spotlight relative"
+            className="enter-up group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 spotlight relative"
           >
             <IconBadge
               color="secondary"
@@ -103,9 +94,9 @@ export default function ContactClient({
             </IconBadge>
             <h2 className="text-xl font-bold mb-2">Location</h2>
             <p className="text-gray-600 dark:text-gray-400">{location}</p>
-          </m.div>
+          </div>
         </div>
-      </m.div>
+      </div>
     </Container>
   );
 }

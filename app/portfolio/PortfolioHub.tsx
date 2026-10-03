@@ -1,11 +1,7 @@
-'use client';
-
-import { m } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
 import Container from '@/components/Container';
 import PageHeader from '@/components/PageHeader';
 import CoverCard from '@/components/CoverCard';
-import { fadeInUpOnView } from '@/lib/motion';
 import type { SectionSummary } from '@/lib/portfolio';
 
 // Singular/plural noun shown under each section card, by section.
@@ -33,10 +29,10 @@ export default function PortfolioHub({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {sections.map((section, index) => (
-          <m.div
+          <div
             key={section.slug}
-            {...fadeInUpOnView}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="enter-up"
+            style={{ animationDelay: `${index * 100}ms` }}
           >
             <CoverCard
               href={`/portfolio/${section.slug}`}
@@ -53,7 +49,7 @@ export default function PortfolioHub({
                 </p>
               }
             />
-          </m.div>
+          </div>
         ))}
       </div>
     </Container>
