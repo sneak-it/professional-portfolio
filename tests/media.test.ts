@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
-import { sanitize } from '../lib/media.ts';
+import { limiter, sanitize } from '../lib/media.ts';
 
 /** The EXIF guarantee, asserted rather than documented. */
 
@@ -158,6 +158,32 @@ void test('no committed image carries metadata into git history', async (t) => {
       `${file} carries metadata and is committed. Stripping on the way out does not help: git keeps the original forever.`,
     );
   }
+});
+
+void test('limiter runs at most n calls at once, in arrival order', async () => {
+  const slot = limiter(2);
+  let running = 0;
+  let peak = 0;
+  const order: number[] = [];
+  await Promise.all(
+    [0, 1, 2, 3, 4].map((i) =>
+      slot(async () => {
+        running++;
+        peak = Math.max(peak, running);
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        order.push(i);
+        running--;
+      }),
+    ),
+  );
+  assert.equal(peak, 2);
+  assert.deepEqual(order, [0, 1, 2, 3, 4]);
+});
+
+void test('limiter frees the slot when a call throws', async () => {
+  const slot = limiter(1);
+  await assert.rejects(slot(() => Promise.reject(new Error('boom'))));
+  assert.equal(await slot(() => Promise.resolve('next')), 'next');
 });
 
 test.after(() => {

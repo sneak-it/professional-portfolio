@@ -17,6 +17,8 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ path: string[] }> },
 ) {
+  // Images never need a query string; one would only bypass the CDN cache.
+  if (new URL(request.url).search) return new Response(null, { status: 404 });
   const { path } = await params;
   const file = mediaFilePath(`/media/${path.join('/')}`);
   if (file === null) return new Response(null, { status: 404 });

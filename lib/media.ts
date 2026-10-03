@@ -25,19 +25,44 @@ const ENCODERS: Record<
   gif: { contentType: 'image/gif', encode: (t) => t.gif() },
 };
 
+// No mozjpeg: 5x the CPU, and the optimizer re-encodes this output anyway.
 const JPEG = {
   contentType: 'image/jpeg',
-  encode: (t: Sharp) => t.jpeg({ quality: 90, mozjpeg: true }),
+  encode: (t: Sharp) => t.jpeg({ quality: 90 }),
 };
+
+/** Runs at most `n` wrapped calls at once; the rest wait in arrival order. */
+export function limiter(n: number) {
+  let active = 0;
+  const queue: Array<() => void> = [];
+  return async <T>(run: () => Promise<T>): Promise<T> => {
+    if (active < n) active++;
+    else await new Promise<void>((resolve) => queue.push(resolve));
+    try {
+      return await run();
+    } finally {
+      const next = queue.shift();
+      if (next) next();
+      else active--;
+    }
+  };
+}
+
+// One decode at a time keeps a gallery's first view under compose's 512 MB.
+const slot = limiter(1);
 
 /**
  * Keeps only the colour profile. Rotates first: orientation lives in the EXIF
  * being dropped, so portraits would serve sideways without it. Throws on
  * anything sharp can't decode, rather than falling back to the original bytes.
  *
- * ponytail: re-encodes per cache miss; add a disk cache if that ever shows up.
+ * ponytail: re-encodes per origin hit; add a disk cache if origin hits show up.
  */
-export async function sanitize(file: string): Promise<Sanitized> {
+export function sanitize(file: string): Promise<Sanitized> {
+  return slot(() => rebuild(file));
+}
+
+async function rebuild(file: string): Promise<Sanitized> {
   const buffer = await fs.promises.readFile(file);
   const { format, pages } = await sharp(buffer).metadata();
 

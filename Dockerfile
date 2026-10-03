@@ -35,6 +35,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# sharp on glibc: fewer malloc arenas keeps memory from fragmenting upward.
+ENV MALLOC_ARENA_MAX=2
 
 COPY --from=builder /app/public ./public
 # Not traced by Next: read at runtime by app/media/[...path].
