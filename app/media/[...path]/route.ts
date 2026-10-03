@@ -13,6 +13,11 @@ export const dynamic = 'force-dynamic';
 const CACHE_CONTROL =
   'public, max-age=3600, s-maxage=604800, stale-while-revalidate=604800';
 
+// An SVG opened directly is a document on this origin; this keeps it inert.
+// `data:` lets it show the images and fonts embedded in the file.
+const SANDBOX =
+  "default-src 'none'; img-src data:; font-src data:; style-src 'unsafe-inline'; sandbox";
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ path: string[] }> },
@@ -36,7 +41,12 @@ export async function GET(
   if (request.headers.get('if-none-match') === etag) {
     return new Response(null, {
       status: 304,
-      headers: { ETag: etag, 'Cache-Control': CACHE_CONTROL },
+      // A 304 updates the headers a cache stored, so it carries the policy too.
+      headers: {
+        ETag: etag,
+        'Cache-Control': CACHE_CONTROL,
+        'Content-Security-Policy': SANDBOX,
+      },
     });
   }
 
@@ -54,6 +64,7 @@ export async function GET(
       'Content-Type': sanitized.contentType,
       'Content-Length': String(sanitized.body.byteLength),
       'Content-Disposition': 'inline',
+      'Content-Security-Policy': SANDBOX,
       'Cache-Control': CACHE_CONTROL,
       ETag: etag,
     },
