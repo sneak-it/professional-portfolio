@@ -189,17 +189,28 @@ export default function ShaderGradient({
     // 1.25: lines are shader-anti-aliased, so full retina is wasted fill rate,
     // and 1.0 lets the compositor blur ~1-device-pixel lines.
     const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-    const renderer = new Renderer({
-      dpr,
-      // The shader writes alpha 1.0 over an opaque wrapper, and one full-screen
-      // triangle needs no depth testing or geometry anti-aliasing.
-      alpha: false,
-      depth: false,
-      antialias: false,
-      powerPreference: 'low-power',
-      // WebGL2 (default): GLSL ES 3.00 has fwidth() in core, no extension.
-    });
+    let renderer: Renderer;
+    try {
+      renderer = new Renderer({
+        dpr,
+        // The shader writes alpha 1.0 over an opaque wrapper, and one full-screen
+        // triangle needs no depth testing or geometry anti-aliasing.
+        alpha: false,
+        depth: false,
+        antialias: false,
+        powerPreference: 'low-power',
+        // WebGL2 (default): GLSL ES 3.00 has fwidth() in core, no extension.
+      });
+    } catch {
+      // No WebGL at all (VMs, remote desktops, acceleration off): OGL throws.
+      return;
+    }
     const gl = renderer.gl;
+    // OGL falls back to WebGL1, which can't compile these shaders.
+    if (!renderer.isWebgl2) {
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+      return;
+    }
     gl.canvas.style.position = 'absolute';
     gl.canvas.style.inset = '0';
     gl.canvas.style.width = '100%';

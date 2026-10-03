@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
+import { catchError } from 'next/error';
 import { usePathname } from 'next/navigation';
 import { Pause, Play } from 'lucide-react';
 import { useMotionEnabled } from '@/hooks/use-motion-enabled';
@@ -82,6 +83,9 @@ function StaticGradient() {
   );
 }
 
+// Decoration must never take the page down with it.
+const StaticOnError = catchError(() => <StaticGradient />);
+
 export default function BackgroundCanvas() {
   const { tier } = useMotionEnabled();
 
@@ -96,7 +100,9 @@ export default function BackgroundCanvas() {
 
   return (
     <>
-      <ShaderGradient paused={paused} calm={calm} />
+      <StaticOnError>
+        <ShaderGradient paused={paused} calm={calm} />
+      </StaticOnError>
       <button
         type="button"
         onClick={() => {
