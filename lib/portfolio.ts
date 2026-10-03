@@ -6,6 +6,8 @@ import {
   listDir,
   listMdxFiles,
   readMdxFile,
+  strings,
+  text,
   type MdxFile,
 } from './content.ts';
 import { byDateDesc } from './sort.ts';
@@ -127,16 +129,16 @@ function projectSummary(section: SectionSlug, file: MdxFile): ProjectSummary {
   return {
     section,
     slug: file.slug,
-    title: (data.title as string) || file.slug,
-    description: (data.description as string) || '',
-    coverImage: (data.coverImage as string) || '',
-    date: (data.date as string) || '',
+    title: text(data.title, file.slug),
+    description: text(data.description, ''),
+    coverImage: text(data.coverImage, ''),
+    date: text(data.date, ''),
     ...(isDraft(data) && { draft: true as const }),
-    tech: data.tech as string[] | undefined,
-    link: (data.link as string) || undefined,
-    github: (data.github as string) || undefined,
-    features: data.features as string[] | undefined,
-    challenges: (data.challenges as string) || undefined,
+    tech: strings(data.tech),
+    link: text(data.link, '') || undefined,
+    github: text(data.github, '') || undefined,
+    features: strings(data.features),
+    challenges: text(data.challenges, '') || undefined,
   };
 }
 
@@ -232,22 +234,22 @@ export async function getPhotographyGallery(
   if (file === null) return null;
 
   const { data } = file;
-  const title = (data.title as string) || file.slug;
+  const title = text(data.title, file.slug);
   const images = (await scanImages(file.slug, altMap(data.alt))).map(
     (image, i, all) => ({
       ...image,
       alt: image.alt || `${title}, photo ${i + 1} of ${all.length}`,
     }),
   );
-  const coverImage = (data.coverImage as string) || images[0]?.src || '';
+  const coverImage = text(data.coverImage, '') || images[0]?.src || '';
 
   return {
     section: 'photography',
     slug: file.slug,
     title,
-    description: (data.description as string) || '',
+    description: text(data.description, ''),
     coverImage,
-    date: (data.date as string) || '',
+    date: text(data.date, ''),
     ...(isDraft(data) && { draft: true as const }),
     images,
   };
@@ -264,11 +266,11 @@ export function getPhotographyGalleries(): GallerySummary[] {
       return {
         section: 'photography' as const,
         slug: mdx.slug,
-        title: (data.title as string) || mdx.slug,
-        description: (data.description as string) || '',
-        cardDescription: (data.cardDescription as string) || undefined,
+        title: text(data.title, mdx.slug),
+        description: text(data.description, ''),
+        cardDescription: text(data.cardDescription, '') || undefined,
         coverImage: galleryCoverSrc(mdx.slug, data.coverImage),
-        date: (data.date as string) || '',
+        date: text(data.date, ''),
         imageCount: listGalleryImageFiles(mdx.slug).length,
       };
     })

@@ -1,4 +1,4 @@
-import { contentDir, list, readMdxFile, text } from './content';
+import { contentDir, list, readMdxFile, strings, text } from './content.ts';
 
 /**
  * About-page content from `content/about.mdx`, bind-mount editable. `icon` is a
@@ -34,13 +34,33 @@ export interface About {
   content: string;
 }
 
+/** Object entries of a frontmatter list that have a non-empty `name`. */
+function named(
+  value: unknown,
+): Array<Record<string, unknown> & { name: string }> {
+  return list<unknown>(value).flatMap((entry) => {
+    if (typeof entry !== 'object' || entry === null) return [];
+    const item = entry as Record<string, unknown>;
+    const name = text(item.name, '');
+    return name ? [{ ...item, name }] : [];
+  });
+}
+
 /** Returns default content if `content/about.mdx` is missing or unparseable. */
 export function getAbout(fallbackDescription: string): About {
   const file = readMdxFile(contentDir(), 'about');
   const data = file?.data ?? {};
   return {
-    skills: list<SkillGroup>(data.skills),
-    interests: list<Interest>(data.interests),
+    skills: named(data.skills).map((group) => ({
+      name: group.name,
+      icon: group.icon as SkillIcon,
+      items: strings(group.items),
+    })),
+    interests: named(data.interests).map((interest) => ({
+      name: interest.name,
+      icon: interest.icon as InterestIcon,
+      blurb: text(interest.blurb, ''),
+    })),
     skillsHeading: text(data.skillsHeading, 'Skills'),
     skillsBlurb: text(data.skillsBlurb, 'The tools I use most.'),
     interestsHeading: text(data.interestsHeading, 'Interests'),

@@ -203,7 +203,7 @@ export default function AboutClient({
                   shape="xl"
                   className="mb-6 transition-transform duration-300 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6"
                 >
-                  {INTEREST_ICONS[interest.icon]}
+                  {INTEREST_ICONS[interest.icon] ?? <Wrench size={24} />}
                 </IconBadge>
                 <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                   {interest.name}

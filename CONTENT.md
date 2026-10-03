@@ -45,7 +45,7 @@ skills:
       - 'Cloudflare'
 interests:
   - name: 'Homelab & Self-Hosting'
-    icon: server         # server | bot | gamepad | camera | wrench | sprout
+    icon: server         # server | bot | gamepad | camera | wrench | sprout (unknown falls back to a wrench)
     blurb: 'One or two sentences.'
 ```
 
@@ -76,11 +76,13 @@ The 404 page, under the large `404`. Frontmatter only; the body is ignored.
 npm run check:content
 ```
 
-Lints every blog post and portfolio entry (the special pages above are not checked):
-missing required fields, unknown keys (a typo'd `catgeory:` otherwise does nothing),
-unparseable dates, a `draft` that is the string `'true'` rather than a boolean, a cover
-image with no file under `media/`, and colliding tag spellings. Also prints the full tag
-vocabulary with counts. Exits non-zero on error.
+Lints every blog post, every portfolio entry, and `about.mdx` (the other special pages
+above are not checked): missing required fields, unknown keys (a typo'd `catgeory:`
+otherwise does nothing), unparseable dates, a `draft` that is the string `'true'` rather
+than a boolean, a list where text belongs or text where a list belongs (the page would
+drop the value), About skills and interests with no `name`, a cover image with no file
+under `media/`, and colliding tag spellings. Also prints the full tag vocabulary with
+counts. Exits non-zero on error.
 
 ## Drafts and scheduled posts
 

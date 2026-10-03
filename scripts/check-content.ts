@@ -23,6 +23,10 @@ interface Schema {
   image: string;
   /** Only blog posts carry tags. */
   tags: boolean;
+  /** Keys that must be lists of strings. */
+  lists: string[];
+  /** Keys that must be text; an empty key reads as absent. */
+  texts: string[];
 }
 
 const BLOG: Schema = {
@@ -40,6 +44,8 @@ const BLOG: Schema = {
   ],
   image: 'image',
   tags: true,
+  lists: [],
+  texts: ['image', 'excerpt', 'readTime'],
 };
 
 const PROJECT: Schema = {
@@ -58,6 +64,8 @@ const PROJECT: Schema = {
   ],
   image: 'coverImage',
   tags: false,
+  lists: ['tech', 'features'],
+  texts: ['coverImage', 'link', 'github', 'challenges'],
 };
 
 const GALLERY: Schema = {
@@ -73,6 +81,8 @@ const GALLERY: Schema = {
   ],
   image: 'coverImage',
   tags: false,
+  lists: [],
+  texts: ['coverImage', 'cardDescription'],
 };
 
 /** More than this on one post and the tags stop narrowing anything. */
@@ -83,6 +93,20 @@ const notes: string[] = [];
 
 const error = (file: string, message: string) =>
   errors.push(`${file}: ${message}`);
+
+const isStringList = (value: unknown) =>
+  Array.isArray(value) && value.every((v) => typeof v === 'string');
+
+/** A value the page drops because it is not text. */
+function checkText(file: string, key: string, value: unknown) {
+  if (value == null || typeof value === 'string') return;
+  const got = Array.isArray(value)
+    ? 'a list'
+    : typeof value === 'object'
+      ? 'nested keys'
+      : `a ${typeof value} (quote it)`;
+  error(file, `${key} must be text, not ${got}`);
+}
 
 /** Every tag spelling seen, by slug, with the files that used it. */
 const spellings = new Map<string, Map<string, string[]>>();
@@ -169,6 +193,14 @@ function checkFile(dir: string, slug: string, schema: Schema) {
     }
   }
 
+  for (const key of schema.lists) {
+    const value = data[key];
+    if (value !== undefined && !isStringList(value)) {
+      error(file, `${key} must be a list of strings`);
+    }
+  }
+  for (const key of schema.texts) checkText(file, key, data[key]);
+
   if (schema.tags) checkTags(file, data.tags);
 
   if (isDraft(data)) {
@@ -176,6 +208,51 @@ function checkFile(dir: string, slug: string, schema: Schema) {
     notes.push(
       `${file}: ${scheduled ? `scheduled for ${String(data.date)}` : 'draft'}`,
     );
+  }
+}
+
+/** The about.mdx keys `getAbout` reads as text. */
+const ABOUT_TEXTS = [
+  'description',
+  'skillsHeading',
+  'skillsBlurb',
+  'interestsHeading',
+  'interestsBlurb',
+];
+
+/** about.mdx: values and entries the About page would skip or show empty. */
+function checkAbout() {
+  const file = path.join(contentDir(), 'about.mdx');
+  if (!fs.existsSync(file)) return;
+  const parsed = readMdxFile(contentDir(), 'about');
+  if (parsed === null) {
+    error(file, 'unreadable or unparseable');
+    return;
+  }
+  const { data } = parsed;
+  for (const key of Object.keys(data)) {
+    if (![...ABOUT_TEXTS, 'skills', 'interests'].includes(key)) {
+      error(file, `unknown frontmatter key "${key}"`);
+    }
+  }
+  for (const key of ABOUT_TEXTS) checkText(file, key, data[key]);
+  for (const key of ['skills', 'interests']) {
+    const value = data[key];
+    if (value === undefined) continue;
+    if (!Array.isArray(value)) {
+      error(file, `${key} must be a list, got ${typeof value}`);
+      continue;
+    }
+    value.forEach((entry: unknown, i) => {
+      const item = (entry ?? {}) as Record<string, unknown>;
+      if (typeof item.name !== 'string' || item.name.trim() === '') {
+        error(file, `${key} entry ${i + 1} has no name`);
+      } else if (key === 'skills' && !isStringList(item.items)) {
+        error(file, `skills entry ${i + 1}: items must be a list of strings`);
+      } else if (key === 'interests') {
+        checkText(file, `interests entry ${i + 1}: blurb`, item.blurb);
+      }
+    });
   }
 }
 
@@ -236,6 +313,8 @@ for (const section of PORTFOLIO_SECTIONS) {
   const schema = section.type === 'gallery' ? GALLERY : PROJECT;
   for (const slug of listMdxSlugs(dir)) checkFile(dir, slug, schema);
 }
+
+checkAbout();
 
 checkTagVocabulary();
 

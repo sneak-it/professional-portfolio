@@ -46,6 +46,7 @@ function postMeta(file: MdxFile): BlogPostMeta {
     readTime: text(data.readTime, readTime(file.content)),
     excerpt: text(data.excerpt, firstParagraph(file.content)),
     updated: text(data.updated, '') || undefined,
+    image: text(data.image, '') || undefined,
   };
 }
 
