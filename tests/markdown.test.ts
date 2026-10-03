@@ -118,6 +118,13 @@ void test('headings flattens inline markdown the same way the anchor does', () =
   assert.deepEqual(headings('## A [link](/somewhere) here\n'), [
     { depth: 2, text: 'A link here', id: 'a-link-here' },
   ]);
+  assert.deepEqual(headings('## Raise __max_connections__ first\n'), [
+    {
+      depth: 2,
+      text: 'Raise max_connections first',
+      id: 'raise-max-connections-first',
+    },
+  ]);
 });
 
 void test('headings numbers repeated titles and drops unslugable ones', () => {
@@ -128,7 +135,7 @@ void test('headings numbers repeated titles and drops unslugable ones', () => {
 
 void test('compiled h2 and h3 ids match headings()', async () => {
   const source =
-    '## Setup\n\n### Notes\n\n## Setup\n\n### Notes\n\n## The `code` [bit](/x)\n\nA note.[^1]\n\n[^1]: Footnote.\n';
+    '## Setup\n\n### Notes\n\n## Setup\n\n### Notes\n\n## The `code` [bit](/x)\n\n## Tuning max_connections\n\nA note.[^1]\n\n[^1]: Footnote.\n';
   const { content } = await compileMDX({
     source,
     options: {

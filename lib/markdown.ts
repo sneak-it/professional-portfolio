@@ -35,12 +35,15 @@ const SKIP_LINE = /^\s*([#<>|`~*+-]|!\[|\d+\.\s|:{3})/;
 
 /** Inline markdown reduced to plain text: links unwrapped, emphasis dropped. */
 function plainText(line: string): string {
-  return line
-    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/\[\^[^\]]*\]/g, '')
-    .replace(/[*_`~]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return (
+    line
+      .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replace(/\[\^[^\]]*\]/g, '')
+      // `_` only at word edges: `max_connections` keeps its underscore.
+      .replace(/[*`~]|\b_+|_+\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
 }
 
 /**
