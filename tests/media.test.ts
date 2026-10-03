@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
-import { limiter, sanitize } from '../lib/media.ts';
+import { limiter, sanitize, sanitizeCached } from '../lib/media.ts';
 
 /** The EXIF guarantee, asserted rather than documented. */
 
@@ -184,6 +184,56 @@ void test('limiter frees the slot when a call throws', async () => {
   const slot = limiter(1);
   await assert.rejects(slot(() => Promise.reject(new Error('boom'))));
   assert.equal(await slot(() => Promise.resolve('next')), 'next');
+});
+
+/** Carries EXIF, so a stripped copy is distinguishable from the original. */
+function jpeg(width: number, height: number) {
+  return sharp({ create: { width, height, channels: 3, background: '#c33' } })
+    .withExifMerge({ IFD0: { Artist: 'admin' } })
+    .jpeg()
+    .toBuffer();
+}
+
+void test('sanitizeCached serves the stored copy while the file is unchanged', async () => {
+  const cacheDir = path.join(tmp, 'cache-hit');
+  const file = scratch('hit.jpg', await jpeg(60, 40));
+
+  await sanitizeCached(file, fs.statSync(file), cacheDir);
+  const [stored, ...others] = filesIn(cacheDir);
+  assert.ok(stored);
+  assert.equal(others.length, 0);
+  assert.equal((await metadata(fs.readFileSync(stored))).hasMetadata, false);
+
+  // A marker in place of the stored copy shows the second call read it.
+  fs.writeFileSync(stored, 'stored copy');
+  const again = await sanitizeCached(file, fs.statSync(file), cacheDir);
+  assert.equal(again.body.toString(), 'stored copy');
+  assert.equal(again.contentType, 'image/jpeg');
+});
+
+void test('sanitizeCached rebuilds a changed file and drops the old copy', async () => {
+  const cacheDir = path.join(tmp, 'cache-change');
+  const file = scratch('change.jpg', await jpeg(60, 40));
+  await sanitizeCached(file, fs.statSync(file), cacheDir);
+
+  fs.writeFileSync(file, await jpeg(30, 20));
+  const { body } = await sanitizeCached(file, fs.statSync(file), cacheDir);
+
+  assert.equal((await metadata(body)).width, 30);
+  assert.equal(filesIn(cacheDir).length, 1);
+});
+
+void test('sanitizeCached still serves stripped bytes when the cache is unwritable', async (t) => {
+  const logged = t.mock.method(console, 'error', () => undefined);
+  // Nothing can be created under a regular file.
+  const cacheDir = path.join(scratch('not-a-dir', Buffer.alloc(0)), 'cache');
+  const original = await jpeg(60, 40);
+  assert.equal((await metadata(original)).hasMetadata, true);
+  const file = scratch('unwritable.jpg', original);
+
+  const { body } = await sanitizeCached(file, fs.statSync(file), cacheDir);
+  assert.equal((await metadata(body)).hasMetadata, false);
+  assert.equal(logged.mock.callCount(), 1);
 });
 
 test.after(() => {

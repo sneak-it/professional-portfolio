@@ -1,4 +1,5 @@
 import type { ComponentPropsWithoutRef, ReactElement } from 'react';
+import Image from 'next/image';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import { Info, Lightbulb, TriangleAlert } from 'lucide-react';
@@ -80,9 +81,23 @@ async function SafeImage({
   // authoring. The CSP (`img-src 'self'`) blocks them in the browser too.
   if (!isLocalSrc(src)) return null;
 
-  // Plain <img>, so `images.localPatterns` doesn't apply; app/media strips
-  // metadata regardless. Dimensions come from disk to avoid layout shift.
+  // Dimensions come from disk to avoid layout shift. Measured rasters get a
+  // srcset from the optimizer; SVG and unmeasured files stay a plain <img>.
   const dims = await localImageDimensions(src);
+  if (dims && !/\.svg$/i.test(src)) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        width={dims.width}
+        height={dims.height}
+        sizes="(max-width: 896px) 100vw, 800px"
+        title={rest.title}
+        className={rest.className}
+        referrerPolicy="no-referrer"
+      />
+    );
+  }
   // `dims` then `rest` so an explicit width/height in MDX still wins, then the
   // security attributes last so authored ones cannot override them.
   return (

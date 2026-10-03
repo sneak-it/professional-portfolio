@@ -9,20 +9,24 @@ Two variants are published from the same layers:
 
 | Tag | User | Notes |
 | --- | --- | --- |
-| `:latest`, `:<version>`, `:dev` | root (uid 0) | Default. What `docker-compose.yml` runs and what a plain `docker build .` produces. |
-| `:latest-nonroot`, `:<version>-nonroot`, `:dev-nonroot` | `nonroot` (uid 65532) | Hardened variant. Switch the `image:` tag and uncomment `user: "65532:65532"`. |
+| `:latest-nonroot`, `:<version>-nonroot`, `:dev-nonroot` | `nonroot` (uid 65532) | What `docker-compose.yml` runs. |
+| `:latest`, `:<version>`, `:dev` | root (uid 0) | What a plain `docker build .` produces. |
 
-Neither variant needs a permission step. `cap_drop: ALL` strips `DAC_OVERRIDE`, so
-both read the mounts under the same rules, satisfied by a default umask. If a tree
-genuinely is unreadable, the site renders empty and logs
+Use the non-root variant with the shipped compose file. `cap_drop: ALL` strips
+`DAC_OVERRIDE` from root as well, so root cannot write the cache volumes (owned by
+uid 65532): every image request is optimized and every photo decoded again, and the
+log fills with `EACCES` and `[media] cannot cache`. Uid 65532 reads the mounts
+through their world-read bits, which a default umask sets. If a tree genuinely is
+unreadable, the site renders empty and logs
 `Cannot read content dir "<path>"`. Fix with `chmod -R a+rX content media`.
 
 ## Building manually
 
-The default target is the root image; pass `--target production-nonroot` for uid 65532.
+Pass `--target production-nonroot` for the image compose runs; without it you
+get the root variant.
 
 ```bash
-docker build -t portfolio-app .
+docker build --target production-nonroot -t portfolio-app .
 docker run -p 3000:3000 \
   -e SITE_URL=https://your-domain \
   -v "$(pwd)/content:/app/content:ro" \
@@ -66,3 +70,9 @@ are cached far longer, since each request is a full rasterize. Their URLs carry 
 token derived from the identity and palette they draw, so a `SITE_*` change moves the URL
 and takes effect immediately. Editing a renderer in `app/brand/` does not move the token,
 and waits out the 24-hour `s-maxage` or a purge.
+
+Compose keeps two named volumes: `images-cache` for Next's optimized images, and
+`media-cache` for the stripped photos they are made from, one per file, replaced when
+the file changes.
+Both are safe to delete; each photo is rebuilt on its next request, one at a time.
+Copies of deleted or renamed photos stay in `media-cache` until you delete it.

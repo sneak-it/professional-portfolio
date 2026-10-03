@@ -43,9 +43,10 @@ The stripped images under `/media/` send their own header, set in
 Cache-Control: public, max-age=3600, s-maxage=604800, stale-while-revalidate=604800
 ```
 
-Every origin hit there is a re-encode (that is what removes the EXIF), so the
-shared TTL matches `images.minimumCacheTTL` and lets the CDN absorb direct hits,
-share-card scrapers and crawlers. Unlike `/brand/`, these URLs carry no version
+The first origin hit for each version of a file is a re-encode (that is what
+removes the EXIF); later hits read the stored copy. The shared TTL matches
+`images.minimumCacheTTL` and lets the CDN absorb direct hits, share-card
+scrapers and crawlers. Unlike `/brand/`, these URLs carry no version
 token, so replacing a file under the same name needs a purge; the `ETag` means a
 revalidating client costs a `stat` rather than a re-encode.
 

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { mediaFilePath } from '@/lib/image';
-import { sanitize } from '@/lib/media';
+import { fileVersion, sanitizeCached } from '@/lib/media';
 
 /**
  * The only reader of `media/`. `/_next/image` fetches through here too, so even
@@ -32,7 +32,7 @@ export async function GET(
   if (!stat.isFile()) return new Response(null, { status: 404 });
 
   // From the file, not the body: a 304 costs a stat, not a re-encode.
-  const etag = `"${stat.size.toString(36)}-${Math.trunc(stat.mtimeMs).toString(36)}"`;
+  const etag = `"${fileVersion(stat)}"`;
   if (request.headers.get('if-none-match') === etag) {
     return new Response(null, {
       status: 304,
@@ -42,7 +42,7 @@ export async function GET(
 
   let sanitized;
   try {
-    sanitized = await sanitize(file);
+    sanitized = await sanitizeCached(file, stat);
   } catch {
     // Fails closed: never fall back to the original bytes.
     console.error(`[media] cannot sanitize ${file}`);

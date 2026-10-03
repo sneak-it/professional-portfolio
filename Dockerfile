@@ -21,7 +21,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Pre-create the writable cache tree here rather than in a runtime stage:
 # distroless has no shell, so mkdir/chown must happen in a stage that has one.
 # Kept above `COPY . .` so a source change doesn't re-run it and re-export the layer.
-RUN mkdir -p /empty-cache/images
+RUN mkdir -p /empty-cache/images /empty-cache/media
 
 COPY . .
 
@@ -58,9 +58,9 @@ COPY --from=builder /app/.next/static ./.next/static
 # npm ci for the target platform).
 COPY --from=deps /app/node_modules/@img ./node_modules/@img
 
-# Next also writes the ISR/fetch cache and optimized images here. Copying the
-# dir in with --chown means a named volume mounted at that path (see
-# docker-compose.yml) is initialized as nonroot-owned rather than root-owned.
+# Next writes its ISR/fetch cache and optimized images here, and app/media its
+# stripped photos. Copying the dir in with --chown means named volumes mounted
+# here (see docker-compose.yml) are initialized as nonroot-owned, not root-owned.
 COPY --from=builder --chown=nonroot:nonroot /empty-cache ./.next/cache
 
 USER nonroot

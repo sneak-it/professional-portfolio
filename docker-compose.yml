@@ -1,14 +1,7 @@
 services:
   portfolio:
-    image: ghcr.io/sneak-it/professional-portfolio:latest
-    # For the hardened variant, switch to :latest-nonroot and uncomment `user`.
-    # No permission step either way: `cap_drop: ALL` takes DAC_OVERRIDE from root
-    # too, so both variants read the mounts as an unprivileged user, and both are
-    # satisfied by the world-readable modes a default umask already produces.
-    # user: "65532:65532"
+    image: ghcr.io/sneak-it/professional-portfolio:latest-nonroot
     container_name: professional-portfolio
-    ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=production
     # Site identity and canonical URL: copy .env.example to .env and edit.
@@ -24,8 +17,10 @@ services:
       - ./media/portfolio/photography:/app/media/portfolio/photography:ro
       # Optional: your own avatar and blog images, replacing the shipped ones.
       # - ./media/images:/app/media/images:ro
-      # Persist the Next.js image optimizer cache
+      # Optional, recommended: persist the Next.js image optimizer cache
       - images-cache:/app/.next/cache/images
+      # Persist stripped photos, so each version is re-encoded once
+      - media-cache:/app/.next/cache/media
     restart: unless-stopped
     read_only: true
     tmpfs:
@@ -48,3 +43,4 @@ services:
 
 volumes:
   images-cache:
+  media-cache:

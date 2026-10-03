@@ -1,4 +1,6 @@
+import { createHash, randomUUID } from 'crypto';
 import fs from 'fs';
+import path from 'path';
 import sharp from 'sharp';
 import type { Sharp } from 'sharp';
 
@@ -55,11 +57,66 @@ const slot = limiter(1);
  * Keeps only the colour profile. Rotates first: orientation lives in the EXIF
  * being dropped, so portraits would serve sideways without it. Throws on
  * anything sharp can't decode, rather than falling back to the original bytes.
- *
- * ponytail: re-encodes per origin hit; add a disk cache if origin hits show up.
  */
 export function sanitize(file: string): Promise<Sanitized> {
   return slot(() => rebuild(file));
+}
+
+// Its own volume in compose, so stored copies outlive restarts and deploys.
+const CACHE_DIR = path.join(
+  /*turbopackIgnore: true*/ process.cwd(),
+  '.next/cache/media',
+);
+
+// Bump when rebuild() output changes, so stored copies and ETags turn over.
+const PIPELINE = 1;
+
+/** Changes with the file or `PIPELINE`: names both the ETag and the stored copy. */
+export function fileVersion(stat: fs.Stats): string {
+  return `${PIPELINE}-${stat.size.toString(36)}-${Math.trunc(stat.mtimeMs).toString(36)}`;
+}
+
+/**
+ * `sanitize`, stored so each version is rebuilt once and replaces the last.
+ * ponytail: copies of deleted or renamed files stay until the volume is wiped.
+ */
+export async function sanitizeCached(
+  file: string,
+  stat: fs.Stats,
+  cacheDir = CACHE_DIR,
+): Promise<Sanitized> {
+  // A runtime folder, not a build input: the ignores keep it out of the trace.
+  const dir = path.join(
+    /*turbopackIgnore: true*/ cacheDir,
+    createHash('sha256').update(file).digest('hex'),
+  );
+  const at = (name: string) => path.join(/*turbopackIgnore: true*/ dir, name);
+  const version = fileVersion(stat);
+  const names = await fs.promises.readdir(dir).catch((): string[] => []);
+  const hit = names.find((name) => name.startsWith(`${version}.`));
+  if (hit) {
+    return {
+      body: await fs.promises.readFile(at(hit)),
+      contentType: `image/${hit.slice(version.length + 1)}`,
+    };
+  }
+
+  const sanitized = await sanitize(file);
+  try {
+    await fs.promises.mkdir(dir, { recursive: true });
+    // Written aside, then renamed, so a reader never sees half a file.
+    const tmp = at(`.${randomUUID()}`);
+    await fs.promises.writeFile(tmp, sanitized.body);
+    const subtype = sanitized.contentType.slice('image/'.length);
+    await fs.promises.rename(tmp, at(`${version}.${subtype}`));
+    await Promise.all(
+      names.map((old) => fs.promises.rm(at(old), { force: true })),
+    );
+  } catch {
+    // Still served; only the next request rebuilds it again.
+    console.error(`[media] cannot cache ${file}`);
+  }
+  return sanitized;
 }
 
 async function rebuild(file: string): Promise<Sanitized> {

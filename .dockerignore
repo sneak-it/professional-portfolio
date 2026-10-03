@@ -14,3 +14,6 @@ LICENSE
 plans/
 .prettierrc.json
 .prettierignore
+# Original photographs: served by mount, never baked into an image.
+media/portfolio/photography/*
+!media/portfolio/photography/.gitkeep

@@ -112,6 +112,9 @@ from its pixels before sending it. Concretely, a photo off a phone:
 The rebuild is the mechanism. Metadata is not filtered out block by block, it is simply
 never copied into the new image, so there is no list of tags to keep up to date.
 
+Each version of a file is rebuilt once, on its first request, and the stripped copy is
+stored (the `media-cache` volume under compose). Changing the file starts a new version.
+
 Two consequences worth knowing:
 
 - **Orientation is baked in, not flagged.** Since the EXIF being dropped is where "which
@@ -178,9 +181,8 @@ That is deliberate. Committing a photograph would publish the full-resolution or
 that the route withholds, and git would keep it after any later unpublish. Back
 photographs up somewhere that is not git.
 
-A local `docker build .` still picks them up, since `.dockerignore` does not exclude
-`media/`. Only a build from a clean checkout, which is what the release workflow does,
-leaves them out.
+`.dockerignore` excludes them as well, so a local `docker build .` leaves them out
+just as the release workflow's clean checkout does.
 
 ## Checks
 
@@ -204,11 +206,11 @@ If the second one fails, strip that file before committing it.
 
 Removing a file removes it from the gallery on the next request.
 
-Replacing a file **under the same name** needs more care. The response carries
-`s-maxage=604800`, so a CDN may hold the old image for up to a week. Either give the new
-file a new name, or purge that URL (for Cloudflare, see [CLOUDFLARE.md](CLOUDFLARE.md)).
-Browsers revalidate hourly and the `ETag` covers same-name edits, so this is a CDN concern
-rather than a visitor one.
+Replacing a file **under the same name** shows up on its own within about two weeks. The
+optimizer re-checks the original once its own copy is a week old (`images.minimumCacheTTL`),
+and a CDN or browser may keep the old image for up to another week. A purge cannot shorten
+the first week, because the optimizer's copy lives on the server. To publish a change
+immediately, give the file a new name, and update `coverImage` if it named the old one.
 
 ## Troubleshooting
 
@@ -219,5 +221,5 @@ rather than a visitor one.
 | One photo missing from an otherwise fine gallery | Unsupported extension (`.heic`, `.tif`, `.raw`, `.dng`), or an unreadable file. The server logs `Error reading image dimensions for …` |
 | Listing card shows a gradient instead of a photo | `coverImage` points at a path with no file, and the folder is empty |
 | Photo appears sideways | Report it. Orientation is applied server-side, so this would be a bug rather than a metadata problem |
-| Old version of a replaced photo persists | CDN cache; see [Replacing and removing](#replacing-and-removing) |
+| Old version of a replaced photo persists | Optimizer and CDN caches; see [Replacing and removing](#replacing-and-removing) |
 | `unknown frontmatter key` from `check:content` | Only the fields in the table above are recognised |
