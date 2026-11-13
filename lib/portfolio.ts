@@ -10,7 +10,7 @@ import {
   text,
   type MdxFile,
 } from './content.ts';
-import { byDateDesc } from './sort.ts';
+import { byDateDesc, byName } from './sort.ts';
 
 /**
  * MDX-driven Portfolio data layer. Three sections, each a folder of `.mdx`
@@ -164,9 +164,9 @@ const IMAGE_FILE_RE = /\.(jpe?g|png|webp|gif)$/i;
 
 /** Image filenames in a gallery's folder. */
 function listGalleryImageFiles(slug: string): string[] {
-  return listDir(path.join(mediaPhotographyDirectory, slug)).filter((file) =>
-    IMAGE_FILE_RE.test(file),
-  );
+  return listDir(path.join(mediaPhotographyDirectory, slug))
+    .filter((file) => IMAGE_FILE_RE.test(file))
+    .sort(byName);
 }
 
 /**

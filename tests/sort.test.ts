@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { byDateDesc } from '../lib/sort.ts';
+import { byDateDesc, byName } from '../lib/sort.ts';
 
 const d = (date?: string) => ({ date });
 
@@ -53,4 +53,13 @@ void test('byDateDesc sorts a mixed list', () => {
     [...items].sort(byDateDesc).map((i) => i.date),
     ['2026-12-01', '2026-4-26', '2025-06-15', undefined, 'nope'],
   );
+});
+
+void test('byName orders camera numbering the way people read it', () => {
+  assert.deepEqual(['IMG_10.jpg', 'b.jpg', 'IMG_2.jpg', 'a.jpg'].sort(byName), [
+    'a.jpg',
+    'b.jpg',
+    'IMG_2.jpg',
+    'IMG_10.jpg',
+  ]);
 });

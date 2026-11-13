@@ -88,12 +88,9 @@ with the correct content type rather than handed over as-is.
 
 ## Ordering and the cover
 
-Both the gallery order and the default cover come from the order the filesystem returns
-the directory in, which is not guaranteed to be alphabetical. In practice:
-
-- To control the cover, set `coverImage` explicitly.
-- To control the order, do not rely on it. If sequence matters to you, say so and the scan
-  can be sorted by filename.
+Photos appear in filename order, read the way people count: `IMG_2` comes before
+`IMG_10`. The default cover is the first of them. To pick a different cover, set
+`coverImage`; to change the order, rename the files.
 
 ## What happens to your photograph
 

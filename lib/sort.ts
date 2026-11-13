@@ -15,6 +15,11 @@ export function byDateDesc<T extends { date?: string }>(a: T, b: T): number {
   return ta > tb ? -1 : 1;
 }
 
+/** Filenames as a person reads them: `IMG_2` before `IMG_10`. */
+export function byName(a: string, b: string): number {
+  return a.localeCompare(b, 'en', { numeric: true });
+}
+
 function parseTime(value: string | undefined): number {
   if (value) {
     const t = Date.parse(value);
