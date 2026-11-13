@@ -32,7 +32,8 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   const url = query ? `${pathname}?${query}` : pathname;
 
   // Render-phase update: the class lands before React commits the transition.
-  const [nav, setNav] = useState({ url, cls: 'page-forward' });
+  // 'none' until the first navigation, so the transition React runs on page load doesn't zoom.
+  const [nav, setNav] = useState({ url, cls: 'none' });
   if (nav.url !== url) {
     setNav({ url, cls: transitionClass(nav.url, url) });
   }
