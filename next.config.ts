@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
     imageSizes: [256, 384],
   },
 
+  // Clients that skip <link rel="icon"> ask for these paths directly.
+  async rewrites() {
+    return [
+      { source: '/favicon.ico', destination: '/brand/icon' },
+      { source: '/apple-touch-icon.png', destination: '/brand/apple-icon' },
+    ];
+  },
+
   async headers() {
     return [
       // `s-maxage` opts these force-dynamic routes into a shared cache;
@@ -41,10 +49,11 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Each request is a full rasterize, so let browsers hold them too;
-      // their URLs are versioned (lib/site.ts `BRAND_VERSION`).
+      // Each request is a full rasterize, so let browsers hold them too. /brand/ URLs
+      // are versioned (lib/site.ts `BRAND_VERSION`); the two root aliases are not.
       {
-        source: '/brand/:path(icon|apple-icon|opengraph-image)',
+        source:
+          '/:path(brand/icon|brand/apple-icon|brand/opengraph-image|favicon\\.ico|apple-touch-icon\\.png)',
         headers: [
           {
             key: 'Cache-Control',
