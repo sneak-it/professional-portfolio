@@ -44,12 +44,8 @@ COPY --from=builder /app/media ./media
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-#
-# The standalone tree is nonroot-owned because ISR writes revalidated pages back
-# into .next/server/app, not just into .next/cache; leaving it root-owned makes
-# revalidation fail with EACCES. public/, media/, .next/static and @img below are
-# never written at runtime, so they stay root-owned and read-only to the app.
-COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone ./
+# Root-owned, so the app user cannot rewrite its own code; only .next/cache is writable.
+COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
 # Next's output tracing picks up sharp's .node addon but not the libvips shared
@@ -58,7 +54,7 @@ COPY --from=builder /app/.next/static ./.next/static
 # npm ci for the target platform).
 COPY --from=deps /app/node_modules/@img ./node_modules/@img
 
-# Next writes its ISR/fetch cache and optimized images here, and app/media its
+# Next writes its optimized images here, and app/media its
 # stripped photos. Copying the dir in with --chown means named volumes mounted
 # here (see docker-compose.yml) are initialized as nonroot-owned, not root-owned.
 COPY --from=builder --chown=nonroot:nonroot /empty-cache ./.next/cache
