@@ -20,15 +20,18 @@ jobs:
     name: Post Trivy report
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Only for CI runs triggered by a pull request.
-    if: github.event.workflow_run.event == 'pull_request'
+    # Same-repo PRs only, so the artifact always comes from code pushed with write access.
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.pull_requests[0]
     steps:
-      - name: Download Trivy report artifacts
+      - name: Download Trivy report artifact
         id: download
         uses: actions/download-artifact@v8
-        continue-on-error: true   # CI may not have produced any (e.g. build failed early)
+        continue-on-error: true   # CI may not have produced one (e.g. build failed early)
         with:
-          pattern: trivy-pr-report*   # a single report covering both image variants
+          name: trivy-pr-report
           path: trivy-artifact
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -39,76 +42,29 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const path = require('path');
-            const base = 'trivy-artifact';
-
-            // The report lands in its own subdir: trivy-artifact/trivy-pr-report/
-            // The loop below stays multi-dir tolerant in case variants ever diverge.
-            let dirs = [];
-            try {
-              dirs = fs.readdirSync(base, { withFileTypes: true })
-                .filter(d => d.isDirectory())
-                .map(d => d.name);
-            } catch (e) {
-              core.info('No artifact directory found; nothing to comment.');
-              return;
-            }
-            if (dirs.length === 0) {
-              core.info('No variant artifacts found; nothing to comment.');
-              return;
-            }
-
-            const read = (dir, f) => {
-              try { return fs.readFileSync(path.join(base, dir, f), 'utf8').trim(); } catch (e) { return ''; }
+            const read = (f) => {
+              try { return fs.readFileSync(`trivy-artifact/${f}`, 'utf8').trim(); } catch (e) { return ''; }
             };
 
-            // PR number is identical across variants; take the first available.
-            let issue_number;
-            for (const d of dirs) {
-              const n = parseInt(read(d, 'pr-number.txt'), 10);
-              if (Number.isInteger(n)) { issue_number = n; break; }
-            }
-            if (!Number.isInteger(issue_number)) {
-              core.info('No PR number in artifacts; nothing to comment.');
-              return;
-            }
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.workflow_run.pull_requests[0].number;
 
             const LIMIT = 55000;
-            const variants = dirs
-              .map(d => ({ name: d.replace(/^trivy-pr-report-?/, ''), dir: d }))
-              .sort((a, b) => a.name.localeCompare(b.name));
-            // With one report there is no variant name to show; only label sections
-            // when more than one artifact turns up.
-            const multi = variants.length > 1;
-
-            let anyFailure = false;
-            const sections = variants.map(v => {
-              const outcome = read(v.dir, 'trivy-outcome.txt');
-              const report = read(v.dir, 'trivy-report.txt');
-              const failed = outcome === 'failure';
-              if (failed) anyFailure = true;
-              const status = failed ? '❌ HIGH/CRITICAL findings' : '✅ no HIGH/CRITICAL findings';
-              const block = !report
-                ? '_No report output was produced._'
-                : (report.length > LIMIT
-                    ? report.slice(0, LIMIT) + '\n... (truncated; see the CI run summary for the full report)'
-                    : report);
-              const body = report
-                ? `<details><summary>Full report</summary>\n\n\`\`\`\n${block}\n\`\`\`\n\n</details>`
-                : block;
-              const heading = multi
-                ? `#### \`${v.name}\` image — ${status}`
-                : `#### ${status}\n\nCovers both the root and \`-nonroot\` variants. They share identical layers, so one scan covers both.`;
-              return `${heading}\n\n${body}`;
-            });
+            const failed = read('trivy-outcome.txt') === 'failure';
+            const report = read('trivy-report.txt');
+            const status = failed ? '❌ HIGH/CRITICAL findings' : '✅ no HIGH/CRITICAL findings';
+            const block = report.length > LIMIT
+              ? report.slice(0, LIMIT) + '\n... (truncated; see the CI run summary for the full report)'
+              : report;
+            // A fence longer than any backtick run, so vulnerability titles cannot close it.
+            const fence = '`'.repeat(Math.max(3, ...(block.match(/`+/g) || []).map(s => s.length + 1)));
+            const details = report
+              ? `<details><summary>Full report</summary>\n\n${fence}\n${block}\n${fence}\n\n</details>`
+              : '_No report output was produced._';
 
             const marker = '<!-- trivy-image-scan -->';
-            const heading = anyFailure
-              ? '### 🛡️ Trivy image scan — ❌ HIGH/CRITICAL findings'
-              : '### 🛡️ Trivy image scan — ✅ no HIGH/CRITICAL findings';
-            const body = `${marker}\n${heading}\n\n${sections.join('\n\n')}`;
+            const body = `${marker}\n### 🛡️ Trivy image scan — ${status}\n\n${details}`;
 
-            const { owner, repo } = context.repo;
             const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number });
             const existing = comments.find(c => c.body && c.body.includes(marker));
             if (existing) {

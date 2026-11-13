@@ -82,4 +82,3 @@ jobs:
           registry-username: ${{ github.actor }}
           registry-password: ${{ secrets.GITHUB_TOKEN }}
           upload-artifact: ${{ github.event_name == 'pull_request' }}
-          pr-number: ${{ github.event.pull_request.number }}

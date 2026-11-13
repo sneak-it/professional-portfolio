@@ -17,14 +17,6 @@ inputs:
     description: 'Set to "true" to upload the report for the Trivy PR Comment workflow.'
     required: false
     default: 'false'
-  artifact-name:
-    description: 'Artifact name. Must stay within the pattern trivy-pr-comment.yml downloads.'
-    required: false
-    default: 'trivy-pr-report'
-  pr-number:
-    description: 'PR number to write into the artifact. Required when upload-artifact is true.'
-    required: false
-    default: ''
 
 runs:
   using: composite
@@ -85,20 +77,16 @@ runs:
       if: always() && inputs.upload-artifact == 'true'
       shell: bash
       env:
-        PR_NUMBER: ${{ inputs.pr-number }}
         TRIVY_OUTCOME: ${{ steps.trivy.outcome }}
-      run: |
-        printf '%s\n' "$PR_NUMBER" > pr-number.txt
-        printf '%s\n' "$TRIVY_OUTCOME" > trivy-outcome.txt
+      run: printf '%s\n' "$TRIVY_OUTCOME" > trivy-outcome.txt
 
     - name: Upload Trivy PR artifact
       if: always() && inputs.upload-artifact == 'true'
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ inputs.artifact-name }}
+        name: trivy-pr-report
         path: |
           trivy-report.txt
-          pr-number.txt
           trivy-outcome.txt
         if-no-files-found: warn
         retention-days: 1
