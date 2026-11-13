@@ -13,7 +13,12 @@ const DEFAULT_URL = 'http://localhost:3000';
  */
 export function siteUrl(raw = process.env.SITE_URL): string {
   const trimmed = raw?.trim();
-  if (!trimmed) return DEFAULT_URL;
+  if (!trimmed) {
+    console.warn(
+      `SITE_URL unset; canonical, share, sitemap, and feed URLs use ${DEFAULT_URL}.`,
+    );
+    return DEFAULT_URL;
+  }
 
   const protocol = URL.parse(trimmed)?.protocol;
   if (protocol === 'http:' || protocol === 'https:') {
