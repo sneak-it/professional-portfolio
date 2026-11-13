@@ -3,6 +3,39 @@
 Docker is the recommended way to run this site. The build uses Next.js standalone
 output on a distroless base (no shell, no package manager).
 
+## Reverse proxy
+
+The compose file publishes no port. A reverse proxy (Caddy, nginx, Traefik) terminates
+TLS and forwards plain HTTP to port 3000. Put one of the wirings below in a
+`docker-compose.override.yml` beside `docker-compose.yml`; Compose merges it on
+`docker compose up`, so the shipped file stays untouched.
+
+**Proxy in a container.** Join the proxy's Docker network, then target
+`http://professional-portfolio:3000`. Replace `proxy` with your network's name.
+
+```yaml
+services:
+  portfolio:
+    networks: [proxy]
+networks:
+  proxy:
+    external: true
+```
+
+**Proxy on the host.** Publish the port on loopback only, then target
+`http://127.0.0.1:3000`. Docker's published ports bypass host firewalls such as ufw,
+so binding `127.0.0.1` is what keeps the site off the public interface.
+
+```yaml
+services:
+  portfolio:
+    ports:
+      - "127.0.0.1:3000:3000"
+```
+
+For a quick local look without a proxy, use the `docker run -p 3000:3000` command under
+[Building manually](#building-manually).
+
 ## Image variants
 
 Two variants are published from the same layers:

@@ -18,8 +18,8 @@ A modern, highly polished personal portfolio/blog. This is aimed at self-hosters
 1. Copy `docker-compose.yml` and `.env.example` from this repository, then
    `cp .env.example .env` and edit the values you care about.
 2. `mkdir -p ./content ./media/portfolio/photography`
-3. `docker compose up -d`
-4. Open http://localhost:3000
+3. **Recommended:** Connect your reverse proxy as described in [DOCKER.md](DOCKER.md#reverse-proxy).
+4. `docker compose up -d`
 
 Compose mounts those two paths read-only, so blog posts, projects, and photographs added
 there are served immediately with no rebuild. Make them yourself as in step 2: Docker
