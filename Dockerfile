@@ -29,7 +29,7 @@ RUN npm run build && rm -f .next/standalone/.env .next/standalone/.env.productio
 
 # Stage 3: Non-root production image (distroless)
 
-FROM gcr.io/distroless/nodejs26-debian13:latest AS production-nonroot
+FROM gcr.io/distroless/nodejs26-debian13:latest AS production
 
 WORKDIR /app
 
@@ -78,11 +78,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 # node is the ENTRYPOINT in the distroless image; pass the server bundle as its argument
 CMD ["server.js"]
-
-# Stage 4: Root production image (default)
-# Identical layers to the non-root image above, but runs as root. Root is the
-# default because it is the last stage, so a plain `docker build .` produces it;
-# the non-root image is the hardened variant, published as :<tag>-nonroot.
-FROM production-nonroot AS production
-
-USER root

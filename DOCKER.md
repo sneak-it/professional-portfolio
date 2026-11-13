@@ -36,30 +36,17 @@ services:
 For a quick local look without a proxy, use the `docker run -p 3000:3000` command under
 [Building manually](#building-manually).
 
-## Image variants
+## Image
 
-Two variants are published from the same layers:
-
-| Tag | User | Notes |
-| --- | --- | --- |
-| `:latest-nonroot`, `:<version>-nonroot`, `:dev-nonroot` | `nonroot` (uid 65532) | What `docker-compose.yml` runs. |
-| `:latest`, `:<version>`, `:dev` | root (uid 0) | What a plain `docker build .` produces. |
-
-Use the non-root variant with the shipped compose file. `cap_drop: ALL` strips
-`DAC_OVERRIDE` from root as well, so root cannot write the cache volumes (owned by
-uid 65532): every image request is optimized and every photo decoded again, and the
-log fills with `EACCES` and `[media] cannot cache`. Uid 65532 reads the mounts
-through their world-read bits, which a default umask sets. If a tree genuinely is
-unreadable, the site renders empty and logs
+`:latest` and `:<version>` are releases; `:dev` follows `main`. The image runs as
+`nonroot` (uid 65532) and reads the mounts through their world-read bits, which a
+default umask sets. If a tree genuinely is unreadable, the site renders empty and logs
 `Cannot read content dir "<path>"`. Fix with `chmod -R a+rX content media`.
 
 ## Building manually
 
-Pass `--target production-nonroot` for the image compose runs; without it you
-get the root variant.
-
 ```bash
-docker build --target production-nonroot -t portfolio-app .
+docker build -t portfolio-app .
 docker run -p 3000:3000 \
   -e SITE_URL=https://your-domain \
   -v "$(pwd)/content:/app/content:ro" \

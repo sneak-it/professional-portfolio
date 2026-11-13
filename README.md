@@ -58,7 +58,7 @@ optional, a missing or misplaced `.env` is not an error: the container logs
 
 Non-integer or non-positive values for the tuning variables fall back to the default.
 
-Image variants, manual builds, caching, and what cannot be changed without a rebuild:
+Image tags, manual builds, caching, and what cannot be changed without a rebuild:
 [DOCKER.md](DOCKER.md). Behind Cloudflare, also read [CLOUDFLARE.md](CLOUDFLARE.md).
 
 ## Running locally

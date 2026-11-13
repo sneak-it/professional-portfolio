@@ -1,6 +1,6 @@
 services:
   portfolio:
-    image: ghcr.io/sneak-it/professional-portfolio:latest-nonroot
+    image: ghcr.io/sneak-it/professional-portfolio:latest
     container_name: professional-portfolio
     environment:
       - NODE_ENV=production

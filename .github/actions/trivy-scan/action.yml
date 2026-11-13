@@ -5,10 +5,6 @@ inputs:
   image-ref:
     description: 'Image to scan. A locally loaded tag on PRs, a registry digest on main.'
     required: true
-  covers:
-    description: 'Human-readable note about which published variants this scan applies to.'
-    required: false
-    default: 'both the root and nonroot variants. They share identical layers, so one scan covers both.'
   registry-username:
     description: 'Registry user for pulling the scanned image and the Trivy DB.'
     required: false
@@ -78,8 +74,6 @@ runs:
       run: |
         {
           echo "### 🛡️ Trivy image scan"
-          echo ""
-          echo "Covers ${{ inputs.covers }}"
           echo ""
           echo '```'
           cat trivy-report.txt 2>/dev/null || echo 'No report produced.'
