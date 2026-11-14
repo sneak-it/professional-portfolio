@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { m, AnimatePresence } from 'motion/react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -8,7 +8,6 @@ import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
-import { useFocusTrap } from '@/hooks/use-focus-trap';
 import type { GalleryItem } from '@/lib/portfolio';
 
 export default function GalleryView({
@@ -20,7 +19,7 @@ export default function GalleryView({
 }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const isOpen = selectedIndex !== null;
-  const dialogRef = useFocusTrap<HTMLDivElement>(isOpen);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   const close = useCallback(() => {
     setSelectedIndex(null);
@@ -34,25 +33,10 @@ export default function GalleryView({
     setSelectedIndex((i) => (i === null ? i : (i + 1) % gallery.images.length));
   }, [gallery.images.length]);
 
+  // Closed in onExitComplete, after the fade, which returns focus to the photo.
   useEffect(() => {
-    if (!isOpen) return;
-
-    // Lock the page behind the dialog, restoring the previous value so a
-    // nested overlay leaves the body as it found it.
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
-      else if (e.key === 'ArrowLeft') showPrev();
-      else if (e.key === 'ArrowRight') showNext();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen, close, showPrev, showNext]);
+    if (isOpen && !dialogRef.current?.open) dialogRef.current?.showModal();
+  }, [isOpen]);
 
   const selected =
     selectedIndex !== null ? gallery.images[selectedIndex] : null;
@@ -98,80 +82,91 @@ export default function GalleryView({
         ))}
       </div>
 
-      {/* Lightbox */}
-      <AnimatePresence>
-        {selected && (
-          <m.div
-            ref={dialogRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label={`Image viewer: ${selected.alt}`}
-            tabIndex={-1}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
-            onClick={close}
-          >
-            <button
-              type="button"
-              className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors z-50"
-              onClick={close}
-              aria-label="Close image viewer"
-            >
-              <X size={32} />
-            </button>
-
-            {gallery.images.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-50 p-2 rounded-full bg-white/10 hover:bg-white/20"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    showPrev();
-                  }}
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft size={28} />
-                </button>
-                <button
-                  type="button"
-                  className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-50 p-2 rounded-full bg-white/10 hover:bg-white/20"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    showNext();
-                  }}
-                  aria-label="Next image"
-                >
-                  <ChevronRight size={28} />
-                </button>
-              </>
-            )}
-
+      {/* Lightbox. Escape goes through close() so it fades like the button; a
+          close the page can't cancel still clears the selection. */}
+      <dialog
+        ref={dialogRef}
+        aria-label={selected ? `Image viewer: ${selected.alt}` : undefined}
+        onCancel={(e) => {
+          e.preventDefault();
+          close();
+        }}
+        onClose={close}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowLeft') showPrev();
+          else if (e.key === 'ArrowRight') showNext();
+        }}
+        className="h-full max-h-none w-full max-w-none bg-transparent backdrop:bg-transparent"
+      >
+        <AnimatePresence onExitComplete={() => dialogRef.current?.close()}>
+          {selected && (
             <m.div
-              key={selected.id}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative max-w-5xl max-h-[90vh] w-full h-full"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 flex items-center justify-center bg-black/90 p-4"
+              onClick={close}
             >
-              <Image
-                src={selected.src}
-                alt={selected.alt}
-                fill
-                sizes="100vw"
-                className="object-contain"
-                referrerPolicy="no-referrer"
-              />
+              <button
+                type="button"
+                className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors z-50"
+                onClick={close}
+                aria-label="Close image viewer"
+              >
+                <X size={32} />
+              </button>
+
+              {gallery.images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-50 p-2 rounded-full bg-white/10 hover:bg-white/20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      showPrev();
+                    }}
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft size={28} />
+                  </button>
+                  <button
+                    type="button"
+                    className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-50 p-2 rounded-full bg-white/10 hover:bg-white/20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      showNext();
+                    }}
+                    aria-label="Next image"
+                  >
+                    <ChevronRight size={28} />
+                  </button>
+                </>
+              )}
+
+              <m.div
+                key={selected.id}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="relative max-w-5xl max-h-[90vh] w-full h-full"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <Image
+                  src={selected.src}
+                  alt={selected.alt}
+                  fill
+                  sizes="100vw"
+                  className="object-contain"
+                  referrerPolicy="no-referrer"
+                />
+              </m.div>
             </m.div>
-          </m.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
+      </dialog>
     </Container>
   );
 }

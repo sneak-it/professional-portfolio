@@ -341,6 +341,11 @@
   }
 }
 
+/* The page behind a modal dialog doesn't scroll. */
+html:has(dialog:modal) {
+  overflow: hidden;
+}
+
 /* Keyboard focus ring, in base so an element's own radius beats the 3px. */
 @layer base {
   :focus-visible {

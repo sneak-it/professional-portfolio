@@ -13,7 +13,6 @@ import { m, AnimatePresence } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { navLinks as links } from '@/lib/nav';
-import { useFocusTrap } from '@/hooks/use-focus-trap';
 
 // useLayoutEffect warns during SSR; fall back to useEffect on the server.
 const useIsomorphicLayoutEffect =
@@ -115,15 +114,15 @@ export default function Navbar({ monogram }: { monogram: string }) {
     };
   }, []);
 
-  // Moves focus into the panel on open and back to the trigger on close, and
-  // keeps Tab inside it while open.
-  const mobileMenuRef = useFocusTrap<HTMLDivElement>(isOpen);
-
-  // Close the mobile menu on Escape.
+  // A show/hide panel, not a modal: Tab flows from the button through the
+  // links. Escape closes it and puts focus back on the button.
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!isOpen) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
+      if (e.key !== 'Escape') return;
+      setIsOpen(false);
+      menuButtonRef.current?.focus();
     };
     window.addEventListener('keydown', onKeyDown);
     return () => {
@@ -226,6 +225,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
           <div className="md:hidden flex items-center space-x-4">
             <ThemeToggle />
             <button
+              ref={menuButtonRef}
               className="p-2 text-gray-600 dark:text-gray-300"
               onClick={() => {
                 setIsOpen(!isOpen);
@@ -246,7 +246,6 @@ export default function Navbar({ monogram }: { monogram: string }) {
       <AnimatePresence>
         {isOpen && (
           <m.div
-            ref={mobileMenuRef}
             id="mobile-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
