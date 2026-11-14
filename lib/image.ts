@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
-import { IMAGE_DIMENSION_CACHE_MAX } from './config.ts';
 
 /**
  * Server-only: same-origin src validation, `media/` containment, and a
@@ -40,6 +39,8 @@ const dimensionCache = new Map<
   string,
   { mtimeMs: number; width: number; height: number }
 >();
+// About 0.4 MB when full.
+const DIMENSION_CACHE_MAX = 2000;
 
 interface Size {
   width: number;
@@ -65,7 +66,7 @@ export async function imageDimensions(imagePath: string): Promise<Size> {
 
   // Insertion-ordered eviction: a long-lived container serving a bind-mounted,
   // editable tree would otherwise grow this Map for every path ever requested.
-  if (dimensionCache.size >= IMAGE_DIMENSION_CACHE_MAX) {
+  if (dimensionCache.size >= DIMENSION_CACHE_MAX) {
     const oldest = dimensionCache.keys().next().value;
     if (oldest !== undefined) dimensionCache.delete(oldest);
   }

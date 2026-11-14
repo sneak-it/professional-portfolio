@@ -53,9 +53,8 @@ optional, a missing or misplaced `.env` is not an error: the container logs
 | `SITE_EMAIL` | Contact email. Unset omits the contact card. | unset |
 | `CONTENT_DIR` | Content tree to serve when running from source, absolute or relative to the working directory. Leave unset under Docker and mount over `/app/content` instead. | `./content` |
 | `BLOG_POSTS_PER_PAGE` | Posts per page on `/blog`. | `3` |
-| `IMAGE_DIMENSION_CACHE_MAX` | Entries in the image dimension cache, one per distinct image path rendered. | `2000` |
 
-Non-integer or non-positive values for the tuning variables fall back to the default.
+A non-integer or non-positive `BLOG_POSTS_PER_PAGE` falls back to the default.
 
 Image tags, manual builds, caching, and what cannot be changed without a rebuild:
 [DOCKER.md](DOCKER.md).

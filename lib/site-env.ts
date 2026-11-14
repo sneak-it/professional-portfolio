@@ -1,6 +1,6 @@
 /**
  * Env parsing for lib/site.ts, split out so `node --test` reaches it past that
- * module's `server-only` guard. Same reasoning as lib/config.ts.
+ * module's `server-only` guard.
  */
 import { createHash } from 'node:crypto';
 
