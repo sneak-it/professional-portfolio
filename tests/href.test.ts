@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { inspect } from 'node:util';
-import { isSafeHref } from '../lib/href.ts';
+import { isExternalHref, isSafeHref } from '../lib/href.ts';
 
 // The scheme allowlist behind SafeLink. The obfuscation cases are the point.
 
@@ -80,4 +80,26 @@ void test('isSafeHref treats a percent-encoded scheme as a relative path', () =>
 // `^https?://`, so no target="_blank", but rel is applied unconditionally.
 void test('isSafeHref allows protocol-relative hrefs', () => {
   assert.equal(isSafeHref('//example.com/x'), true);
+});
+
+void test('isExternalHref sees through spellings that leave the site', () => {
+  for (const href of [
+    'https://a.com',
+    'HTTP://a.com',
+    '//a.com',
+    '/\\a.com',
+    '/\t/a.com',
+  ]) {
+    assert.equal(isExternalHref(href), true, JSON.stringify(href));
+  }
+  for (const href of [
+    '/about',
+    '/blog#x',
+    '#section',
+    '?page=2',
+    'about',
+    'mailto:a@b.c',
+  ]) {
+    assert.equal(isExternalHref(href), false, JSON.stringify(href));
+  }
 });

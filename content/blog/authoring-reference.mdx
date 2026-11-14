@@ -61,9 +61,10 @@ so this sentence starts on its own line inside the same paragraph.
 - Bare autolinks: https://nextjs.org, www.typescriptlang.org, hello@example.com
 - Blocked scheme: [this one](javascript:alert(1)) renders as text with no link
 
-Every link is rewritten to carry `rel="noopener noreferrer nofollow ugc"`, and
-only `http`, `https`, and `mailto` survive. Fragments stay in the tab, so a
-[jump to the tables below](#tables) behaves normally.
+External links carry `rel="noopener noreferrer"`; links to this site's own pages
+navigate in place, with no full reload. Only `http`, `https`, and `mailto`
+survive. Fragments stay in the tab, so a [jump to the tables below](#tables)
+behaves normally.
 
 ## Images
 

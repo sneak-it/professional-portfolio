@@ -1,5 +1,6 @@
 import type { ComponentPropsWithoutRef, ReactElement } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import { Info, Lightbulb, TriangleAlert } from 'lucide-react';
@@ -16,7 +17,7 @@ import Stats, { Stat } from '@/components/Stats';
 import Surface from '@/components/Surface';
 import Timeline, { Milestone } from '@/components/Timeline';
 import { imageDimensions, isLocalSrc, mediaFilePath } from '@/lib/image';
-import { isSafeHref } from '@/lib/href';
+import { isExternalHref, isSafeHref } from '@/lib/href';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
 import { rehypeHighlight } from '@/lib/highlight';
 import { rehypeHeadingIds } from '@/lib/markdown';
@@ -37,16 +38,23 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   // A blocked scheme renders as the link text alone.
   if (!isSafeHref(href)) return <>{children}</>;
 
-  const isExternal = /^https?:\/\//i.test(href);
-
   // `rest` first: authored MDX attributes must not override the hardening below.
+  if (isExternalHref(href)) {
+    return (
+      <a {...rest} href={href} rel="noopener noreferrer" target="_blank">
+        {children}
+      </a>
+    );
+  }
+  if (href.startsWith('/')) {
+    return (
+      <Link {...rest} href={href}>
+        {children}
+      </Link>
+    );
+  }
   return (
-    <a
-      {...rest}
-      href={href}
-      rel="noopener noreferrer nofollow ugc"
-      {...(isExternal ? { target: '_blank' } : {})}
-    >
+    <a {...rest} href={href}>
       {children}
     </a>
   );
