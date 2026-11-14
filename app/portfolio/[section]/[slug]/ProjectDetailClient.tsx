@@ -15,7 +15,8 @@ export default function ProjectDetailClient({
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
+      {/* A lone card (no cover, or only one of features and challenges) spans both columns. */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16 [&>:only-child]:col-span-full">
         <div className="enter-up">
           <Surface padding="lg">
             <span className="text-accent-text font-medium font-mono uppercase tracking-wider text-sm mb-4 block">
@@ -24,7 +25,7 @@ export default function ProjectDetailClient({
             <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
               {project.title}
             </h1>
-            <p className="text-lg text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
+            <p className="max-w-measure text-lg text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
               {project.description}
             </p>
 
@@ -92,7 +93,7 @@ export default function ProjectDetailClient({
       </div>
 
       {(features.length > 0 || project.challenges) && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 [&>:only-child]:col-span-full">
           {features.length > 0 && (
             <div className="enter-up">
               <Surface padding="md">
@@ -121,7 +122,7 @@ export default function ProjectDetailClient({
                 <h2 className="text-2xl font-bold mb-6">
                   Challenges & Solutions
                 </h2>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p className="max-w-measure text-gray-700 dark:text-gray-300 leading-relaxed">
                   {project.challenges}
                 </p>
               </Surface>
