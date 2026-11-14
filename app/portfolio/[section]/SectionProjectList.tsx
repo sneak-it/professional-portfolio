@@ -35,14 +35,14 @@ export default function SectionProjectList({
               <div
                 key={project.slug}
                 style={{ animationDelay: `${index * 50}ms` }}
-                className="enter-up group flex flex-col bg-white dark:bg-[#111] rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10 shadow-sm hover:shadow-xl transition-all"
+                className="enter-up group flex flex-col card-surface overflow-hidden hover:border-accent/50 transition-colors"
               >
                 {/* Same target as the title link below: one Tab stop per card. */}
                 <Link
                   href={`/portfolio/${project.section}/${project.slug}`}
                   aria-hidden
                   tabIndex={-1}
-                  className="relative aspect-[4/3] overflow-hidden block"
+                  className="relative photo-edge aspect-[4/3] overflow-hidden block"
                 >
                   <CoverImage
                     src={project.coverImage}
@@ -87,7 +87,7 @@ export default function SectionProjectList({
                       {project.title}
                     </Link>
                   </h2>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">
+                  <p className="text-gray-700 dark:text-gray-300 text-sm mb-6 flex-grow">
                     {project.description}
                   </p>
 
@@ -96,7 +96,7 @@ export default function SectionProjectList({
                       {tech.map((t) => (
                         <span
                           key={t}
-                          className="text-xs font-medium px-2.5 py-1 bg-gray-100 dark:bg-white/10 rounded-md text-gray-600 dark:text-gray-300"
+                          className="text-xs font-medium px-2.5 py-1 bg-gray-100 dark:bg-white/10 rounded-md text-gray-700 dark:text-gray-300"
                         >
                           {t}
                         </span>

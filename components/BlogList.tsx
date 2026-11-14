@@ -107,7 +107,7 @@ export default function BlogList({
             style={{ animationDelay: `${index * 100}ms` }}
             className="enter-up group relative flex flex-col md:flex-row gap-8 items-start card-surface p-6 hover:border-accent/50 transition-colors"
           >
-            <div className="w-full md:w-2/5 aspect-video md:aspect-square lg:aspect-[4/3] relative rounded-2xl overflow-hidden shrink-0">
+            <div className="w-full md:w-2/5 aspect-video md:aspect-square lg:aspect-[4/3] relative photo-edge rounded-2xl overflow-hidden shrink-0">
               <CoverImage
                 src={post.meta.image}
                 alt=""
@@ -131,7 +131,7 @@ export default function BlogList({
                 </Link>
               </h2>
 
-              <p className="text-gray-600 dark:text-gray-400 mb-6 line-clamp-3">
+              <p className="text-gray-700 dark:text-gray-300 mb-6 line-clamp-3">
                 {post.meta.excerpt}
               </p>
 

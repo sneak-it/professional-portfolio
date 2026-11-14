@@ -31,7 +31,7 @@ export function Stat({
 }) {
   return (
     <div className="card-surface flex flex-col p-6">
-      <dt className="mt-1 text-gray-600 dark:text-gray-300">{label}</dt>
+      <dt className="mt-1 text-gray-700 dark:text-gray-300">{label}</dt>
       <dd className="order-first text-4xl font-semibold tracking-tight text-gray-900 dark:text-white">
         {value}
       </dd>

@@ -61,20 +61,20 @@ function StaticGradient() {
       className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-background-deep"
     >
       {/* Soft accent tint on the calm side, matching the shader's ambient
-          wash. */}
+          wash: dark mode only. */}
       <div
-        className="absolute inset-0 opacity-[0.16] dark:opacity-[0.18]"
+        className="absolute inset-0 hidden opacity-[0.18] dark:block"
         style={{
           background:
             'linear-gradient(110deg, var(--accent-from) 0%, var(--accent-via) 22%, transparent 50%)',
         }}
       />
-      {/* Gradient concentrated on the right to match the animated shader. */}
+      {/* Gradient concentrated on the right, in the shader's line colors. */}
       <div
-        className="absolute inset-0 opacity-60 dark:opacity-50"
+        className="absolute inset-0 opacity-30 dark:opacity-50"
         style={{
           background:
-            'radial-gradient(70% 90% at 100% 18%, var(--accent-to), transparent 60%), radial-gradient(60% 80% at 92% 85%, var(--accent-via), transparent 60%), radial-gradient(55% 70% at 80% 50%, var(--accent-from), transparent 65%)',
+            'radial-gradient(70% 90% at 100% 18%, var(--accent-to-text), transparent 60%), radial-gradient(60% 80% at 92% 85%, var(--accent-via-text), transparent 60%), radial-gradient(55% 70% at 80% 50%, var(--accent-from-text), transparent 65%)',
         }}
       />
       {/* Vignette keeps text legible — matches the shader wrapper. */}

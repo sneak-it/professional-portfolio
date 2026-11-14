@@ -56,7 +56,7 @@ export default function BlogPostContent({
             />
           </div>
 
-          <div className="relative aspect-video rounded-3xl overflow-hidden mb-10">
+          <div className="relative photo-edge aspect-video rounded-3xl overflow-hidden mb-10">
             <CoverImage
               src={post.meta.image}
               alt=""

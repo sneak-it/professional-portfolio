@@ -24,7 +24,7 @@ export default function ProjectDetailClient({
             <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
               {project.title}
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+            <p className="text-lg text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
               {project.description}
             </p>
 
@@ -76,7 +76,7 @@ export default function ProjectDetailClient({
         {project.coverImage && (
           <div
             style={{ animationDelay: '200ms' }}
-            className="enter-up relative aspect-square lg:aspect-auto lg:h-full rounded-3xl overflow-hidden shadow-2xl"
+            className="enter-up relative photo-edge aspect-square lg:aspect-auto lg:h-full rounded-3xl overflow-hidden shadow-2xl"
           >
             <Image
               src={project.coverImage}
@@ -101,7 +101,7 @@ export default function ProjectDetailClient({
                   {features.map((feature, index) => (
                     <li
                       key={index}
-                      className="flex items-start gap-3 text-gray-600 dark:text-gray-400"
+                      className="flex items-start gap-3 text-gray-700 dark:text-gray-300"
                     >
                       <CheckCircle2
                         className="text-accent shrink-0 mt-1"
@@ -121,7 +121,7 @@ export default function ProjectDetailClient({
                 <h2 className="text-2xl font-bold mb-6">
                   Challenges & Solutions
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   {project.challenges}
                 </p>
               </Surface>

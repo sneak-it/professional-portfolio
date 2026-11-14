@@ -4,8 +4,8 @@ import { useEffect, useRef } from 'react';
 import { Renderer, Triangle, Program, Mesh } from 'ogl';
 
 /* Animated topographic contour field: iso-lines of a drifting noise height
-   field, thicker every 5th line, tinted by elevation from --accent-from/via/to
-   (re-read on theme change).
+   field, thicker every 5th line, tinted by elevation from
+   --accent-from/via/to-text (re-read on theme change).
 
    Mounted only on the `full` motion tier and lazy-loaded, so OGL stays off
    mobile and out of first paint (see components/BackgroundCanvas.tsx). Budget:
@@ -142,16 +142,18 @@ const fragment = /* glsl */ `#version 300 es
 
     // Right-side emphasis; faint on the left so centred text stays readable.
     float side = mix(0.14, 1.0, smoothstep(0.30, 0.85, vUv.x));
-    float lineAmt = lines * side * uIntensity;
+    // A tint on a light base shows less than light added to a dark one, so
+    // light mode lifts the calm strength (0.38 -> 0.62); home stays at 1.
+    float lineAmt = lines * side * mix(sqrt(uIntensity), uIntensity, uDark);
 
     // Composed opaquely in-shader, so every layer is dithered together. Dark
     // mode ADDS the accent over the base; light mode TINTS the base toward it.
     vec3 col = uBg;
 
-    // Ambient accent wash on the left.
+    // Left-side accent wash, dark mode only; a light base turns it to haze.
     float washX = 1.0 - smoothstep(0.0, 0.55, vUv.x);
     vec3 washCol = mix(uColorA, uColorB, 0.35);
-    col = mix(mix(col, washCol, washX * 0.12), col + washCol * washX * 0.20, uDark);
+    col += washCol * washX * 0.20 * uDark;
 
     // Contour lines.
     col = mix(mix(col, lineCol, lineAmt), col + lineCol * lineAmt, uDark);
@@ -217,9 +219,15 @@ export default function ShaderGradient({
     gl.canvas.style.height = '100%';
     container.appendChild(gl.canvas);
 
-    const colorA = { value: hexToRgb01(readVar('--accent-from', '#14b87a')) };
-    const colorB = { value: hexToRgb01(readVar('--accent-via', '#0ea5a4')) };
-    const colorC = { value: hexToRgb01(readVar('--accent-to', '#4f7cff')) };
+    const colorA = {
+      value: hexToRgb01(readVar('--accent-from-text', '#14b87a')),
+    };
+    const colorB = {
+      value: hexToRgb01(readVar('--accent-via-text', '#0ea5a4')),
+    };
+    const colorC = {
+      value: hexToRgb01(readVar('--accent-to-text', '#4f7cff')),
+    };
     const dark = {
       value: document.documentElement.classList.contains('dark') ? 1 : 0,
     };
@@ -265,9 +273,9 @@ export default function ShaderGradient({
 
     // Re-read palette on theme toggle so the field follows the tokens.
     const refreshTheme = () => {
-      colorA.value = hexToRgb01(readVar('--accent-from', '#14b87a'));
-      colorB.value = hexToRgb01(readVar('--accent-via', '#0ea5a4'));
-      colorC.value = hexToRgb01(readVar('--accent-to', '#4f7cff'));
+      colorA.value = hexToRgb01(readVar('--accent-from-text', '#14b87a'));
+      colorB.value = hexToRgb01(readVar('--accent-via-text', '#0ea5a4'));
+      colorC.value = hexToRgb01(readVar('--accent-to-text', '#4f7cff'));
       dark.value = document.documentElement.classList.contains('dark') ? 1 : 0;
       bg.value = hexToRgb01(readVar('--background-deep', '#050505'));
       draw();

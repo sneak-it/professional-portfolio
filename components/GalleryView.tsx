@@ -77,7 +77,7 @@ export default function GalleryView({
             type="button"
             key={image.id}
             style={{ animationDelay: `${(index % 5) * 100}ms` }}
-            className="enter-up block w-full break-inside-avoid relative group cursor-pointer rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-900"
+            className="enter-up block w-full break-inside-avoid relative photo-edge group cursor-pointer rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-900"
             onClick={() => {
               setSelectedIndex(index);
             }}

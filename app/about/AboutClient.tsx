@@ -69,7 +69,7 @@ export default function AboutClient({
     <Container>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         <div className="enter-up">
-          <div className="relative aspect-square max-w-md mx-auto lg:mx-0 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="relative photo-edge aspect-square max-w-md mx-auto lg:mx-0 rounded-3xl overflow-hidden shadow-2xl">
             <CoverImage
               src={avatarUrl}
               alt={`Portrait of ${name}`}
@@ -85,7 +85,7 @@ export default function AboutClient({
             <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
               About Me
             </h1>
-            <div className="space-y-4 text-lg text-gray-600 dark:text-gray-300">
+            <div className="space-y-4 text-lg text-gray-700 dark:text-gray-300">
               {children}
             </div>
 
@@ -183,7 +183,7 @@ export default function AboutClient({
                 <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
                   {interest.name}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   {interest.blurb}
                 </p>
               </div>

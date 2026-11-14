@@ -38,7 +38,7 @@ export default function ContactClient({
             <a
               style={{ animationDelay: '100ms' }}
               href={`mailto:${email}`}
-              className="enter-up group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
+              className="enter-up group flex flex-col items-center p-8 card-surface transition-colors duration-300 hover:border-accent"
             >
               <IconBadge
                 color="primary"
@@ -50,7 +50,7 @@ export default function ContactClient({
               <h2 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent-text">
                 Email
               </h2>
-              <span className="text-gray-600 dark:text-gray-400 transition-colors group-hover:text-accent-text break-all">
+              <span className="text-gray-700 dark:text-gray-300 transition-colors group-hover:text-accent-text break-all">
                 {email}
               </span>
             </a>
@@ -62,7 +62,7 @@ export default function ContactClient({
               href={linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="enter-up group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 transition-all duration-300 hover:shadow-xl hover:bg-white dark:hover:bg-[#1a1a1a] hover:border-accent dark:hover:border-accent"
+              className="enter-up group flex flex-col items-center p-8 card-surface transition-colors duration-300 hover:border-accent"
             >
               <IconBadge
                 color="primary"
@@ -74,7 +74,7 @@ export default function ContactClient({
               <h2 className="text-xl font-bold mb-2 transition-colors group-hover:text-accent-text">
                 LinkedIn
               </h2>
-              <span className="text-gray-600 dark:text-gray-400 transition-colors group-hover:text-accent-text">
+              <span className="text-gray-700 dark:text-gray-300 transition-colors group-hover:text-accent-text">
                 Connect with me
               </span>
             </a>
@@ -83,7 +83,7 @@ export default function ContactClient({
           <div
             style={{ animationDelay: '300ms' }}
             onPointerMove={moveSpotlight}
-            className="enter-up group flex flex-col items-center p-8 bg-gray-50 dark:bg-[#111] rounded-3xl border border-gray-100 dark:border-white/10 spotlight relative"
+            className="enter-up group flex flex-col items-center p-8 card-surface spotlight relative"
           >
             <IconBadge
               color="secondary"
@@ -93,7 +93,7 @@ export default function ContactClient({
               <MapPin size={32} />
             </IconBadge>
             <h2 className="text-xl font-bold mb-2">Location</h2>
-            <p className="text-gray-600 dark:text-gray-400">{location}</p>
+            <p className="text-gray-700 dark:text-gray-300">{location}</p>
           </div>
         </div>
       </div>
