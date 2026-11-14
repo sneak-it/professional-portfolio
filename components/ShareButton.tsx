@@ -17,8 +17,10 @@ export default function ShareButton({ title }: { title: string }) {
       try {
         await share.call(navigator, { title, url });
         return;
-      } catch {
-        // User cancelled or share failed — fall through to clipboard.
+      } catch (error) {
+        // A dismissed sheet is the visitor's answer; other failures fall back.
+        if (error instanceof DOMException && error.name === 'AbortError')
+          return;
       }
     }
     try {

@@ -45,7 +45,10 @@ export default function SectionGalleryList({
                 meta={
                   <div className="flex items-center gap-2 text-white/90 mb-2 text-sm font-medium">
                     <ImageIcon size={16} />
-                    <span>{gallery.imageCount} Photos</span>
+                    <span>
+                      {gallery.imageCount}{' '}
+                      {gallery.imageCount === 1 ? 'Photo' : 'Photos'}
+                    </span>
                     {gallery.date && (
                       <>
                         <span className="mx-2">•</span>
