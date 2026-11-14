@@ -17,6 +17,7 @@ function PostNavLink({
   const href = `/blog/${post.slug}`;
   return (
     <Link
+      prefetch={false}
       href={href}
       rel={dir}
       onClick={() => {

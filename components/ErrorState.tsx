@@ -28,7 +28,7 @@ export default function ErrorState({
         <RotateCw size={18} />
         Try again
       </button>
-      <Link href={backHref} className="pill-outline px-6 py-3">
+      <Link prefetch={false} href={backHref} className="pill-outline px-6 py-3">
         <ArrowLeft size={18} />
         {backLabel}
       </Link>

@@ -84,6 +84,7 @@ export default function BlogList({
                 </summary>
                 <div className="card-surface absolute right-0 z-30 mt-2 flex max-h-80 w-64 flex-wrap items-start gap-2 overflow-y-auto p-4 shadow-2xl">
                   <Link
+                    prefetch={false}
                     href="/blog"
                     aria-current={activeTag ? undefined : 'page'}
                     className={chipClass(!activeTag)}
@@ -125,7 +126,7 @@ export default function BlogList({
               />
 
               <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-accent-text transition-colors">
-                <Link href={`/blog/${post.slug}`}>
+                <Link prefetch={false} href={`/blog/${post.slug}`}>
                   <span className="absolute inset-0" />
                   {post.meta.title}
                 </Link>
@@ -154,6 +155,7 @@ export default function BlogList({
         >
           {currentPage > 1 ? (
             <Link
+              prefetch={false}
               href={pageHref(currentPage - 1)}
               rel="prev"
               aria-label="Previous page"
@@ -174,6 +176,7 @@ export default function BlogList({
             const isActive = page === currentPage;
             return (
               <Link
+                prefetch={false}
                 key={page}
                 href={pageHref(page)}
                 aria-label={`Page ${page}`}
@@ -191,6 +194,7 @@ export default function BlogList({
 
           {currentPage < totalPages ? (
             <Link
+              prefetch={false}
               href={pageHref(currentPage + 1)}
               rel="next"
               aria-label="Next page"

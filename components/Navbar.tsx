@@ -142,6 +142,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link
+            prefetch={false}
             href="/"
             className="text-xl font-mono font-bold tracking-tight uppercase"
           >
@@ -190,6 +191,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
                   const isActive = link.href === activeHref;
                   return (
                     <Link
+                      prefetch={false}
                       key={link.name}
                       href={link.href}
                       aria-current={isActive ? 'page' : undefined}
@@ -254,6 +256,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
             <nav aria-label="Main" className="px-4 pt-2 pb-6 space-y-1">
               {links.map((link) => (
                 <Link
+                  prefetch={false}
                   key={link.name}
                   href={link.href}
                   aria-current={link.href === activeHref ? 'page' : undefined}

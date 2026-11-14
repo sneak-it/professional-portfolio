@@ -14,6 +14,7 @@ export default function BackButton({
 }) {
   return (
     <Link
+      prefetch={false}
       href={href}
       className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-accent-text transition-colors mb-8"
     >

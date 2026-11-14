@@ -30,6 +30,7 @@ export default function CoverCard({
 }) {
   return (
     <Link
+      prefetch={false}
       href={href}
       className={`not-prose group block relative photo-edge rounded-3xl overflow-hidden ${aspect} bg-gray-100 dark:bg-gray-900`}
     >

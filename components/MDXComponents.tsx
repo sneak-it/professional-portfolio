@@ -48,7 +48,7 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   }
   if (href.startsWith('/')) {
     return (
-      <Link {...rest} href={href}>
+      <Link {...rest} href={href} prefetch={false}>
         {children}
       </Link>
     );

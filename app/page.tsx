@@ -64,6 +64,7 @@ export default function Home() {
             >
               <div className="inline-block">
                 <Link
+                  prefetch={false}
                   href="/portfolio"
                   className="pill-solid group px-8 py-4 text-base"
                 >
@@ -76,6 +77,7 @@ export default function Home() {
               </div>
               <div className="inline-block">
                 <Link
+                  prefetch={false}
                   href="/contact"
                   className="pill-outline px-8 py-4 text-base"
                 >

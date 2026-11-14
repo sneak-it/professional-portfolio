@@ -39,6 +39,7 @@ export default function SectionProjectList({
               >
                 {/* Same target as the title link below: one Tab stop per card. */}
                 <Link
+                  prefetch={false}
                   href={`/portfolio/${project.section}/${project.slug}`}
                   aria-hidden
                   tabIndex={-1}
@@ -82,6 +83,7 @@ export default function SectionProjectList({
                 <div className="p-6 flex flex-col flex-grow">
                   <h2 className="text-xl font-bold mb-2 group-hover:text-accent-text transition-colors">
                     <Link
+                      prefetch={false}
                       href={`/portfolio/${project.section}/${project.slug}`}
                     >
                       {project.title}

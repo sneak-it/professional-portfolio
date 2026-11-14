@@ -46,6 +46,7 @@ export default function TagList({
           <li key={slug || name}>
             {link && slug !== '' ? (
               <Link
+                prefetch={false}
                 href={tagHref(slug)}
                 aria-current={active ? 'page' : undefined}
                 className={chipClass(active)}

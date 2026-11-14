@@ -15,6 +15,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0 text-center md:text-left">
             <Link
+              prefetch={false}
               href="/"
               className="text-2xl font-mono font-bold tracking-tight uppercase"
             >
