@@ -22,6 +22,13 @@ const useIsomorphicLayoutEffect =
 // Horizontal inset of the active underline, matching the links' px-4.
 const UNDERLINE_INSET = 16;
 
+/** A nav link is current on its own page and every page under it. */
+function isCurrent(href: string, pathname: string): boolean {
+  return href === '/'
+    ? pathname === '/'
+    : pathname === href || pathname.startsWith(`${href}/`);
+}
+
 interface Indicator {
   left: number;
   top: number;
@@ -41,7 +48,8 @@ export default function Navbar({ monogram }: { monogram: string }) {
   const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
   const [pill, setPill] = useState<Indicator | null>(null);
   const [underline, setUnderline] = useState<Indicator | null>(null);
-  const activeExists = links.some((link) => link.href === pathname);
+  const activeHref =
+    links.find((link) => isCurrent(link.href, pathname))?.href ?? null;
 
   const measure = useCallback((href: string | null): Indicator | null => {
     const el = href ? linkRefs.current.get(href) : null;
@@ -59,9 +67,9 @@ export default function Navbar({ monogram }: { monogram: string }) {
   const applyMeasurements = useCallback(() => {
     const hovered = measure(hoveredPath);
     if (hovered) setPill(hovered);
-    const active = measure(pathname);
+    const active = measure(activeHref);
     if (active) setUnderline(active);
-  }, [measure, hoveredPath, pathname]);
+  }, [measure, hoveredPath, activeHref]);
 
   // Latest measurement, so the mount-only resize listener always calls current
   // hover/route state without re-subscribing.
@@ -143,6 +151,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
 
           {/* Desktop Navigation */}
           <nav
+            aria-label="Main"
             className="hidden md:flex items-center"
             onMouseLeave={() => {
               setHoveredPath(null);
@@ -172,17 +181,18 @@ export default function Navbar({ monogram }: { monogram: string }) {
                     (underline?.width ?? 0) - UNDERLINE_INSET * 2,
                     0,
                   ),
-                  opacity: activeExists ? 1 : 0,
+                  opacity: activeHref ? 1 : 0,
                 }}
               />
 
               <div className="relative z-10 flex items-center space-x-2">
                 {links.map((link) => {
-                  const isActive = pathname === link.href;
+                  const isActive = link.href === activeHref;
                   return (
                     <Link
                       key={link.name}
                       href={link.href}
+                      aria-current={isActive ? 'page' : undefined}
                       ref={(el) => {
                         if (el) linkRefs.current.set(link.href, el);
                         else linkRefs.current.delete(link.href);
@@ -241,16 +251,17 @@ export default function Navbar({ monogram }: { monogram: string }) {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-background border-t border-gray-200 dark:border-white/10"
           >
-            <div className="px-4 pt-2 pb-6 space-y-1">
+            <nav aria-label="Main" className="px-4 pt-2 pb-6 space-y-1">
               {links.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
+                  aria-current={link.href === activeHref ? 'page' : undefined}
                   onClick={() => {
                     setIsOpen(false);
                   }}
                   className={`block px-3 py-3 text-base font-medium rounded-md ${
-                    pathname === link.href
+                    link.href === activeHref
                       ? 'text-accent-text bg-accent/10 dark:bg-accent/10'
                       : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
                   }`}
@@ -258,7 +269,7 @@ export default function Navbar({ monogram }: { monogram: string }) {
                   {link.name}
                 </Link>
               ))}
-            </div>
+            </nav>
           </m.div>
         )}
       </AnimatePresence>
