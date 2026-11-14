@@ -59,7 +59,7 @@ export default function BlogPostContent({
           <div className="relative aspect-video rounded-3xl overflow-hidden mb-10">
             <CoverImage
               src={post.meta.image}
-              alt={post.meta.title}
+              alt=""
               priority
               sizes="(max-width: 896px) 100vw, 736px"
             />
@@ -97,7 +97,7 @@ export default function BlogPostContent({
               {avatar ? (
                 <Image
                   src={avatar}
-                  alt={siteConfig.author}
+                  alt=""
                   width={48}
                   height={48}
                   className="rounded-full"

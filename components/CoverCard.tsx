@@ -35,7 +35,7 @@ export default function CoverCard({
     >
       <CoverImage
         src={coverImage}
-        alt={title}
+        alt=""
         priority={priority}
         sizes={sizes}
         className="transition-transform duration-700 group-hover:scale-105"

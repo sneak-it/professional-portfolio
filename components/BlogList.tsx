@@ -110,7 +110,7 @@ export default function BlogList({
             <div className="w-full md:w-2/5 aspect-video md:aspect-square lg:aspect-[4/3] relative rounded-2xl overflow-hidden shrink-0">
               <CoverImage
                 src={post.meta.image}
-                alt={post.meta.title}
+                alt=""
                 priority={index === 0}
                 sizes="(max-width: 768px) 100vw, 40vw"
                 className="transition-transform duration-700 group-hover:scale-105"

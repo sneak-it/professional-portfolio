@@ -27,6 +27,7 @@ export default function AboutPage() {
 
   return (
     <AboutClient
+      name={siteConfig.name}
       linkedin={siteConfig.social.linkedin}
       avatarUrl={avatarSrc()}
       skills={skills}

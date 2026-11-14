@@ -55,9 +55,9 @@ export default function ProjectDetailClient({
 
             {tech.length > 0 && (
               <div>
-                <h3 className="text-sm font-bold font-mono uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">
+                <h2 className="text-sm font-bold font-mono uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">
                   Technologies
-                </h3>
+                </h2>
                 <div className="flex flex-wrap gap-2">
                   {tech.map((t) => (
                     <span
@@ -80,7 +80,7 @@ export default function ProjectDetailClient({
           >
             <Image
               src={project.coverImage}
-              alt={project.title}
+              alt=""
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"

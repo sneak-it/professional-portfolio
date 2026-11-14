@@ -42,6 +42,7 @@ const INTEREST_ICONS: Record<InterestIcon, React.ReactNode> = {
 };
 
 export default function AboutClient({
+  name,
   linkedin,
   avatarUrl,
   skills,
@@ -52,6 +53,7 @@ export default function AboutClient({
   interestsBlurb,
   children,
 }: {
+  name: string;
   linkedin?: string;
   avatarUrl: string | null;
   skills: SkillGroup[];
@@ -70,7 +72,7 @@ export default function AboutClient({
           <div className="relative aspect-square max-w-md mx-auto lg:mx-0 rounded-3xl overflow-hidden shadow-2xl">
             <CoverImage
               src={avatarUrl}
-              alt="Portrait"
+              alt={`Portrait of ${name}`}
               priority
               sizes="(max-width: 1024px) 100vw, 448px"
             />

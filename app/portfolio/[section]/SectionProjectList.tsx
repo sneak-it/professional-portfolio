@@ -37,13 +37,16 @@ export default function SectionProjectList({
                 style={{ animationDelay: `${index * 50}ms` }}
                 className="enter-up group flex flex-col bg-white dark:bg-[#111] rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10 shadow-sm hover:shadow-xl transition-all"
               >
+                {/* Same target as the title link below: one Tab stop per card. */}
                 <Link
                   href={`/portfolio/${project.section}/${project.slug}`}
+                  aria-hidden
+                  tabIndex={-1}
                   className="relative aspect-[4/3] overflow-hidden block"
                 >
                   <CoverImage
                     src={project.coverImage}
-                    alt={project.title}
+                    alt=""
                     priority={index === 0}
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="transition-transform duration-700 group-hover:scale-105"

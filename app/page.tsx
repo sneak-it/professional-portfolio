@@ -40,7 +40,7 @@ export default function Home() {
             </p>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter mb-6 flex flex-wrap justify-center gap-x-4">
               <span className={`${styles.word} inline-block`}>{headline}</span>
-              <div className="w-full h-0" />
+              <span aria-hidden className="w-full h-0" />
               <span
                 className={`${styles.word} ${styles.word2} text-transparent bg-clip-text bg-gradient-to-r from-accent-from-text via-accent-via-text to-accent-to-text inline-block`}
               >
