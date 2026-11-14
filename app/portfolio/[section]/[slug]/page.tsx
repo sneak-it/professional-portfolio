@@ -11,7 +11,7 @@ import {
   getProjectItem,
   getPhotographyGallery,
 } from '@/lib/portfolio';
-import { absoluteUrl } from '@/lib/site';
+import { absoluteUrl, siteConfig } from '@/lib/site';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
 import { pageMetadata } from '@/lib/metadata';
 import { PROSE } from '@/lib/prose';
@@ -111,7 +111,9 @@ export default async function PortfolioItemPage({
     description: project.description,
     url,
     datePublished: project.date || undefined,
-    image: project.coverImage || undefined,
+    image: project.coverImage
+      ? URL.parse(project.coverImage, siteConfig.url)?.href
+      : undefined,
   };
 
   return (

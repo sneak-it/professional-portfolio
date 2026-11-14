@@ -63,11 +63,11 @@ export default async function BlogPost({
     '@type': 'BlogPosting',
     headline: post.meta.title,
     description: post.meta.excerpt,
-    image: post.meta.image,
+    image: post.meta.image && URL.parse(post.meta.image, siteConfig.url)?.href,
     datePublished: post.meta.date,
     dateModified: post.meta.updated || post.meta.date,
     keywords: post.meta.tags.join(', '),
-    author: { '@type': 'Person', name: siteConfig.author },
+    author: { '@type': 'Person', name: siteConfig.author, url: siteConfig.url },
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
   };
 
