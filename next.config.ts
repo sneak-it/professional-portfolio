@@ -29,26 +29,6 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
-      // `s-maxage` opts these force-dynamic routes into a shared cache;
-      // browsers still revalidate. Cloudflare needs a Cache Rule (CLOUDFLARE.md).
-      {
-        source:
-          '/:path(|about|contact|blog|portfolio|robots\\.txt|sitemap\\.xml|feed\\.xml|blog/[^/]+|portfolio/[^/]+|portfolio/[^/]+/[^/]+)',
-        // RSC payloads, and prefetches that skip proxy.ts (no CSP), share these
-        // URLs; CDNs that ignore Vary must not keep them.
-        missing: [
-          { type: 'header', key: 'rsc' },
-          { type: 'query', key: '_rsc' },
-          { type: 'header', key: 'next-router-prefetch' },
-          { type: 'header', key: 'purpose', value: 'prefetch' },
-        ],
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 's-maxage=300, stale-while-revalidate=600',
-          },
-        ],
-      },
       // Each request is a full rasterize, so let browsers hold them too. /brand/ URLs
       // are versioned (lib/site.ts `BRAND_VERSION`); the two root aliases are not.
       {

@@ -79,11 +79,9 @@ so the portrait goes blank with no error.
 
 ## Caching
 
-Content routes render per request, so edits and `SITE_*` changes take effect immediately
-and every document request reaches the Node process. `next.config.ts` sends
-`Cache-Control: s-maxage=300, stale-while-revalidate=600` on the pages worth caching.
-Cloudflare ignores that header for HTML until a Cache Rule marks it eligible; see
-[CLOUDFLARE.md](CLOUDFLARE.md), which is not optional if you run behind Cloudflare.
+Content routes render per request, so edits and `SITE_*` changes take effect immediately.
+Pages send Next's default `Cache-Control: private, no-cache, no-store`, so no shared cache
+keeps a copy, and every page view reaches the Node process.
 
 The generated brand images (`/brand/icon`, `/brand/apple-icon`, `/brand/opengraph-image`)
 are cached far longer, since each request is a full rasterize. Their URLs carry a version

@@ -1,5 +1,4 @@
 import type { MetadataRoute } from 'next';
-import { SITEMAP_CACHE_TTL_MS, ttlCached } from '@/lib/config';
 import { toDate } from '@/lib/date';
 import { TAG_INDEX_MIN_POSTS, getAllPostMeta, getTags } from '@/lib/mdx';
 import {
@@ -10,7 +9,7 @@ import {
 import { absoluteUrl } from '@/lib/site';
 
 // Rendered per request so the origin reflects the runtime `SITE_URL` (see
-// lib/site.ts). The content scan is memoized below.
+// lib/site.ts).
 export const dynamic = 'force-dynamic';
 
 type Entry = MetadataRoute.Sitemap[number];
@@ -116,9 +115,6 @@ function buildRoutes(): Route[] {
   ];
 }
 
-// Pages render per request, so the TTL only affects sitemap.xml and feed.xml.
-const getRoutes = ttlCached(SITEMAP_CACHE_TTL_MS, buildRoutes);
-
 export default function sitemap(): MetadataRoute.Sitemap {
-  return getRoutes().map((r) => entry(absoluteUrl(r.path), r.lastModified));
+  return buildRoutes().map((r) => entry(absoluteUrl(r.path), r.lastModified));
 }

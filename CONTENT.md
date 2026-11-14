@@ -90,8 +90,7 @@ counts. Exits non-zero on error.
 counts, and sitemap, but keeps it reachable at its own URL with `noindex, nofollow`.
 
 A future `date` does the same, so a post publishes itself once that date arrives. Nothing
-is scheduled server-side: each request re-reads the file. The sitemap and RSS feed lag by
-`SITEMAP_CACHE_TTL_MS`, so check the page rather than `sitemap.xml` when confirming.
+is scheduled server-side: each request re-reads the file.
 
 ## Blog posts
 
@@ -145,8 +144,7 @@ same list becomes the post's `keywords` and its RSS `<category>` entries. The `/
 filter chip expands to the full tag list with post counts.
 
 Published posts are served as RSS at `/feed.xml`, linked from every page's `<head>`.
-Drafts and future-dated posts are excluded. Like the sitemap, the item list is cached for
-`SITEMAP_CACHE_TTL_MS`.
+Drafts and future-dated posts are excluded.
 
 Run `npm run check:content` before committing: it catches a tag spelled two ways
 (`Next.js` vs `NextJS`), which is what fragments a vocabulary over a few dozen posts.

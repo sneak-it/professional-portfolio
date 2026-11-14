@@ -1,10 +1,8 @@
-import { SITEMAP_CACHE_TTL_MS, ttlCached } from '@/lib/config';
 import { toDate } from '@/lib/date';
 import { getAllPostMeta } from '@/lib/mdx';
 import { absoluteUrl, siteConfig } from '@/lib/site';
 
-// Rendered per request so the origin reflects the runtime `SITE_URL`; the post
-// scan behind it is cached like the sitemap's.
+// Rendered per request so the origin reflects the runtime `SITE_URL`.
 export const dynamic = 'force-dynamic';
 
 const ESCAPES: Record<string, string> = {
@@ -48,8 +46,6 @@ function buildItems(): Item[] {
   }));
 }
 
-const getItems = ttlCached(SITEMAP_CACHE_TTL_MS, buildItems);
-
 function itemXml(item: Item): string {
   const url = absoluteUrl(item.path);
   return [
@@ -67,7 +63,7 @@ function itemXml(item: Item): string {
 }
 
 export function GET() {
-  const items = getItems();
+  const items = buildItems();
 
   const xml = [
     '<?xml version="1.0" encoding="utf-8"?>',
