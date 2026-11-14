@@ -1,5 +1,3 @@
-// ViewTransition is canary-only; see the note in app/layout.tsx.
-/// <reference types="react/canary" />
 'use client';
 
 import type { ReactNode } from 'react';

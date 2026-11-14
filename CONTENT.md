@@ -174,7 +174,7 @@ copy one, rename it, edit.
    title: 'My Project'
    description: 'One-line summary.'
    date: 'YYYY-MM-DD'
-   coverImage: 'https://example.com/cover.jpg'
+   coverImage: '/media/images/my-project.jpg' # same-origin only, under media/
    tech: ['TypeScript', 'Node.js']
    github: 'https://github.com/you/my-project' # optional
    link: 'https://my-project.dev' # optional

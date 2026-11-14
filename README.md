@@ -68,10 +68,13 @@ Requires Node.js 26.x and npm.
 ```bash
 git clone https://github.com/sneak-it/professional-portfolio.git
 cd professional-portfolio
-npm install
+npm ci
 npm run build
 npm run start
 ```
+
+`npm run start` warns that `next start` does not support `output: standalone`; it
+still serves the build. The Docker image runs the standalone server instead.
 
 Then open http://localhost:3000.
 
