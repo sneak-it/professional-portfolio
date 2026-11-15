@@ -31,7 +31,7 @@ export default function Home() {
           className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,var(--background-deep)_0%,transparent_70%)] opacity-70 dark:opacity-80"
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className={styles.enter}>
             <p
               className={`${styles.eyebrow} text-sm md:text-base font-semibold tracking-widest text-accent-text uppercase font-mono mb-4`}
