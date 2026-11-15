@@ -74,7 +74,7 @@ export default function AboutClient({
               src={avatarUrl}
               alt={`Portrait of ${name}`}
               priority
-              sizes="(max-width: 1024px) 100vw, 448px"
+              sizes="(max-width: 30rem) 100vw, 28rem"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           </div>

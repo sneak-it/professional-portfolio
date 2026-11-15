@@ -83,7 +83,7 @@ export default function GalleryView({
               alt={image.alt}
               width={image.width}
               height={image.height}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, (max-width: 80rem) 33vw, 24.5rem"
               loading={i === 0 ? 'eager' : 'lazy'}
               fetchPriority={i === 0 ? 'high' : 'auto'}
               className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"

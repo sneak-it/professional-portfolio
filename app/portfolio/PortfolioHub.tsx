@@ -41,7 +41,7 @@ export default function PortfolioHub({
               description={section.cardDescription}
               aspect="aspect-[4/5]"
               priority={index === 0}
-              sizes="(max-width: 768px) 100vw, 33vw"
+              sizes="(max-width: 48rem) 100vw, (max-width: 80rem) 33vw, 24rem"
               badge={<ArrowUpRight size={20} />}
               meta={
                 <p className="text-white/90 mb-2 text-sm font-medium font-mono uppercase tracking-wider">

@@ -41,7 +41,7 @@ export default function SectionGalleryList({
                 description={gallery.cardDescription}
                 aspect="aspect-square"
                 priority={index === 0}
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, (max-width: 80rem) 33vw, 24rem"
                 meta={
                   <div className="flex items-center gap-2 text-white/90 mb-2 text-sm font-medium">
                     <ImageIcon size={16} />

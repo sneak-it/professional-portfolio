@@ -113,7 +113,7 @@ export default function BlogList({
                 src={post.meta.image}
                 alt=""
                 priority={index === 0}
-                sizes="(max-width: 768px) 100vw, 40vw"
+                sizes="(max-width: 48rem) 100vw, 20rem"
                 className="transition-transform duration-700 group-hover:scale-105"
               />
             </div>

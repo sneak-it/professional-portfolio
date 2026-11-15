@@ -49,7 +49,7 @@ export default function SectionProjectList({
                     src={project.coverImage}
                     alt=""
                     priority={index === 0}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, (max-width: 80rem) 33vw, 24rem"
                     className="transition-transform duration-700 group-hover:scale-105"
                   />
                 </Link>

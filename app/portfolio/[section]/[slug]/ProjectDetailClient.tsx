@@ -85,7 +85,7 @@ export default function ProjectDetailClient({
               fill
               loading="eager"
               fetchPriority="high"
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              sizes="(max-width: 64rem) 100vw, 27.5rem"
               className="object-cover"
               referrerPolicy="no-referrer"
             />
