@@ -480,6 +480,26 @@ html:has(dialog:modal) {
   animation: none;
 }
 
+/* Theme switch (components/ThemeToggle.tsx): the new theme spreads in a circle
+   from the toggle over the old one. */
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x) var(--vt-y));
+  }
+  to {
+    clip-path: circle(150% at var(--vt-x) var(--vt-y));
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-switch::view-transition-old(root),
+  html.theme-switch::view-transition-new(root) {
+    mix-blend-mode: normal;
+  }
+  html.theme-switch::view-transition-new(root) {
+    animation: theme-reveal 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
 /* Let clicks reach the live page while the transition overlay is up. */
 ::view-transition {
   pointer-events: none;

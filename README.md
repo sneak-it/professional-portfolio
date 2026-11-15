@@ -10,7 +10,7 @@ A modern, highly polished personal portfolio/blog. This is aimed at self-hosters
 - **Auto-discovered Galleries**: Photography galleries build their image lists from the filesystem, with a scrollable layout and lightbox. Every image is re-encoded on the way out, so EXIF data never reaches a visitor. See [PHOTOGRAPHY.md](PHOTOGRAPHY.md).
 - **Incremental content**: Content routes render per request, so a dropped-in file appears with no rebuild.
 - **Fully Responsive**: Optimized for all screen sizes.
-- **Light/Dark/System Mode Support**: Color scheme adapts to user preference.
+- **Light and Dark Modes**: Follows the device's setting until a visitor picks one with the toggle.
 - **Docker Ready**: Hardened multi-stage `Dockerfile` and `docker-compose.yml`.
 
 ## Running with Docker (recommended)
