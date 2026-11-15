@@ -1,9 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { m, AnimatePresence } from 'motion/react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import Image, { getImageProps } from 'next/image';
+import Lightbox from 'yet-another-react-lightbox';
+import Download from 'yet-another-react-lightbox/plugins/download';
+import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
+import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import 'yet-another-react-lightbox/styles.css';
+import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import EmptyState from '@/components/EmptyState';
@@ -17,29 +22,34 @@ export default function GalleryView({
   gallery: GalleryItem;
   backHref: string;
 }) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const isOpen = selectedIndex !== null;
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [index, setIndex] = useState(-1);
 
-  const close = useCallback(() => {
-    setSelectedIndex(null);
-  }, []);
-  const showPrev = useCallback(() => {
-    setSelectedIndex((i) =>
-      i === null ? i : (i - 1 + gallery.images.length) % gallery.images.length,
-    );
-  }, [gallery.images.length]);
-  const showNext = useCallback(() => {
-    setSelectedIndex((i) => (i === null ? i : (i + 1) % gallery.images.length));
-  }, [gallery.images.length]);
-
-  // Closed in onExitComplete, after the fade, which returns focus to the photo.
-  useEffect(() => {
-    if (isOpen && !dialogRef.current?.open) dialogRef.current?.showModal();
-  }, [isOpen]);
-
-  const selected =
-    selectedIndex !== null ? gallery.images[selectedIndex] : null;
+  // A sizes without vw lists every configured width; the lightbox picks per
+  // drawn size and zoom. Widths past the served copy are dropped.
+  const slides = gallery.images.map(({ src, alt, width, height }) => {
+    const { props } = getImageProps({ src, alt, width, height, sizes: '1px' });
+    return {
+      src: props.src,
+      alt,
+      width,
+      height,
+      download: { url: src, filename: src.slice(src.lastIndexOf('/') + 1) },
+      srcSet: props.srcSet
+        ?.split(', ')
+        .map((entry) => {
+          const space = entry.lastIndexOf(' ');
+          const slideWidth = parseInt(entry.slice(space + 1), 10);
+          return {
+            src: entry.slice(0, space),
+            width: slideWidth,
+            height: Math.round((slideWidth * height) / width),
+          };
+        })
+        .filter((s) => s.width <= width),
+    };
+  });
+  const multiple = slides.length > 1;
+  const noButton = multiple ? undefined : () => null;
 
   return (
     <Container>
@@ -56,14 +66,14 @@ export default function GalleryView({
       )}
 
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-        {gallery.images.map((image, index) => (
+        {gallery.images.map((image, i) => (
           <button
             type="button"
             key={image.id}
-            style={{ animationDelay: `${(index % 5) * 100}ms` }}
+            style={{ animationDelay: `${(i % 5) * 100}ms` }}
             className="enter-up block w-full break-inside-avoid relative photo-edge group cursor-pointer rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-900"
             onClick={() => {
-              setSelectedIndex(index);
+              setIndex(i);
             }}
             aria-label={`View image: ${image.alt}`}
             aria-haspopup="dialog"
@@ -74,8 +84,8 @@ export default function GalleryView({
               width={image.width}
               height={image.height}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              loading={index === 0 ? 'eager' : 'lazy'}
-              fetchPriority={index === 0 ? 'high' : 'auto'}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchPriority={i === 0 ? 'high' : 'auto'}
               className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
               referrerPolicy="no-referrer"
             />
@@ -84,91 +94,29 @@ export default function GalleryView({
         ))}
       </div>
 
-      {/* Lightbox. Escape goes through close() so it fades like the button; a
-          close the page can't cancel still clears the selection. */}
-      <dialog
-        ref={dialogRef}
-        aria-label={selected ? `Image viewer: ${selected.alt}` : undefined}
-        onCancel={(e) => {
-          e.preventDefault();
-          close();
+      <Lightbox
+        open={index >= 0}
+        index={index}
+        close={() => {
+          setIndex(-1);
         }}
-        onClose={close}
-        onKeyDown={(e) => {
-          if (e.key === 'ArrowLeft') showPrev();
-          else if (e.key === 'ArrowRight') showNext();
+        slides={slides}
+        plugins={
+          multiple
+            ? [Download, Fullscreen, Thumbnails, Zoom]
+            : [Download, Fullscreen, Zoom]
+        }
+        controller={{ closeOnBackdropClick: true, closeOnPullDown: true }}
+        carousel={{ imageProps: { referrerPolicy: 'no-referrer' } }}
+        render={{ buttonPrev: noButton, buttonNext: noButton }}
+        labels={{
+          Lightbox: 'Image viewer',
+          Close: 'Close image viewer',
+          Previous: 'Previous image',
+          Next: 'Next image',
         }}
-        className="h-full max-h-none w-full max-w-none bg-transparent backdrop:bg-transparent"
-      >
-        <AnimatePresence onExitComplete={() => dialogRef.current?.close()}>
-          {selected && (
-            <m.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 flex items-center justify-center bg-black/90 p-4"
-              onClick={close}
-            >
-              <button
-                type="button"
-                className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors z-50"
-                onClick={close}
-                aria-label="Close image viewer"
-              >
-                <X size={32} />
-              </button>
-
-              {gallery.images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-50 p-2 rounded-full bg-white/10 hover:bg-white/20"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      showPrev();
-                    }}
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeft size={28} />
-                  </button>
-                  <button
-                    type="button"
-                    className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-50 p-2 rounded-full bg-white/10 hover:bg-white/20"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      showNext();
-                    }}
-                    aria-label="Next image"
-                  >
-                    <ChevronRight size={28} />
-                  </button>
-                </>
-              )}
-
-              <m.div
-                key={selected.id}
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="relative max-w-5xl max-h-[90vh] w-full h-full"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <Image
-                  src={selected.src}
-                  alt={selected.alt}
-                  fill
-                  sizes="100vw"
-                  className="object-contain"
-                  referrerPolicy="no-referrer"
-                />
-              </m.div>
-            </m.div>
-          )}
-        </AnimatePresence>
-      </dialog>
+        styles={{ root: { '--yarl__color_backdrop': 'rgb(0 0 0 / 0.9)' } }}
+      />
     </Container>
   );
 }

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
+import { MAX_EDGE } from './media.ts';
 
 /**
  * Server-only: same-origin src validation, `media/` containment, and a
@@ -57,12 +58,12 @@ export async function imageDimensions(imagePath: string): Promise<Size> {
   const { width, height, orientation } = await sharp(imagePath).metadata();
   if (!width || !height) throw new Error(`no dimensions in ${imagePath}`);
 
-  // Orientations 5-8 are quarter-turns, which sanitize() and the optimizer
-  // both apply, so the served pixels are swapped from the stored ones.
-  const size =
-    orientation && orientation >= 5
-      ? { width: height, height: width }
-      : { width, height };
+  // Served pixels: quarter-turns (orientations 5-8) applied, long edge capped at
+  // MAX_EDGE as sanitize() does. An SVG isn't resized, but only its ratio matters.
+  const [w, h] =
+    orientation && orientation >= 5 ? [height, width] : [width, height];
+  const scale = Math.min(1, MAX_EDGE / Math.max(w, h));
+  const size = { width: Math.round(w * scale), height: Math.round(h * scale) };
 
   // Insertion-ordered eviction: a long-lived container serving a bind-mounted,
   // editable tree would otherwise grow this Map for every path ever requested.

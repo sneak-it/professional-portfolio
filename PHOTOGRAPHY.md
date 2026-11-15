@@ -118,6 +118,8 @@ Two consequences worth knowing:
   way up" normally lives, the pixels are rotated instead. Portraits stay portrait.
 - **The original is not downloadable.** The full-resolution file never leaves the server.
   A direct link, a right-click save, or a Slack preview all get the capped, stripped copy.
+  In a gallery, the lightbox's download button saves that copy; a right-click save gets
+  the size on screen.
 
 Both routes that can reach an image are covered. `/media/...` strips as described, and
 `/_next/image` reads through that same route, so even its passthrough cases (animated

@@ -341,9 +341,10 @@
   }
 }
 
-/* The page behind a modal dialog doesn't scroll. */
-html:has(dialog:modal) {
-  overflow: hidden;
+/* The lightbox's buttons clear outlines unlayered; restore the focus ring. */
+.yarl__button:focus-visible {
+  outline: 2px solid var(--accent-from);
+  outline-offset: 2px;
 }
 
 /* Keyboard focus ring, in base so an element's own radius beats the 3px. */

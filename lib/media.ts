@@ -10,7 +10,7 @@ import type { Sharp } from 'sharp';
  */
 
 // Largest `images.deviceSizes` entry in next.config.ts.
-const MAX_EDGE = 3840;
+export const MAX_EDGE = 3840;
 
 export interface Sanitized {
   body: Buffer;

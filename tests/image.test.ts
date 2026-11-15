@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { isLocalSrc, mediaFilePath } from '../lib/image.ts';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import sharp from 'sharp';
+import { imageDimensions, isLocalSrc, mediaFilePath } from '../lib/image.ts';
 
 void test('isLocalSrc accepts only same-origin paths', () => {
   for (const src of [
@@ -46,4 +50,34 @@ void test('mediaFilePath keeps env- and URL-supplied paths inside media/', () =>
   assert.equal(mediaFilePath('https://evil.example/x.png', root), null);
   assert.equal(mediaFilePath('media/images/a.png', root), null);
   assert.equal(mediaFilePath(undefined, root), null);
+});
+
+void test('imageDimensions reports the served size: turned, long edge capped', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'image-test-'));
+  const write = async (
+    name: string,
+    width: number,
+    height: number,
+    orientation?: number,
+  ) => {
+    const file = path.join(dir, name);
+    let img = sharp({
+      create: { width, height, channels: 3, background: '#c33' },
+    });
+    if (orientation) img = img.withMetadata({ orientation });
+    await img.jpeg().toFile(file);
+    return file;
+  };
+  assert.deepEqual(await imageDimensions(await write('big.jpg', 5000, 2000)), {
+    width: 3840,
+    height: 1536,
+  });
+  assert.deepEqual(
+    await imageDimensions(await write('turned.jpg', 5000, 2000, 6)),
+    { width: 1536, height: 3840 },
+  );
+  assert.deepEqual(await imageDimensions(await write('small.jpg', 600, 400)), {
+    width: 600,
+    height: 400,
+  });
 });
