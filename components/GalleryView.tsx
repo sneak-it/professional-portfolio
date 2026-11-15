@@ -74,6 +74,8 @@ export default function GalleryView({
               width={image.width}
               height={image.height}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              loading={index === 0 ? 'eager' : 'lazy'}
+              fetchPriority={index === 0 ? 'high' : 'auto'}
               className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
               referrerPolicy="no-referrer"
             />

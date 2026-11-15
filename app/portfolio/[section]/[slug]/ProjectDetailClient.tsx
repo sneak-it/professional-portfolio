@@ -83,7 +83,8 @@ export default function ProjectDetailClient({
               src={project.coverImage}
               alt=""
               fill
-              priority
+              loading="eager"
+              fetchPriority="high"
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
               referrerPolicy="no-referrer"
