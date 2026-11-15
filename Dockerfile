@@ -40,6 +40,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV MALLOC_ARENA_MAX=2
 ENV MALLOC_TRIM_THRESHOLD_=131072
 ENV MALLOC_MMAP_THRESHOLD_=131072
+# Photo encodes at once, about 60 MB each; .env can override it (.env.example).
+ENV UV_THREADPOOL_SIZE=2
 
 COPY --from=builder /app/public ./public
 # Not traced by Next: read at runtime by app/media/[...path].

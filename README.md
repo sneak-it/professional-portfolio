@@ -53,8 +53,9 @@ optional, a missing or misplaced `.env` is not an error: the container logs
 | `SITE_EMAIL` | Contact email. Unset omits the contact card. | unset |
 | `CONTENT_DIR` | Content tree to serve when running from source, absolute or relative to the working directory. Leave unset under Docker and mount over `/app/content` instead. | `./content` |
 | `BLOG_POSTS_PER_PAGE` | Posts per page on `/blog`. | `3` |
+| `UV_THREADPOOL_SIZE` | Photo encodes at once. Each adds about 60 MB to peak memory, so raise the compose memory limit with it. Set it in the container's environment (compose `env_file` does this); Next's own `.env` loading under `npm run start` is too late for it. | `2` in the image, `4` from source |
 
-A non-integer or non-positive `BLOG_POSTS_PER_PAGE` falls back to the default.
+A non-integer or non-positive `BLOG_POSTS_PER_PAGE` falls back to the default. An empty, 0 or non-number `UV_THREADPOOL_SIZE` means 1; remove the line to keep the default.
 
 Image tags, manual builds, caching, and what cannot be changed without a rebuild:
 [DOCKER.md](DOCKER.md).

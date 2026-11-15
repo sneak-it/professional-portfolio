@@ -52,6 +52,8 @@ export function limiter(n: number) {
 
 // One decode at a time keeps a gallery's first view under compose's 512 MB.
 const slot = limiter(1);
+// Process-wide, so the optimizer's encodes are single-threaded too.
+sharp.concurrency(1);
 
 /**
  * Keeps only the colour profile. Rotates first: orientation lives in the EXIF
