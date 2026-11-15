@@ -9,7 +9,6 @@ import {
 } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { m, AnimatePresence } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { navLinks as links } from '@/lib/nav';
@@ -242,39 +241,42 @@ export default function Navbar({ monogram }: { monogram: string }) {
 
       <div aria-hidden className="nav-progress" />
 
-      {/* Mobile Navigation */}
-      <AnimatePresence>
-        {isOpen && (
-          <m.div
-            id="mobile-menu"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background border-t border-gray-200 dark:border-white/10"
+      {/* Mobile Navigation. Stays mounted so it can animate shut: the grid
+          row goes from 1fr to 0fr, then visibility takes the links out of reach. */}
+      <div
+        id="mobile-menu"
+        className={`md:hidden grid duration-300 ease-[cubic-bezier(0.25,0.1,0.35,1)] ${
+          isOpen
+            ? 'grid-rows-[1fr] transition-[grid-template-rows,opacity]'
+            : 'invisible grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity,visibility]'
+        }`}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <nav
+            aria-label="Main"
+            className="bg-background border-t border-gray-200 dark:border-white/10 px-4 pt-2 pb-6 space-y-1"
           >
-            <nav aria-label="Main" className="px-4 pt-2 pb-6 space-y-1">
-              {links.map((link) => (
-                <Link
-                  prefetch={false}
-                  key={link.name}
-                  href={link.href}
-                  aria-current={link.href === activeHref ? 'page' : undefined}
-                  onClick={() => {
-                    setIsOpen(false);
-                  }}
-                  className={`block px-3 py-3 text-base font-medium rounded-md ${
-                    link.href === activeHref
-                      ? 'text-accent-text bg-accent/10 dark:bg-accent/10'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
-          </m.div>
-        )}
-      </AnimatePresence>
+            {links.map((link) => (
+              <Link
+                prefetch={false}
+                key={link.name}
+                href={link.href}
+                aria-current={link.href === activeHref ? 'page' : undefined}
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+                className={`block px-3 py-3 text-base font-medium rounded-md ${
+                  link.href === activeHref
+                    ? 'text-accent-text bg-accent/10 dark:bg-accent/10'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </div>
     </header>
   );
 }
