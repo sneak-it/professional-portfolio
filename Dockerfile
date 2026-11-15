@@ -35,8 +35,11 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-# sharp on glibc: fewer malloc arenas keeps memory from fragmenting upward.
+# sharp on glibc: fewer arenas, and 128 KB+ buffers in their own mappings, so
+# freed pixel memory goes back to the system instead of fragmenting the heap.
 ENV MALLOC_ARENA_MAX=2
+ENV MALLOC_TRIM_THRESHOLD_=131072
+ENV MALLOC_MMAP_THRESHOLD_=131072
 
 COPY --from=builder /app/public ./public
 # Not traced by Next: read at runtime by app/media/[...path].
