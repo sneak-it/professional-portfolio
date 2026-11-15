@@ -42,6 +42,7 @@ ENV MALLOC_TRIM_THRESHOLD_=131072
 ENV MALLOC_MMAP_THRESHOLD_=131072
 # Photo encodes at once, about 60 MB each; .env can override it (.env.example).
 ENV UV_THREADPOOL_SIZE=2
+ENV NODE_OPTIONS=--max-semi-space-size=2
 
 COPY --from=builder /app/public ./public
 # Not traced by Next: read at runtime by app/media/[...path].
