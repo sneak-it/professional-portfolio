@@ -6,22 +6,23 @@ import * as React from 'react';
 // font size.
 const MOBILE_QUERY = '(width < 48rem)';
 
-function getIsMobile() {
-  return (
-    typeof window !== 'undefined' && window.matchMedia(MOBILE_QUERY).matches
-  );
-}
-
-export function useIsMobile() {
+/** Live result of a CSS media query; false on the server. */
+export function useMediaQuery(query: string) {
+  const matches = () =>
+    typeof window !== 'undefined' && window.matchMedia(query).matches;
   return React.useSyncExternalStore(
     (onChange) => {
-      const mql = window.matchMedia(MOBILE_QUERY);
+      const mql = window.matchMedia(query);
       mql.addEventListener('change', onChange);
       return () => {
         mql.removeEventListener('change', onChange);
       };
     },
-    getIsMobile,
-    getIsMobile, // SSR fallback
+    matches,
+    matches, // SSR fallback
   );
+}
+
+export function useIsMobile() {
+  return useMediaQuery(MOBILE_QUERY);
 }

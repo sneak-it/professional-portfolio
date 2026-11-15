@@ -4,7 +4,6 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BackgroundCanvas from '@/components/BackgroundCanvas';
-import MotionProvider from '@/components/MotionProvider';
 import PageTransition from '@/components/PageTransition';
 import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
@@ -94,14 +93,12 @@ export default async function RootLayout({
           disableTransitionOnChange
           nonce={nonce}
         >
-          <MotionProvider>
-            <BackgroundCanvas />
-            <Navbar monogram={siteConfig.monogram} />
-            <main id="main-content" className="flex-grow pt-20">
-              <PageTransition>{children}</PageTransition>
-            </main>
-            <Footer />
-          </MotionProvider>
+          <BackgroundCanvas />
+          <Navbar monogram={siteConfig.monogram} />
+          <main id="main-content" className="flex-grow pt-20">
+            <PageTransition>{children}</PageTransition>
+          </main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

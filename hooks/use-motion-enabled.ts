@@ -1,7 +1,6 @@
 'use client';
 
-import { useReducedMotion } from 'motion/react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile, useMediaQuery } from '@/hooks/use-mobile';
 
 /**
  * Animation capability tier, consulted by every animated surface.
@@ -13,8 +12,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 export type MotionTier = 'none' | 'lite' | 'full';
 
 export function useMotionEnabled(): { tier: MotionTier } {
-  // motion's useReducedMotion returns null until mounted, then a boolean.
-  const prefersReduced = useReducedMotion();
+  const prefersReduced = useMediaQuery('(prefers-reduced-motion: reduce)');
   const isMobile = useIsMobile();
 
   if (prefersReduced) {
