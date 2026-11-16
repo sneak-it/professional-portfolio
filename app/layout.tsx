@@ -73,6 +73,8 @@ export default async function RootLayout({
     <html
       lang={siteConfig.locale}
       className={grotesk.variable}
+      // Has Next pause globals.css smooth scrolling for route changes.
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <body
