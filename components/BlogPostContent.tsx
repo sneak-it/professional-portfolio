@@ -31,15 +31,12 @@ export default function BlogPostContent({
     toc.length > 0 &&
     (typeof post.meta.toc === 'boolean' ? post.meta.toc : toc.length >= 4);
   // w-full: auto margins would size the grid item to its widest diagram.
+  // The back link stays outside <article> so read-aloud features skip it.
   const article = (
-    <Container
-      as="article"
-      size="md"
-      className="lg:col-start-2 lg:row-start-1 lg:w-full"
-    >
+    <Container size="md" className="lg:col-start-2 lg:row-start-1 lg:w-full">
       <BackButton href="/blog" label="Back to Blog" />
 
-      <Surface as="div" padding="lg" className="surface-opaque mt-6">
+      <Surface as="article" padding="lg" className="surface-opaque mt-6">
         <header className="mb-10">
           <div className="mx-auto max-w-measure">
             <TagList tags={post.meta.tags} link className="mb-6" />
@@ -67,26 +64,28 @@ export default function BlogPostContent({
         </header>
 
         {showToc && (
-          <details className="mx-auto mb-10 max-w-measure card-surface p-5 lg:hidden">
-            <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Contents
-            </summary>
-            <ol className="mt-4 space-y-2">
-              {toc.map((item, i) => (
-                <li
-                  key={`${item.id}-${i}`}
-                  className={item.depth === 3 ? 'ml-5' : ''}
-                >
-                  <a
-                    href={`#${item.id}`}
-                    className="text-gray-700 hover:text-accent-text dark:text-gray-300 transition-colors"
+          <nav aria-label="Table of contents" className="lg:hidden">
+            <details className="mx-auto mb-10 max-w-measure card-surface p-5">
+              <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Contents
+              </summary>
+              <ol className="mt-4 space-y-2">
+                {toc.map((item, i) => (
+                  <li
+                    key={`${item.id}-${i}`}
+                    className={item.depth === 3 ? 'ml-5' : ''}
                   >
-                    {item.text}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </details>
+                    <a
+                      href={`#${item.id}`}
+                      className="text-gray-700 hover:text-accent-text dark:text-gray-300 transition-colors"
+                    >
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          </nav>
         )}
 
         <div className={`${PROSE} ${PROSE_CODE} measure`}>{children}</div>
