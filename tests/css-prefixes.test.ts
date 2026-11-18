@@ -16,3 +16,15 @@ void test('hand-written CSS has no -webkit- or -moz- prefixes', () => {
   );
   assert.deepEqual(hits, []);
 });
+
+// The CSP's `img-src 'self'` blocks data: URLs, masks and backgrounds included.
+void test('hand-written CSS has no data: URLs', () => {
+  const hits = globSync('app/**/*.css', { cwd: root }).flatMap((file) =>
+    readFileSync(new URL(file, root), 'utf8')
+      .split('\n')
+      .flatMap((line, i) =>
+        /url\(\s*["']?data:/.test(line) ? [`${file}:${i + 1}`] : [],
+      ),
+  );
+  assert.deepEqual(hits, []);
+});

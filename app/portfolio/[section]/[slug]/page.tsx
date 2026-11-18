@@ -4,7 +4,6 @@ import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import GalleryView from '@/components/GalleryView';
 import JsonLd from '@/components/JsonLd';
-import Surface from '@/components/Surface';
 import { CachedMDX } from '@/components/MDXComponents';
 import {
   getSection,
@@ -14,7 +13,6 @@ import {
 import { absoluteUrl, siteConfig } from '@/lib/site';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
 import { pageMetadata } from '@/lib/metadata';
-import { PROSE } from '@/lib/prose';
 import ProjectDetailClient from './ProjectDetailClient';
 
 // Rendered per request so items added, edited, or removed in the bind-mounted
@@ -134,12 +132,9 @@ export default async function PortfolioItemPage({
         <ProjectDetailClient project={project} sectionName={config.name} />
 
         {project.content && project.content.trim() && (
-          <Surface
-            padding="lg"
-            className={`mt-8 ${PROSE} [&>:first-child]:mt-0 [&>:last-child]:mb-0`}
-          >
-            <CachedMDX source={project.content} />
-          </Surface>
+          <div className="mt-8 flex flex-col gap-8">
+            <CachedMDX source={project.content} cards />
+          </div>
         )}
       </Container>
     </>

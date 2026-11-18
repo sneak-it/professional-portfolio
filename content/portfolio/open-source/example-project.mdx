@@ -1,21 +1,68 @@
 ---
-title: "Example Open Source Project"
-description: "Replace this with a real open source project — what it does and why."
-date: "2024-05-01"
-coverImage: ""
-tech: ["TypeScript", "Node.js"]
-github: "#"
-link: "#"
-features:
-  - "Describe the main capability"
-  - "Note adoption, stars, or usage if relevant"
-  - "Highlight a notable technical detail"
-challenges: "Describe an interesting design or maintenance challenge."
+title: 'Example Open Source Project'
+description: 'One or two sentences on what the project does. This shows under the title.'
+date: '2024-05-01'
+coverImage: '/media/images/blog/cover-demo.png'
+tech: ['TypeScript', 'Node.js']
+github: 'https://github.com/example/example-project'
+link: 'https://example.com'
+linkLabel: 'Read the Docs'
 ---
 
-This is a placeholder Open Source entry. Copy this file, rename it to a
-descriptive slug (the filename becomes the URL), and replace the frontmatter and
-this body with a real project.
+<CardRow>
+<Card title="Key Features" checks>
 
-Provide a `github` link (and optionally a `link` to a live site/docs); the detail
-page only renders the buttons for fields you fill in.
+- Describe the main capability
+- Note adoption, stars, or usage if relevant
+- Highlight a notable technical detail
+
+</Card>
+<Card title="Overview">
+
+A longer description than the one under the title: what the project is, who
+it is for, and why you built it. Markdown works here as it does in a blog
+post: **bold**, [links](https://example.com), and images.
+
+<Figure
+  src="/media/images/blog/inline-demo.svg"
+  alt="Describe what the image shows"
+  caption="An optional caption"
+/>
+
+</Card>
+</CardRow>
+
+<Card title="How It Works">
+
+### Architecture
+
+A card outside a `<CardRow>` spans the full width. Use `###` headings inside
+a card to break up longer sections.
+
+```bash
+npm install example-project
+```
+
+<Callout type="tip">
+  Callouts, code blocks, and tables all work inside a card.
+</Callout>
+
+</Card>
+
+<CardRow>
+<Card title="Challenges & Solutions">
+
+Describe an interesting design or maintenance problem and how you solved it.
+
+</Card>
+<Card title="Roadmap">
+
+- Without `checks`, a list keeps plain bullets
+- A third card in a row wraps onto a new line
+
+</Card>
+</CardRow>
+
+Text outside any card, like this paragraph, gets a full-width card of its
+own. Delete what you don't need: a project with no body shows only the title
+section.

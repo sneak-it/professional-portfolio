@@ -185,6 +185,40 @@ copy one, rename it, edit.
 
 3. Write the narrative in the MDX body.
 
+### Cards
+
+A project's body is laid out as cards. Put cards side by side with `<CardRow>`, and
+title each `<Card>` however you like:
+
+```mdx
+<CardRow>
+<Card title="Key Features" checks>
+
+- Runs anywhere Docker does
+- Ships as one binary
+
+</Card>
+<Card title="Overview">
+
+A longer description, with **bold**, [links](https://example.com), and images.
+
+</Card>
+</CardRow>
+```
+
+- Cards in a row sit side by side on wide screens and stack on phones. A third card
+  starts a new line, and an odd last card spans the full width.
+- A `<Card>` outside a row spans the full width. `title` is optional.
+- `checks` turns the card's bullet list into check marks; without it, lists keep
+  plain bullets.
+- Text outside any card gets a full-width card of its own, so a body with no cards
+  shows as one card.
+- Anything that works in a blog post works in a card: images, `<Figure>`,
+  `<Callout>`, code blocks, tables, `###` headings.
+- `{` and `<` are MDX syntax. Write `\{` and `\<` when you mean the characters.
+
+`content/portfolio/open-source/example-project.mdx` uses all of the above.
+
 ### Adding a photography gallery
 
 Galleries have their own document: [PHOTOGRAPHY.md](PHOTOGRAPHY.md). It covers the MDX

@@ -5,6 +5,7 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import { Info, Lightbulb, TriangleAlert } from 'lucide-react';
 import BarChart, { Bar, Marker } from '@/components/BarChart';
+import Card, { CardRow } from '@/components/Card';
 import Container from '@/components/Container';
 import CopyButton from '@/components/CopyButton';
 import CoverCard from '@/components/CoverCard';
@@ -18,6 +19,7 @@ import Surface from '@/components/Surface';
 import Timeline, { Milestone } from '@/components/Timeline';
 import { imageDimensions, isLocalSrc, mediaFilePath } from '@/lib/image';
 import { isExternalHref, isSafeHref } from '@/lib/href';
+import { remarkCardWrap } from '@/lib/cards';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
 import { rehypeHighlight } from '@/lib/highlight';
 import { rehypeHeadingIds } from '@/lib/markdown';
@@ -277,6 +279,9 @@ export const mdxComponents = {
   IconBadge,
   PostMeta,
   Surface,
+  // Project pages; the page passes `cards` so loose content gets a card too.
+  Card,
+  CardRow,
   // `Bar`, `Marker`, and `Stat` only mean something inside their parent.
   Stats,
   Stat,
@@ -293,15 +298,20 @@ export const mdxComponents = {
 } as const;
 
 /** Both sanitization halves, kept together. `CachedMDX` is the only consumer. */
-const mdxRenderProps = {
+const mdxRenderProps = (cards: boolean) => ({
   components: mdxComponents,
   options: {
     mdxOptions: {
-      remarkPlugins: [remarkGfm, remarkMermaid, hardenRawHtml],
+      remarkPlugins: [
+        remarkGfm,
+        remarkMermaid,
+        hardenRawHtml,
+        ...(cards ? [remarkCardWrap] : []),
+      ],
       rehypePlugins: [rehypeHeadingIds, rehypeHighlight],
     },
   },
-};
+});
 
 // Keyed by body text, so an edit lands on a new key. Capped, since a
 // superseded entry is never read again.
@@ -312,14 +322,22 @@ const COMPILE_CACHE_MAX = 64;
  * Renders MDX, compiling each distinct body once per container: the element
  * `compileMDX` returns is an immutable descriptor.
  */
-export async function CachedMDX({ source }: { source: string }) {
-  const cached = compileCache.get(source);
+export async function CachedMDX({
+  source,
+  cards = false,
+}: {
+  source: string;
+  cards?: boolean;
+}) {
+  // Prefixed so a project body never reuses a plain compile of the same text.
+  const key = `${cards ? 1 : 0}${source}`;
+  const cached = compileCache.get(key);
   if (cached) return cached;
 
-  const { content } = await compileMDX({ source, ...mdxRenderProps });
+  const { content } = await compileMDX({ source, ...mdxRenderProps(cards) });
 
   // Cleared wholesale: refilling this content tree costs a few ms.
   if (compileCache.size >= COMPILE_CACHE_MAX) compileCache.clear();
-  compileCache.set(source, content);
+  compileCache.set(key, content);
   return content;
 }
