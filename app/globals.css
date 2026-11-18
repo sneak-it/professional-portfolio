@@ -138,13 +138,14 @@
   );
 }
 /* Hairline over a photo frame (needs `relative`), so very bright or dark photos
-   keep an edge. A pseudo-element, since an outline would replace the focus ring. */
+   keep an edge. A pseudo-element, since an outline would replace the focus ring.
+   Set --photo-edge on the frame to change the color. */
 @utility photo-edge {
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    border: 1px solid rgb(128 128 128 / 0.3);
+    border: 1px solid var(--photo-edge, rgb(128 128 128 / 0.3));
     border-radius: inherit;
     pointer-events: none;
   }

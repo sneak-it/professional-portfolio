@@ -65,13 +65,13 @@ export default function GalleryView({
         <EmptyState>No images in this gallery yet.</EmptyState>
       )}
 
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+      <div className="columns-1 sm:columns-2 lg:columns-3 gap-3 space-y-3">
         {gallery.images.map((image, i) => (
           <button
             type="button"
             key={image.id}
             style={{ animationDelay: `${(i % 5) * 100}ms` }}
-            className="enter-up block w-full break-inside-avoid relative photo-edge group cursor-pointer rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-900"
+            className="enter-up block w-full break-inside-avoid relative photo-edge [--photo-edge:rgb(0_0_0/0.35)] dark:[--photo-edge:rgb(255_255_255/0.35)] group cursor-pointer rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-900"
             onClick={() => {
               setIndex(i);
             }}
@@ -83,7 +83,7 @@ export default function GalleryView({
               alt={image.alt}
               width={image.width}
               height={image.height}
-              sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, (max-width: 80rem) 33vw, 24.5rem"
+              sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, (max-width: 80rem) 33vw, 25rem"
               loading={i === 0 ? 'eager' : 'lazy'}
               fetchPriority={i === 0 ? 'high' : 'auto'}
               className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
