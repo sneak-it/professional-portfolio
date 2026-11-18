@@ -238,6 +238,18 @@ function CodeBlock(props: ComponentPropsWithoutRef<'pre'>) {
   );
 }
 
+/**
+ * Scrolls a wide table instead of widening the page; focusable like Shiki's <pre>.
+ * `my-7 md:my-8` is Typography's table margin under `prose md:prose-lg`.
+ */
+function ScrollTable(props: ComponentPropsWithoutRef<'table'>) {
+  return (
+    <div tabIndex={0} className="my-7 overflow-x-auto md:my-8 [&>table]:my-0">
+      <table {...props} />
+    </div>
+  );
+}
+
 // GFM task lists compile to <input type="checkbox">, and `input` is blocked.
 // This re-admits just that checkbox; lib/harden.ts drops authored <input>.
 function TaskCheckbox({ type, ...rest }: ComponentPropsWithoutRef<'input'>) {
@@ -256,6 +268,7 @@ export const mdxComponents = {
   h3: heading('h3'),
   // The one client piece in a post body: its copy button.
   pre: CodeBlock,
+  table: ScrollTable,
   // Server components only: a client one would ship JS per post for no gain.
   Container,
   CoverCard,

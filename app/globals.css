@@ -264,7 +264,15 @@
 /* Text is capped at --measure; media stay full width.
    ponytail: :only-child ignores text, so a sentence with one inline image goes wide. */
 .measure
-  > :not(pre, table, figure, .not-prose, :has(> pre), :has(> img:only-child)) {
+  > :not(
+      pre,
+      table,
+      figure,
+      .not-prose,
+      :has(> pre),
+      :has(> table),
+      :has(> img:only-child)
+    ) {
   @apply mx-auto max-w-measure;
 }
 
