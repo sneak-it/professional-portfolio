@@ -71,7 +71,7 @@ export default function TableOfContents({
       <p className="font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
         Contents
       </p>
-      <ol className="mt-4 space-y-1">
+      <ol className="mt-3">
         {items.map((item, i) => (
           <li
             key={`${item.id}-${i}`}
@@ -80,7 +80,7 @@ export default function TableOfContents({
             <a
               href={`#${item.id}`}
               aria-current={i === active ? 'location' : undefined}
-              className="block border-l-2 border-transparent py-1 pl-3 text-sm wrap-break-word text-gray-700 transition-colors hover:text-accent-text aria-[current=location]:border-accent aria-[current=location]:text-gray-900 dark:text-gray-300 dark:aria-[current=location]:text-white"
+              className="block border-l-2 border-transparent py-0.5 pl-3 text-sm wrap-break-word text-gray-700 transition-colors hover:text-accent-text aria-[current=location]:border-accent aria-[current=location]:text-gray-900 dark:text-gray-300 dark:aria-[current=location]:text-white"
             >
               {item.text}
             </a>

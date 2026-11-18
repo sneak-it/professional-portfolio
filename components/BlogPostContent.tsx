@@ -69,7 +69,7 @@ export default function BlogPostContent({
               <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Contents
               </summary>
-              <ol className="mt-4 space-y-2">
+              <ol className="mt-3">
                 {toc.map((item, i) => (
                   <li
                     key={`${item.id}-${i}`}
@@ -77,7 +77,7 @@ export default function BlogPostContent({
                   >
                     <a
                       href={`#${item.id}`}
-                      className="text-gray-700 hover:text-accent-text dark:text-gray-300 transition-colors"
+                      className="block py-0.5 text-sm text-gray-700 hover:text-accent-text dark:text-gray-300 transition-colors"
                     >
                       {item.text}
                     </a>
