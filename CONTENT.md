@@ -1,10 +1,9 @@
 # Content management
 
 All content is MDX under `content/`, and images live under `media/`. Under Docker
-Compose `./content` and `./media/portfolio/photography` are bind-mounted read-only, so new
-and edited files are served immediately with no rebuild. `media/images/` is not mounted by
-default: the shipped avatar and blog assets are used until you uncomment the
-`./media/images` mount in `docker-compose.yml`, which replaces them wholesale.
+Compose `./content` and `./media` are bind-mounted read-only, so new and edited files are
+served immediately with no rebuild. Each mount replaces what the image ships wholesale, so
+copy in any shipped image your content still uses, such as the avatar placeholder.
 
 ## Special pages
 

@@ -50,14 +50,17 @@ docker build -t portfolio-app .
 docker run -p 3000:3000 \
   -e SITE_URL=https://your-domain \
   -v "$(pwd)/content:/app/content:ro" \
-  -v "$(pwd)/media/portfolio/photography:/app/media/portfolio/photography:ro" \
+  -v "$(pwd)/media:/app/media:ro" \
   portfolio-app
 ```
 
-Those are the same two mounts Compose uses. Add
-`-v "$(pwd)/media/images:/app/media/images:ro"` only to replace the shipped avatar and blog
-assets; it shadows them wholesale. Create each host path yourself before the first run, or
-Docker creates it root-owned.
+Those are the same two mounts Compose uses. Each shadows what the image ships wholesale,
+so copy in any shipped image your content still uses. Create each host path yourself
+before the first run, or Docker creates it root-owned.
+
+The image ships only the placeholder images: `.dockerignore` keeps everything else under
+`media/` out of the build context, so originals in your working tree never end up in a
+layer.
 
 ## Runtime vs build time
 
@@ -71,9 +74,8 @@ Changing either requires a rebuild, using a build `ARG` if the value varies per 
 
 This matters for `SITE_AVATAR_URL`. Images are same-origin only (no
 `images.remotePatterns`, and the CSP sets `img-src 'self'`), so a remote URL will not
-load. Point it at a path under `/media/images/`, and uncomment the `./media/images` mount
-in `docker-compose.yml` so your file is there. That mount replaces the shipped assets
-wholesale, so include a file for every path your content references. A path outside
+load. Point it at a path under `/media/images/`, with the file at the same path in the
+host's `./media`. A path outside
 `images.localPatterns` returns 400 from the optimizer while the page still returns 200,
 so the portrait goes blank with no error.
 

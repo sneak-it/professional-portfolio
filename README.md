@@ -17,15 +17,15 @@ A modern, highly polished personal portfolio/blog. This is aimed at self-hosters
 
 1. Copy `docker-compose.yml` and `.env.example` from this repository, then
    `cp .env.example .env` and edit the values you care about.
-2. `mkdir -p ./content ./media/portfolio/photography`
+2. `mkdir -p ./content ./media`
 3. **Recommended:** Connect your reverse proxy as described in [DOCKER.md](DOCKER.md#reverse-proxy).
 4. `docker compose up -d`
 
 Compose mounts those two paths read-only, so blog posts, projects, and photographs added
 there are served immediately with no rebuild. Make them yourself as in step 2: Docker
 creates a missing bind source root-owned, and you would then need `sudo` to add anything.
-Starting with an empty host tree is fine: the image ships its own avatar and demo assets,
-and the site renders with no content.
+Starting with an empty host tree is fine: the site renders with no content and no avatar
+until you add your own.
 
 Cloning the repository and running Compose from it instead serves the bundled example
 content, since the mounts then point at the repository's own `content/`.

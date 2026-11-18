@@ -14,6 +14,9 @@ LICENSE
 plans/
 .prettierrc.json
 .prettierignore
-# Original photographs: served by mount, never baked into an image.
-media/portfolio/photography/*
-!media/portfolio/photography/.gitkeep
+# Media comes from the mount; the image ships only the placeholders, so a local
+# build never bakes in an original photo.
+media
+!media/images/avatar-placeholder.png
+!media/images/blog/cover-demo.png
+!media/images/blog/inline-demo.svg

@@ -140,7 +140,7 @@ Be clear-eyed about the limits:
 
 ## Adding photos to a running site
 
-Compose bind-mounts `./media/portfolio/photography` read-only, so copying a file in
+Compose bind-mounts `./media` read-only, so copying a file in
 publishes it. No rebuild, no restart, no container write access.
 
 Create the host paths yourself before the first `docker compose up`. Docker creates a
@@ -148,7 +148,7 @@ missing bind source root-owned, and a later `mkdir` under it fails with
 `Permission denied` for a non-root user:
 
 ```bash
-mkdir -p ./content ./media/portfolio/photography
+mkdir -p ./content ./media
 ```
 
 Then each gallery folder is a plain `mkdir` and a copy:
@@ -164,10 +164,6 @@ trees back.
 Because the container cannot write to that mount, stripping happens on the way out rather
 than in place, which is why a file dropped in this way is still safe.
 
-`media/images/` is deliberately *not* mounted, so the shipped avatar and blog assets work
-on a first run with an empty host tree. To supply your own, uncomment the `./media/images`
-mount in `docker-compose.yml`; it replaces the shipped ones wholesale.
-
 ### Photographs are not committed
 
 `media/portfolio/` is gitignored, so a clone of this repository contains no photographs
@@ -180,8 +176,8 @@ That is deliberate. Committing a photograph would publish the full-resolution or
 that the route withholds, and git would keep it after any later unpublish. Back
 photographs up somewhere that is not git.
 
-`.dockerignore` excludes them as well, so a local `docker build .` leaves them out
-just as the release workflow's clean checkout does.
+`.dockerignore` excludes everything under `media/` except the shipped placeholders, so a
+local `docker build .` leaves them out just as the release workflow's clean checkout does.
 
 ## Checks
 
