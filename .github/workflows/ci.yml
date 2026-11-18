@@ -33,8 +33,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: npm audit (fail on high vulnerabilities)
-        run: npm audit --audit-level=high
+      - name: npm audit (production, fail on high)
+        run: npm audit --omit=dev --audit-level=high
+
+      # Dev tooling never ships in the image, so it blocks only on critical.
+      - name: npm audit (all, fail on critical)
+        run: npm audit --audit-level=critical
 
       - name: Lint
         run: npm run lint
