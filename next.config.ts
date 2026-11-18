@@ -69,6 +69,10 @@ const nextConfig: NextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
           },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
           // CSP is in proxy.ts: it carries a per-request nonce.
         ],
       },
