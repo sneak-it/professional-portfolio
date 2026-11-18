@@ -12,6 +12,16 @@ export function ThemeToggle() {
   const toggle = (button: HTMLButtonElement) => {
     const root = document.documentElement;
     const next = root.classList.contains('dark') ? 'light' : 'dark';
+    // Spins the icons, not the bordered button. WAAPI ignores the CSS reduced-motion
+    // backstop, so check it here.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      for (const icon of button.children) {
+        icon.animate(
+          { transform: ['rotate(0)', 'rotate(360deg)'] },
+          { duration: 300, easing: 'ease' },
+        );
+      }
+    }
     const commit = () => {
       flushSync(() => {
         setTheme(next);
