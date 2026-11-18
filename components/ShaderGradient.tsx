@@ -176,12 +176,15 @@ export default function ShaderGradient({
   calm?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  // Read inside the rAF loop, so a pause or a page change keeps the GL context.
+  // Refs, not effect deps, so a pause or a page change keeps the GL context.
+  // `syncRef` is the render effect's sync(), which acts on them.
   const pausedRef = useRef(paused);
   const calmRef = useRef(calm);
+  const syncRef = useRef<(() => void) | null>(null);
   useEffect(() => {
     pausedRef.current = paused;
     calmRef.current = calm;
+    syncRef.current?.();
   }, [paused, calm]);
 
   useEffect(() => {
@@ -287,61 +290,55 @@ export default function ShaderGradient({
     });
 
     let rafId = 0;
-    let running = true;
     // Deadlines advance on a fixed grid, so vsync quantisation cancels out and
     // the average holds on target at any refresh rate, variable ones included.
     let due = 0;
-    let last = performance.now();
+    let last = 0;
     const loop = (now: number) => {
-      if (!running) return;
       // Re-arm first, so a skipped frame still schedules the next one.
       rafId = requestAnimationFrame(loop);
-      const target = goal();
-      if (pausedRef.current) {
-        last = now;
-        // Paused, a page change snaps the frozen frame to its strength.
-        if (Math.abs(intensity.value - target.intensity) > 0.001) {
-          intensity.value = target.intensity;
-          speed = target.speed;
-          draw();
-        }
-        return;
-      }
       if (now < due) return;
       due += FRAME_MS;
-      // Stalled (hidden tab, long task): skip ahead. Nothing here is
-      // frame-sequential.
+      // Stalled (long task): skip ahead. Nothing here is frame-sequential.
       if (due < now) due = now + FRAME_MS;
-      // Frame time, at most 100 ms so a stall doesn't jump the drift. The render
-      // cap changes GPU cost and leaves the drift speed alone.
-      const dt = Math.min(now - last, 100);
+      // Frame time, 0 to 100 ms: a frame can be stamped before sync() set `last`,
+      // and a stall mustn't jump the drift. The render cap leaves drift speed alone.
+      const dt = Math.min(Math.max(now - last, 0), 100);
       last = now;
+      const target = goal();
       const ease = 1 - Math.exp(-dt / EASE_MS);
       intensity.value += (target.intensity - intensity.value) * ease;
       speed += (target.speed - speed) * ease;
       time.value += (dt / 1000) * speed;
       draw();
     };
-    rafId = requestAnimationFrame(loop);
 
-    // Pause the rAF while the tab is hidden — no GPU work in the background.
-    const onVisibility = () => {
-      if (document.hidden) {
-        running = false;
-        cancelAnimationFrame(rafId);
-      } else if (!running) {
-        running = true;
+    // The loop runs only while playing and visible, so a paused or hidden
+    // background schedules nothing. Paused, a page change snaps the frozen frame.
+    const sync = () => {
+      cancelAnimationFrame(rafId);
+      if (pausedRef.current) {
+        const target = goal();
+        if (Math.abs(intensity.value - target.intensity) > 0.001) {
+          intensity.value = target.intensity;
+          speed = target.speed;
+          draw();
+        }
+      } else if (!document.hidden) {
+        last = performance.now();
         rafId = requestAnimationFrame(loop);
       }
     };
+    syncRef.current = sync;
+    sync();
     window.addEventListener('resize', resize);
-    document.addEventListener('visibilitychange', onVisibility);
+    document.addEventListener('visibilitychange', sync);
 
     return () => {
-      running = false;
+      syncRef.current = null;
       cancelAnimationFrame(rafId);
       window.removeEventListener('resize', resize);
-      document.removeEventListener('visibilitychange', onVisibility);
+      document.removeEventListener('visibilitychange', sync);
       themeObserver.disconnect();
       // Release GPU memory and detach the canvas.
       gl.getExtension('WEBGL_lose_context')?.loseContext();
