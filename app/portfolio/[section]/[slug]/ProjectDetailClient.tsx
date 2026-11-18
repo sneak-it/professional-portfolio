@@ -16,7 +16,7 @@ export default function ProjectDetailClient({
   return (
     <>
       {/* A lone card (no cover, or only one of features and challenges) spans both columns. */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16 [&>:only-child]:col-span-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 [&>:only-child]:col-span-full">
         <div className="enter-up">
           <Surface padding="lg">
             <span className="text-accent-text font-medium font-mono uppercase tracking-wider text-sm mb-4 block">
@@ -94,10 +94,10 @@ export default function ProjectDetailClient({
       </div>
 
       {(features.length > 0 || project.challenges) && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 [&>:only-child]:col-span-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 [&>:only-child]:col-span-full">
           {features.length > 0 && (
             <div className="enter-up">
-              <Surface padding="md">
+              <Surface padding="md" className="h-full">
                 <h2 className="text-2xl font-bold mb-6">Key Features</h2>
                 <ul className="space-y-4">
                   {features.map((feature, index) => (
@@ -119,7 +119,7 @@ export default function ProjectDetailClient({
 
           {project.challenges && (
             <div className="enter-up" style={{ animationDelay: '200ms' }}>
-              <Surface padding="md">
+              <Surface padding="md" className="h-full">
                 <h2 className="text-2xl font-bold mb-6">
                   Challenges & Solutions
                 </h2>

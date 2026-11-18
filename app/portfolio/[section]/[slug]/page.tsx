@@ -134,7 +134,10 @@ export default async function PortfolioItemPage({
         <ProjectDetailClient project={project} sectionName={config.name} />
 
         {project.content && project.content.trim() && (
-          <Surface padding="lg" className={`mt-16 ${PROSE}`}>
+          <Surface
+            padding="lg"
+            className={`mt-8 ${PROSE} [&>:first-child]:mt-0 [&>:last-child]:mb-0`}
+          >
             <CachedMDX source={project.content} />
           </Surface>
         )}

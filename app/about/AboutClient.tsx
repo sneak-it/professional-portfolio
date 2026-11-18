@@ -67,7 +67,7 @@ export default function AboutClient({
 }) {
   return (
     <Container>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-[28rem_1fr] gap-8 items-center">
         <div className="enter-up">
           <div className="relative photo-edge aspect-square max-w-md mx-auto lg:mx-0 rounded-3xl overflow-hidden shadow-2xl">
             <CoverImage
@@ -107,8 +107,8 @@ export default function AboutClient({
 
       {/* Skills section, hidden when about.mdx has none */}
       {skills.length > 0 && (
-        <div className="mt-32">
-          <div className="enter-up text-center mb-16">
+        <div className="mt-16">
+          <div className="enter-up text-center mb-8">
             <h2 className="heading-legible text-3xl md:text-4xl font-display font-bold tracking-tight">
               {skillsHeading}
             </h2>
@@ -155,8 +155,8 @@ export default function AboutClient({
 
       {/* Personal interests, hidden when about.mdx has none */}
       {interests.length > 0 && (
-        <div className="mt-32">
-          <div className="enter-up text-center mb-16">
+        <div className="mt-16">
+          <div className="enter-up text-center mb-8">
             <h2 className="heading-legible text-3xl md:text-4xl font-display font-bold tracking-tight">
               {interestsHeading}
             </h2>
