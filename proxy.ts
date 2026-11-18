@@ -36,14 +36,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    {
-      // `brand` and `media`: image responses, no nonce to inject.
-      source: '/((?!api|brand|media|_next/static|_next/image|favicon.ico).*)',
-      missing: [
-        { type: 'header', key: 'next-router-prefetch' },
-        { type: 'header', key: 'purpose', value: 'prefetch' },
-      ],
-    },
-  ],
+  // `brand` and `media`: image responses, no nonce to inject. Prefetch requests
+  // stay matched, so no HTML goes out without the CSP.
+  matcher: ['/((?!api|brand|media|_next/static|_next/image|favicon.ico).*)'],
 };
