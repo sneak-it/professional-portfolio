@@ -18,6 +18,14 @@ fs.writeFileSync(
   "---\ntitle: 'Typo'\ndescription: 'x'\ntech: TypeScript\nfeatures: one\nlink: 42\nchallenges:\n  - 'Problem A'\n  - 'Problem B'\n---\nBody.\n",
 );
 fs.writeFileSync(
+  path.join(projects, 'labeled.mdx'),
+  "---\ntitle: 'Labeled'\ndescription: 'x'\nlink: 'https://example.com'\nlinkLabel: 'Download'\n---\n",
+);
+fs.writeFileSync(
+  path.join(projects, 'unlabeled.mdx'),
+  "---\ntitle: 'Unlabeled'\ndescription: 'x'\nlink: 'https://example.com'\n---\n",
+);
+fs.writeFileSync(
   path.join(root, 'about.mdx'),
   "---\nskillHeading: 'Toolbox'\ninterestsHeading: 'Outside work'\nskills:\n  - name: 'Ops'\n    icon: ops\n    item:\n      - 'Docker'\n  - just a string\n  - null\ninterests:\n  - icon: server\n    blurb: 'no name'\n  - name: 'Homelab'\n    icon: server\n    blurb:\n      - 'a list'\n---\nBio.\n",
 );
@@ -27,15 +35,24 @@ fs.writeFileSync(
   "---\ntitle: 'Post'\ndate: '2026-01-01'\nimage:\n  src: '/media/x.png'\n  alt: 'x'\n---\nBody.\n",
 );
 process.env.CONTENT_DIR = root;
-const { getProjectItems } = await import('../lib/portfolio.ts');
+const { getProjectItem } = await import('../lib/portfolio.ts');
 const { getAbout } = await import('../lib/about.ts');
 const { getAllPostMeta } = await import('../lib/mdx.ts');
 
 void test('project list fields that are not lists become empty lists', () => {
-  const [item] = getProjectItems('open-source');
+  const item = getProjectItem('open-source', 'typo');
   assert.deepEqual(item?.tech, []);
   assert.deepEqual(item?.features, []);
   assert.equal(item?.link, undefined);
+  assert.equal(item?.linkLabel, undefined);
+});
+
+void test('a project link label defaults only when unset', () => {
+  assert.equal(getProjectItem('open-source', 'labeled')?.linkLabel, 'Download');
+  assert.equal(
+    getProjectItem('open-source', 'unlabeled')?.linkLabel,
+    'Visit Site',
+  );
 });
 
 void test('about skills and interests keep only well-formed entries', () => {

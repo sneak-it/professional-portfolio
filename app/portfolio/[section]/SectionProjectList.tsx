@@ -61,7 +61,7 @@ export default function SectionProjectList({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform shadow-md"
-                        aria-label={`View ${project.title} live`}
+                        aria-label={`${project.linkLabel}: ${project.title}`}
                       >
                         <ExternalLink size={18} />
                       </a>

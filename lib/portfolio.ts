@@ -69,6 +69,8 @@ export interface ProjectItem {
   content?: string;
   tech?: string[];
   link?: string;
+  /** Button text for `link`; set whenever `link` is. */
+  linkLabel?: string;
   github?: string;
   features?: string[];
   challenges?: string;
@@ -126,6 +128,7 @@ function sectionDir(section: SectionSlug): string {
 
 function projectSummary(section: SectionSlug, file: MdxFile): ProjectSummary {
   const { data } = file;
+  const link = text(data.link, '') || undefined;
   return {
     section,
     slug: file.slug,
@@ -135,7 +138,8 @@ function projectSummary(section: SectionSlug, file: MdxFile): ProjectSummary {
     date: text(data.date, ''),
     ...(isDraft(data) && { draft: true as const }),
     tech: strings(data.tech),
-    link: text(data.link, '') || undefined,
+    link,
+    linkLabel: link && (text(data.linkLabel, '') || 'Visit Site'),
     github: text(data.github, '') || undefined,
     features: strings(data.features),
     challenges: text(data.challenges, '') || undefined,

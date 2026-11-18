@@ -38,7 +38,7 @@ export default function ProjectDetailClient({
                     rel="noopener noreferrer"
                     className="pill-solid px-6 py-3"
                   >
-                    Live Demo <ExternalLink size={18} />
+                    {project.linkLabel} <ExternalLink size={18} />
                   </a>
                 )}
                 {project.github && (

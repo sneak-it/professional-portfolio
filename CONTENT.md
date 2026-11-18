@@ -176,6 +176,7 @@ copy one, rename it, edit.
    tech: ['TypeScript', 'Node.js']
    github: 'https://github.com/you/my-project' # optional
    link: 'https://my-project.dev' # optional
+   linkLabel: 'Read the Docs' # optional button text for link, default "Visit Site"
    features:
      - 'Key capability one'
      - 'Key capability two'
