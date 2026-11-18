@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { ArrowUp } from 'lucide-react';
 import Container from '@/components/Container';
 import CoverImage from '@/components/CoverImage';
 import Surface from '@/components/Surface';
@@ -45,12 +46,14 @@ export default function BlogPostContent({
               {post.meta.title}
             </h1>
 
-            <PostMeta
-              date={post.meta.date}
-              readTime={post.meta.readTime}
-              updated={post.meta.updated}
-              className="mb-10"
-            />
+            <div className="mb-10 flex items-center justify-between gap-4">
+              <PostMeta
+                date={post.meta.date}
+                readTime={post.meta.readTime}
+                updated={post.meta.updated}
+              />
+              <ShareButton title={post.meta.title} />
+            </div>
           </div>
 
           <div className="relative photo-edge aspect-video rounded-3xl overflow-hidden mb-10">
@@ -116,6 +119,14 @@ export default function BlogPostContent({
           <PostNav prev={prev} next={next} />
         </footer>
       </Surface>
+
+      {/* The skip link's target: focus restarts at the top, not just the scroll. */}
+      <a
+        href="#main-content"
+        className="mt-8 inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-accent-text transition-colors"
+      >
+        <ArrowUp size={16} aria-hidden /> Back to top
+      </a>
     </Container>
   );
   if (!showToc) return article;
