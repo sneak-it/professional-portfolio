@@ -176,14 +176,11 @@ copy one, rename it, edit.
    github: 'https://github.com/you/my-project' # optional
    link: 'https://my-project.dev' # optional
    linkLabel: 'Read the Docs' # optional button text for link, default "Visit Site"
-   features:
-     - 'Key capability one'
-     - 'Key capability two'
-   challenges: 'The hardest problem and how you solved it.'
    ---
    ```
 
-3. Write the narrative in the MDX body.
+3. Write the body: features, the story of the work, and anything else, laid out as
+   [cards](#cards).
 
 ### Cards
 
@@ -214,7 +211,8 @@ A longer description, with **bold**, [links](https://example.com), and images.
 - Text outside any card gets a full-width card of its own, so a body with no cards
   shows as one card.
 - Anything that works in a blog post works in a card: images, `<Figure>`,
-  `<Callout>`, code blocks, tables, `###` headings.
+  `<Callout>`, code blocks, tables, `###` headings. Footnotes are the exception:
+  their list renders below the cards, outside any card.
 - `{` and `<` are MDX syntax. Write `\{` and `\<` when you mean the characters.
 
 `content/portfolio/open-source/example-project.mdx` uses all of the above.

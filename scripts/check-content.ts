@@ -59,14 +59,12 @@ const PROJECT: Schema = {
     'link',
     'linkLabel',
     'github',
-    'features',
-    'challenges',
     'draft',
   ],
   image: 'coverImage',
   tags: false,
-  lists: ['tech', 'features'],
-  texts: ['coverImage', 'link', 'linkLabel', 'github', 'challenges'],
+  lists: ['tech'],
+  texts: ['coverImage', 'link', 'linkLabel', 'github'],
 };
 
 const GALLERY: Schema = {

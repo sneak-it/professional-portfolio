@@ -75,6 +75,15 @@ void test('footnote definitions alone make no card', async () => {
   assert.ok(!html.includes('<section></section>'), html);
 });
 
+void test('an MDX comment in a row makes no card', async () => {
+  assert.equal(
+    await render(
+      '<CardRow>\n{/* left */}\n<Card title="A">\nx\n</Card>\n<Card title="B">\ny\n</Card>\n</CardRow>\n',
+    ),
+    '<div data-row=""><section data-title="A"><p>x</p></section><section data-title="B"><p>y</p></section></div>',
+  );
+});
+
 void test('export lines stay unwrapped', async () => {
   assert.equal(
     await render('export const a = 1\n\n<Card>\nText\n</Card>\n'),

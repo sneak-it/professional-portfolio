@@ -72,8 +72,6 @@ export interface ProjectItem {
   /** Button text for `link`; set whenever `link` is. */
   linkLabel?: string;
   github?: string;
-  features?: string[];
-  challenges?: string;
 }
 
 /** Gallery-style item. No `content`: nothing renders a photography body. */
@@ -141,8 +139,6 @@ function projectSummary(section: SectionSlug, file: MdxFile): ProjectSummary {
     link,
     linkLabel: link && (text(data.linkLabel, '') || 'Visit Site'),
     github: text(data.github, '') || undefined,
-    features: strings(data.features),
-    challenges: text(data.challenges, '') || undefined,
   };
 }
 

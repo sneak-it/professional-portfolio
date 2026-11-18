@@ -42,7 +42,6 @@ const { getAllPostMeta } = await import('../lib/mdx.ts');
 void test('project list fields that are not lists become empty lists', () => {
   const item = getProjectItem('open-source', 'typo');
   assert.deepEqual(item?.tech, []);
-  assert.deepEqual(item?.features, []);
   assert.equal(item?.link, undefined);
   assert.equal(item?.linkLabel, undefined);
 });
@@ -78,9 +77,9 @@ void test('check:content names each slip', () => {
   assert.equal(run.status, 1);
   for (const message of [
     'tech must be a list of strings',
-    'features must be a list of strings',
+    'unknown frontmatter key "features"',
     'link must be text, not a number (quote it)',
-    'challenges must be text, not a list',
+    'unknown frontmatter key "challenges"',
     'image must be text, not nested keys',
     'unknown frontmatter key "skillHeading"',
     'skills entry 1: items must be a list of strings',

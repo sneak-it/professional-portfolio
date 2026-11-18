@@ -5,7 +5,12 @@ const isCard = (node: MdxJsxNode) =>
   (node.name === 'Card' || node.name === 'CardRow');
 
 // Render nothing where they stand, so alone they'd leave an empty card.
-const SILENT = new Set(['definition', 'footnoteDefinition']);
+// `{expressions}`, comments included, are removed later by `blockJS`.
+const SILENT = new Set([
+  'definition',
+  'footnoteDefinition',
+  'mdxFlowExpression',
+]);
 
 function wrapLoose(children: MdxJsxNode[]): MdxJsxNode[] {
   const out: MdxJsxNode[] = [];
