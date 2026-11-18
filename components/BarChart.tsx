@@ -27,11 +27,13 @@ export default function BarChart({
   title,
   note,
   orientation,
+  hideTable,
   children,
 }: {
   title?: string;
   note?: string;
   orientation?: string;
+  hideTable?: boolean;
   children?: ReactNode;
 }) {
   const elements = Children.toArray(children).filter(isValidElement);
@@ -54,6 +56,43 @@ export default function BarChart({
     );
   }
   const max = Math.max(0, ...bars.map((b) => b.value));
+  const table = (
+    <table className="mt-3 w-full text-sm">
+      {title && <caption className="sr-only">{title}</caption>}
+      <tbody>
+        {bars.map((bar, i) => (
+          <Fragment key={i}>
+            <tr className="border-b border-gray-100 dark:border-white/10">
+              <th
+                scope="row"
+                className="py-1.5 pe-4 text-start font-normal text-gray-600 dark:text-gray-300"
+              >
+                {bar.label}
+              </th>
+              <td className="py-1.5 text-end tabular-nums text-gray-900 dark:text-white">
+                {formatFull(bar.value)}
+              </td>
+            </tr>
+            {bar.markers.map((marker, j) => (
+              <tr
+                key={j}
+                className="border-b border-gray-100 dark:border-white/10"
+              >
+                <td
+                  colSpan={2}
+                  className="py-1.5 text-gray-500 dark:text-gray-400"
+                >
+                  {marker.note
+                    ? `${marker.label}, ${marker.note}`
+                    : marker.label}
+                </td>
+              </tr>
+            ))}
+          </Fragment>
+        ))}
+      </tbody>
+    </table>
+  );
 
   return (
     <figure className="not-prose my-10">
@@ -70,46 +109,16 @@ export default function BarChart({
       {note && (
         <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">{note}</p>
       )}
-      <details className="mt-4">
-        <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          Data table
-        </summary>
-        <table className="mt-3 w-full text-sm">
-          {title && <caption className="sr-only">{title}</caption>}
-          <tbody>
-            {bars.map((bar, i) => (
-              <Fragment key={i}>
-                <tr className="border-b border-gray-100 dark:border-white/10">
-                  <th
-                    scope="row"
-                    className="py-1.5 pe-4 text-start font-normal text-gray-600 dark:text-gray-300"
-                  >
-                    {bar.label}
-                  </th>
-                  <td className="py-1.5 text-end tabular-nums text-gray-900 dark:text-white">
-                    {formatFull(bar.value)}
-                  </td>
-                </tr>
-                {bar.markers.map((marker, j) => (
-                  <tr
-                    key={j}
-                    className="border-b border-gray-100 dark:border-white/10"
-                  >
-                    <td
-                      colSpan={2}
-                      className="py-1.5 text-gray-500 dark:text-gray-400"
-                    >
-                      {marker.note
-                        ? `${marker.label}, ${marker.note}`
-                        : marker.label}
-                    </td>
-                  </tr>
-                ))}
-              </Fragment>
-            ))}
-          </tbody>
-        </table>
-      </details>
+      {hideTable === true ? (
+        <div className="sr-only">{table}</div>
+      ) : (
+        <details className="mt-4">
+          <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            Data table
+          </summary>
+          {table}
+        </details>
+      )}
     </figure>
   );
 }

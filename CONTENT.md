@@ -126,7 +126,7 @@ Components available in the body: `<Callout type="note|tip|warn" title="…">`,
 http/https/mailto.
 
 Charts and diagrams render on the server and follow the theme toggle: `<Stats>` with
-`<Stat value label note />` tiles, `<BarChart title note orientation>` with
+`<Stat value label note />` tiles, `<BarChart title note orientation hideTable>` with
 `<Bar label value show />` and `<Marker after label note />` children, `<Timeline>` with
 `<Milestone date title>` entries, and ` ```mermaid ` fences (flowchart, state, sequence,
 class, and ER). The "Charts and diagrams" section of the authoring reference shows each
