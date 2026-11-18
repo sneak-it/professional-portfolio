@@ -52,6 +52,7 @@ optional, a missing or misplaced `.env` is not an error: the container logs
 | `SITE_LINKEDIN_URL` | LinkedIn profile link. Empty hides it. | `https://linkedin.com/in/your-profile` |
 | `SITE_EMAIL` | Contact email. Unset omits the contact card. | unset |
 | `CONTENT_DIR` | Content tree to serve when running from source, absolute or relative to the working directory. Leave unset under Docker and mount over `/app/content` instead. | `./content` |
+| `MEDIA_DIR` | Media tree to serve when running from source, the same way. Replaces `./media` wholesale, so copy in any shipped image your content still uses. Leave unset under Docker and mount under `/app/media` instead. | `./media` |
 | `BLOG_POSTS_PER_PAGE` | Posts per page on `/blog`. | `3` |
 | `UV_THREADPOOL_SIZE` | Photo encodes at once. Each adds about 60 MB to peak memory, so raise the compose memory limit with it. | `2` in the image, `4` from source |
 

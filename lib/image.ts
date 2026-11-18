@@ -19,21 +19,27 @@ export function isLocalSrc(src: unknown): src is string {
   );
 }
 
+/** `MEDIA_DIR` (absolute, or relative to the cwd), else ./media. */
+export function mediaDir(raw = process.env.MEDIA_DIR): string {
+  const dir = raw?.trim();
+  return dir
+    ? path.resolve(/*turbopackIgnore: true*/ dir)
+    : path.join(process.cwd(), 'media');
+}
+
 /**
  * Filesystem path backing a `/media/...` URL, or null if it resolves outside
- * `media/`. SITE_AVATAR_URL and the route's `[...path]` both arrive from
+ * `dir`. SITE_AVATAR_URL and the route's `[...path]` both arrive from
  * outside, so the containment check is a real boundary.
  */
 export function mediaFilePath(
   src: unknown,
-  root: string = process.cwd(),
+  dir: string = mediaDir(),
 ): string | null {
   if (!isLocalSrc(src)) return null;
-  const mediaDir = path.join(root, 'media');
-  const full = path.resolve(root, `.${src}`);
-  return full === mediaDir || full.startsWith(mediaDir + path.sep)
-    ? full
-    : null;
+  if (src !== '/media' && !src.startsWith('/media/')) return null;
+  const full = path.resolve(dir, `.${src.slice('/media'.length)}`);
+  return full === dir || full.startsWith(dir + path.sep) ? full : null;
 }
 
 const dimensionCache = new Map<

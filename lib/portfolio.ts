@@ -1,5 +1,5 @@
 import path from 'path';
-import { imageDimensions } from './image.ts';
+import { imageDimensions, mediaDir } from './image.ts';
 import {
   contentDir,
   isDraft,
@@ -111,8 +111,8 @@ export interface SectionSummary {
 
 const portfolioDirectory = contentDir('portfolio');
 const mediaPhotographyDirectory = path.join(
-  process.cwd(),
-  'media/portfolio/photography',
+  mediaDir(),
+  'portfolio/photography',
 );
 
 /** Look up a section by slug; validates a dynamic route param. */

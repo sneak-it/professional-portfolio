@@ -4,7 +4,12 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
-import { imageDimensions, isLocalSrc, mediaFilePath } from '../lib/image.ts';
+import {
+  imageDimensions,
+  isLocalSrc,
+  mediaDir,
+  mediaFilePath,
+} from '../lib/image.ts';
 
 void test('isLocalSrc accepts only same-origin paths', () => {
   for (const src of [
@@ -32,24 +37,33 @@ void test('isLocalSrc accepts only same-origin paths', () => {
 });
 
 void test('mediaFilePath keeps env- and URL-supplied paths inside media/', () => {
-  const root = '/srv/app';
+  const dir = '/srv/app/media';
   assert.equal(
-    mediaFilePath('/media/images/a.png', root),
+    mediaFilePath('/media/images/a.png', dir),
     '/srv/app/media/images/a.png',
   );
-  assert.equal(mediaFilePath('/media', root), '/srv/app/media');
+  assert.equal(mediaFilePath('/media', dir), '/srv/app/media');
 
   // Anything resolving outside media/ resolves to nothing, including the
   // sibling directory Next *does* serve verbatim.
-  assert.equal(mediaFilePath('/public/images/a.png', root), null);
-  assert.equal(mediaFilePath('/images/a.png', root), null);
-  assert.equal(mediaFilePath('/media/../public/a.png', root), null);
-  assert.equal(mediaFilePath('/media/../../etc/passwd', root), null);
-  assert.equal(mediaFilePath('/../../etc/passwd', root), null);
-  assert.equal(mediaFilePath('//evil.example/x.png', root), null);
-  assert.equal(mediaFilePath('https://evil.example/x.png', root), null);
-  assert.equal(mediaFilePath('media/images/a.png', root), null);
-  assert.equal(mediaFilePath(undefined, root), null);
+  assert.equal(mediaFilePath('/public/images/a.png', dir), null);
+  assert.equal(mediaFilePath('/images/a.png', dir), null);
+  assert.equal(mediaFilePath('/media/../public/a.png', dir), null);
+  assert.equal(mediaFilePath('/media/../../etc/passwd', dir), null);
+  assert.equal(mediaFilePath('/media/../media-x/a.png', dir), null);
+  assert.equal(mediaFilePath('/mediax/a.png', dir), null);
+  assert.equal(mediaFilePath('/../../etc/passwd', dir), null);
+  assert.equal(mediaFilePath('//evil.example/x.png', dir), null);
+  assert.equal(mediaFilePath('https://evil.example/x.png', dir), null);
+  assert.equal(mediaFilePath('media/images/a.png', dir), null);
+  assert.equal(mediaFilePath(undefined, dir), null);
+});
+
+void test('mediaDir defaults to ./media and resolves MEDIA_DIR', () => {
+  assert.equal(mediaDir(undefined), path.resolve('media'));
+  assert.equal(mediaDir('   '), path.resolve('media'));
+  assert.equal(mediaDir(' /srv/media '), '/srv/media');
+  assert.equal(mediaDir('../private'), path.resolve('../private'));
 });
 
 void test('imageDimensions reports the served size: turned, long edge capped', async () => {
