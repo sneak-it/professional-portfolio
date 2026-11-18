@@ -54,13 +54,14 @@ export default function SectionProjectList({
                   />
                 </Link>
                 {(project.link || project.github) && (
-                  <div className="relative -mt-12 px-6 flex justify-end gap-3 z-10 [@media(hover:hover)]:opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
+                  // The row overlaps the cover; only the buttons take clicks.
+                  <div className="relative -mt-12 px-6 flex justify-end gap-3 z-10 pointer-events-none">
                     {project.link && (
                       <a
                         href={project.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform shadow-md"
+                        className="pointer-events-auto w-10 h-10 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform shadow-md"
                         aria-label={`${project.linkLabel}: ${project.title}`}
                       >
                         <ExternalLink size={18} />
@@ -71,7 +72,7 @@ export default function SectionProjectList({
                         href={project.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform shadow-md"
+                        className="pointer-events-auto w-10 h-10 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform shadow-md"
                         aria-label={`View ${project.title} source on GitHub`}
                       >
                         <GitHubIcon size={18} />
