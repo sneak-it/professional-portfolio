@@ -215,6 +215,7 @@ function checkFile(dir: string, slug: string, schema: Schema) {
 
 /** The about.mdx keys `getAbout` reads as text. */
 const ABOUT_TEXTS = [
+  'heading',
   'description',
   'skillsHeading',
   'skillsBlurb',
@@ -256,6 +257,21 @@ function checkAbout() {
       }
     });
   }
+}
+
+/** blog.mdx: unknown keys, and a description the page would drop. */
+function checkBlogPage() {
+  const file = path.join(contentDir(), 'blog.mdx');
+  if (!fs.existsSync(file)) return;
+  const parsed = readMdxFile(contentDir(), 'blog');
+  if (parsed === null) {
+    error(file, 'unreadable or unparseable');
+    return;
+  }
+  for (const key of Object.keys(parsed.data)) {
+    if (key !== 'description') error(file, `unknown frontmatter key "${key}"`);
+  }
+  checkText(file, 'description', parsed.data.description);
 }
 
 /** portfolio.mdx: unknown sections or keys, and values the pages would drop. */
@@ -356,6 +372,7 @@ for (const section of PORTFOLIO_SECTIONS) {
 }
 
 checkAbout();
+checkBlogPage();
 checkPortfolioPage();
 
 checkTagVocabulary();

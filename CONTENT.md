@@ -27,6 +27,7 @@ Body: the bio paragraph under the hero.
 
 | Field | Purpose | Default |
 | --- | --- | --- |
+| `heading` | Page heading. | `About Me` |
 | `description` | Meta description. | Derived from `SITE_NAME` |
 | `skillsHeading` | Heading over the skills grid. | `Skills` |
 | `skillsBlurb` | Line under that heading. | `The tools I use most.` |
@@ -68,6 +69,14 @@ The 404 page, under the large `404`. Frontmatter only; the body is ignored.
 | --- | --- | --- |
 | `title` | Heading. | `Page not found.` |
 | `message` | Line under the heading. | `The page you are looking for cannot be found.` |
+
+### `content/blog.mdx`
+
+The Blog page. Frontmatter only; the body is ignored.
+
+| Field | Purpose | Default |
+| --- | --- | --- |
+| `description` | Meta description for `/blog`. | None (line left out) |
 
 ### `content/portfolio.mdx`
 

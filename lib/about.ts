@@ -22,6 +22,7 @@ export interface Interest {
 }
 
 export interface About {
+  heading: string;
   skills: SkillGroup[];
   interests: Interest[];
   skillsHeading: string;
@@ -51,6 +52,7 @@ export function getAbout(fallbackDescription: string): About {
   const file = readMdxFile(contentDir(), 'about');
   const data = file?.data ?? {};
   return {
+    heading: text(data.heading, 'About Me'),
     skills: named(data.skills).map((group) => ({
       name: group.name,
       icon: group.icon as SkillIcon,

@@ -43,6 +43,7 @@ const INTEREST_ICONS: Record<InterestIcon, React.ReactNode> = {
 
 export default function AboutClient({
   name,
+  heading,
   linkedin,
   avatarUrl,
   skills,
@@ -54,6 +55,7 @@ export default function AboutClient({
   children,
 }: {
   name: string;
+  heading: string;
   linkedin?: string;
   avatarUrl: string | null;
   skills: SkillGroup[];
@@ -83,7 +85,7 @@ export default function AboutClient({
         <div className="enter-up" style={{ animationDelay: '200ms' }}>
           <Surface padding="lg">
             <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-6">
-              About Me
+              {heading}
             </h1>
             <div className="space-y-4 text-lg text-gray-700 dark:text-gray-300">
               {children}

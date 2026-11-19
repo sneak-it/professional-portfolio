@@ -9,15 +9,12 @@ import {
   type Tag,
 } from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
+import { getBlogPage } from '@/lib/blog';
 import { pageMetadata } from '@/lib/metadata';
 
 // Rendered per request: the bind-mounted content/ dir and the runtime site
 // config both apply immediately. See lib/mdx.ts and lib/site.ts.
 export const dynamic = 'force-dynamic';
-
-// Metadata only; the page itself shows just the title.
-const DESCRIPTION =
-  'Thoughts, tutorials, and insights on web development, design, and technology.';
 
 // Resolve the requested page to a valid 1-based index, or null when the param
 // is present but out of range / malformed. Callers 404 on null.
@@ -78,7 +75,10 @@ export async function generateMetadata({
   if (missingTag) return {};
 
   const title = tag ? `Posts tagged ${tag.name}` : 'Blog';
-  const description = tag ? `Every post tagged ${tag.name}.` : DESCRIPTION;
+  // Metadata only; the page itself shows just the title.
+  const description = tag
+    ? `Every post tagged ${tag.name}.`
+    : getBlogPage().description;
   // Out-of-range pages 404 (see default export); still give them a self-canonical.
   const canonical = canonicalFor(tag, currentPage);
 

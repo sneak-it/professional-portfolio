@@ -16,6 +16,7 @@ export function generateMetadata() {
 
 export default function AboutPage() {
   const {
+    heading,
     skills,
     interests,
     skillsHeading,
@@ -28,6 +29,7 @@ export default function AboutPage() {
   return (
     <AboutClient
       name={siteConfig.name}
+      heading={heading}
       linkedin={siteConfig.social.linkedin}
       avatarUrl={avatarSrc()}
       skills={skills}
