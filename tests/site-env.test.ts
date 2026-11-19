@@ -1,6 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { brandVersion, monogram, siteUrl } from '../lib/site-env.ts';
+import {
+  GITHUB_PLACEHOLDER,
+  LINKEDIN_PLACEHOLDER,
+  brandVersion,
+  licenseUrl,
+  monogram,
+  profileUrls,
+  siteUrl,
+} from '../lib/site-env.ts';
 
 const DEFAULT_URL = 'http://localhost:3000';
 
@@ -42,4 +50,49 @@ void test('brandVersion is stable per input and moves with any part', () => {
 
 void test('brandVersion emits a URL-safe token', () => {
   assert.match(brandVersion(['a']), /^[A-Za-z0-9_-]{12}$/);
+});
+
+void test('profileUrls drops placeholders and blanks', () => {
+  assert.deepEqual(
+    profileUrls(
+      [GITHUB_PLACEHOLDER, '', 'https://linkedin.com/in/ian'],
+      undefined,
+    ),
+    ['https://linkedin.com/in/ian'],
+  );
+  assert.deepEqual(
+    profileUrls([GITHUB_PLACEHOLDER, LINKEDIN_PLACEHOLDER], ''),
+    [],
+  );
+});
+
+void test('profileUrls splits, trims, and dedupes SITE_PROFILE_URLS', () => {
+  assert.deepEqual(
+    profileUrls(
+      ['https://github.com/a'],
+      ' https://bsky.app/profile/a , https://github.com/a,,',
+    ),
+    ['https://github.com/a', 'https://bsky.app/profile/a'],
+  );
+});
+
+void test('profileUrls rejects non-http(s) entries', () => {
+  assert.deepEqual(
+    profileUrls([], 'javascript:alert(1),example.com,mailto:a@b.c'),
+    [],
+  );
+});
+
+void test('licenseUrl keeps site paths and http(s) URLs only', () => {
+  assert.equal(licenseUrl('/contact'), '/contact');
+  assert.equal(
+    licenseUrl(' https://creativecommons.org/licenses/by/4.0/ '),
+    'https://creativecommons.org/licenses/by/4.0/',
+  );
+  assert.equal(licenseUrl('//evil.example'), '');
+  assert.equal(licenseUrl('/\\evil.example'), '');
+  assert.equal(licenseUrl('javascript:alert(1)'), '');
+  assert.equal(licenseUrl('contact'), '');
+  assert.equal(licenseUrl(undefined), '');
+  assert.equal(licenseUrl('  '), '');
 });

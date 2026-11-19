@@ -2,7 +2,15 @@ import 'server-only';
 import fs from 'fs';
 import { ACCENT_BAR, ACCENT_DIAGONAL } from './brand';
 import { mediaFilePath } from './image';
-import { brandVersion, monogram, siteUrl } from './site-env';
+import {
+  GITHUB_PLACEHOLDER,
+  LINKEDIN_PLACEHOLDER,
+  brandVersion,
+  licenseUrl,
+  monogram,
+  profileUrls,
+  siteUrl,
+} from './site-env';
 
 /**
  * Central site metadata. Every field is env-driven with a placeholder, so one
@@ -19,6 +27,11 @@ if (!process.env.SITE_NAME) {
     '[site] SITE_NAME unset; serving the placeholder identity. See .env.example.',
   );
 }
+
+// `??`: an empty value blanks the link out (callers hide it), an unset one
+// keeps the placeholder.
+const github = process.env.SITE_GITHUB_URL?.trim() ?? GITHUB_PLACEHOLDER;
+const linkedin = process.env.SITE_LINKEDIN_URL?.trim() ?? LINKEDIN_PLACEHOLDER;
 
 export const siteConfig = {
   name,
@@ -39,16 +52,16 @@ export const siteConfig = {
   avatarUrl:
     process.env.SITE_AVATAR_URL?.trim() ||
     '/media/images/avatar-placeholder.png',
-  // `??`: an empty value blanks the link out (callers hide it), an unset one
-  // keeps the placeholder. `email` has no placeholder.
+  // Contact details; `email` has no placeholder.
   social: {
     email: process.env.SITE_EMAIL?.trim() ?? '',
-    github:
-      process.env.SITE_GITHUB_URL?.trim() ?? 'https://github.com/your-username',
-    linkedin:
-      process.env.SITE_LINKEDIN_URL?.trim() ??
-      'https://linkedin.com/in/your-profile',
+    github,
+    linkedin,
   },
+  jobTitle: process.env.SITE_JOB_TITLE?.trim() || '',
+  // Profiles that are also the owner, for structured data; never placeholders.
+  profileUrls: profileUrls([github, linkedin]),
+  photoLicenseUrl: licenseUrl(),
 } as const;
 
 /**
@@ -59,7 +72,7 @@ export function absoluteUrl(path: string): string {
   return `${siteConfig.url}${path}`;
 }
 
-const AVATAR_FALLBACK = '/media/images/avatar-placeholder.png';
+export const AVATAR_FALLBACK = '/media/images/avatar-placeholder.png';
 const missingAvatars = new Set<string>();
 
 /**

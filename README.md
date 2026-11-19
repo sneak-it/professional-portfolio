@@ -52,6 +52,9 @@ optional, a missing or misplaced `.env` is not an error: the container logs
 | `SITE_GITHUB_URL` | GitHub profile link. Empty hides it. | `https://github.com/your-username` |
 | `SITE_LINKEDIN_URL` | LinkedIn profile link. Empty hides it. | `https://linkedin.com/in/your-profile` |
 | `SITE_EMAIL` | Contact email. Unset omits the contact card. | unset |
+| `SITE_JOB_TITLE` | Job title in the structured data. | unset |
+| `SITE_PROFILE_URLS` | Extra profile URLs that are also you, comma-separated; tells search engines these profiles and the site are one person. GitHub and LinkedIn are included automatically. | unset |
+| `SITE_PHOTO_LICENSE_URL` | License link on gallery photos, shown in Google Images: a page that states your terms, such as `/portfolio/photography` with a section note (see `CONTENT.md`), or a full URL. | unset |
 | `CONTENT_DIR` | Content tree to serve when running from source, absolute or relative to the working directory. Leave unset under Docker and mount over `/app/content` instead. | `./content` |
 | `MEDIA_DIR` | Media tree to serve when running from source, the same way. Replaces `./media` wholesale, so copy in any shipped image your content still uses. Leave unset under Docker and mount under `/app/media` instead. | `./media` |
 | `BLOG_POSTS_PER_PAGE` | Posts per page on `/blog`. | `3` |
