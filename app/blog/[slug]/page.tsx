@@ -33,6 +33,7 @@ export async function generateMetadata({
     path: url,
     image,
     published: date,
+    modified: post.meta.updated,
     keywords: tags,
     // Drafts and not-yet-published posts stay reachable for preview, so keep
     // crawlers off them. Same predicate the listings filter on.

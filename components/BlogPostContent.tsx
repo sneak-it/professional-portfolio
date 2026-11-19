@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowUp } from 'lucide-react';
 import Container from '@/components/Container';
 import CoverImage from '@/components/CoverImage';
@@ -109,7 +110,14 @@ export default function BlogPostContent({
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-accent-2/30" />
               )}
               <div>
-                <p className="font-bold">{siteConfig.author}</p>
+                <Link
+                  prefetch={false}
+                  href="/about"
+                  rel="author"
+                  className="font-bold hover:text-accent-text transition-colors"
+                >
+                  {siteConfig.author}
+                </Link>
               </div>
             </div>
 

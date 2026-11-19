@@ -14,6 +14,8 @@ interface Page {
   image?: string;
   /** Posts and portfolio items: og:type article, with this publish date. */
   published?: string;
+  /** Articles only: og `article:modified_time`. */
+  modified?: string;
   keywords?: string[];
   robots?: Metadata['robots'];
 }
@@ -23,7 +25,16 @@ interface Page {
  * `openGraph`, `twitter`, and `alternates` whole in every segment that sets them.
  */
 export function pageMetadata(page: Page): Metadata {
-  const { title, description, path, image, published, keywords, robots } = page;
+  const {
+    title,
+    description,
+    path,
+    image,
+    published,
+    modified,
+    keywords,
+    robots,
+  } = page;
   const shareTitle = title ?? siteConfig.title;
   const images = image
     ? [{ url: image }]
@@ -40,7 +51,11 @@ export function pageMetadata(page: Page): Metadata {
     },
     openGraph: {
       ...(published !== undefined
-        ? { type: 'article', ...(published && { publishedTime: published }) }
+        ? {
+            type: 'article',
+            ...(published && { publishedTime: published }),
+            ...(modified && { modifiedTime: modified }),
+          }
         : { type: 'website' }),
       siteName: siteConfig.name,
       locale: siteConfig.locale.replace('-', '_'),
