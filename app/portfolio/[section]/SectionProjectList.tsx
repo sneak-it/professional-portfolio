@@ -14,10 +14,12 @@ export default function SectionProjectList({
   title,
   description,
   projects,
+  note,
 }: {
   title: string;
   description: string;
   projects: ProjectSummary[];
+  note?: React.ReactNode;
 }) {
   return (
     <Container>
@@ -110,6 +112,11 @@ export default function SectionProjectList({
               </div>
             );
           })}
+        </div>
+      )}
+      {note && (
+        <div className="mt-12 text-center text-sm text-gray-600 dark:text-gray-400 [&_a]:underline">
+          {note}
         </div>
       )}
     </Container>

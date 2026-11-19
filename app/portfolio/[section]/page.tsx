@@ -8,6 +8,7 @@ import {
 import { breadcrumbJsonLd } from '@/lib/jsonld';
 import { pageMetadata } from '@/lib/metadata';
 import JsonLd from '@/components/JsonLd';
+import { CachedMDX } from '@/components/MDXComponents';
 import SectionGalleryList from './SectionGalleryList';
 import SectionProjectList from './SectionProjectList';
 
@@ -41,6 +42,7 @@ export default async function PortfolioSectionPage({
   const { section } = await params;
   const config = getSection(section);
   if (!config) notFound();
+  const note = config.note ? <CachedMDX source={config.note} /> : undefined;
 
   return (
     <>
@@ -56,12 +58,14 @@ export default async function PortfolioSectionPage({
           title={config.name}
           description={config.description}
           galleries={getPhotographyGalleries()}
+          note={note}
         />
       ) : (
         <SectionProjectList
           title={config.name}
           description={config.description}
           projects={getProjectItems(config.slug)}
+          note={note}
         />
       )}
     </>

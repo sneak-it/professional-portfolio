@@ -13,10 +13,12 @@ export default function SectionGalleryList({
   title,
   description,
   galleries,
+  note,
 }: {
   title: string;
   description: string;
   galleries: GallerySummary[];
+  note?: React.ReactNode;
 }) {
   return (
     <Container>
@@ -62,6 +64,11 @@ export default function SectionGalleryList({
               />
             </div>
           ))}
+        </div>
+      )}
+      {note && (
+        <div className="mt-12 text-center text-sm text-gray-600 dark:text-gray-400 [&_a]:underline">
+          {note}
         </div>
       )}
     </Container>

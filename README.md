@@ -25,7 +25,8 @@ Compose mounts those two paths read-only, so blog posts, projects, and photograp
 there are served immediately with no rebuild. Make them yourself as in step 2: Docker
 creates a missing bind source root-owned, and you would then need `sudo` to add anything.
 Starting with an empty host tree is fine: the site renders with no content and no avatar
-until you add your own.
+until you add your own. To start from the bundled samples instead, see
+[DOCKER.md](DOCKER.md#content-files).
 
 Cloning the repository and running Compose from it instead serves the bundled example
 content, since the mounts then point at the repository's own `content/`.

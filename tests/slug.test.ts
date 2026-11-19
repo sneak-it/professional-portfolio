@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { safeSlug, slugify } from '../lib/slug.ts';
+import { safeSlug, slugify, titleFromSlug } from '../lib/slug.ts';
 
 // safeSlug is the only thing between a route param and a filesystem path
 // (lib/content.ts builds `${dir}/${slug}.mdx` from its return value).
@@ -68,4 +68,10 @@ void test('slugify returns empty for input with no alphanumerics', () => {
   assert.equal(slugify('---'), '');
   assert.equal(slugify(''), '');
   assert.equal(slugify('!!!'), '');
+});
+
+void test('titleFromSlug title-cases hyphenated folder names', () => {
+  assert.equal(titleFromSlug('technology-consulting'), 'Technology Consulting');
+  assert.equal(titleFromSlug('open-source'), 'Open Source');
+  assert.equal(titleFromSlug('photography'), 'Photography');
 });

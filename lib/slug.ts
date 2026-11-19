@@ -35,3 +35,11 @@ export function slugger(): (text: string) => string {
     return id;
   };
 }
+
+/** A folder slug as a display name: `open-source` becomes `Open Source`. */
+export function titleFromSlug(slug: string): string {
+  return slug
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}

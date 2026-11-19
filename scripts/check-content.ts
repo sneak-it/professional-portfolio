@@ -96,6 +96,9 @@ const error = (file: string, message: string) =>
 const isStringList = (value: unknown) =>
   Array.isArray(value) && value.every((v) => typeof v === 'string');
 
+const isMap = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === 'object' && !Array.isArray(value);
+
 /** A value the page drops because it is not text. */
 function checkText(file: string, key: string, value: unknown) {
   if (value == null || typeof value === 'string') return;
@@ -255,6 +258,45 @@ function checkAbout() {
   }
 }
 
+/** portfolio.mdx: unknown sections or keys, and values the pages would drop. */
+function checkPortfolioPage() {
+  const file = path.join(contentDir(), 'portfolio.mdx');
+  if (!fs.existsSync(file)) return;
+  const parsed = readMdxFile(contentDir(), 'portfolio');
+  if (parsed === null) {
+    error(file, 'unreadable or unparseable');
+    return;
+  }
+  const { data } = parsed;
+  for (const key of Object.keys(data)) {
+    if (!['description', 'sections'].includes(key)) {
+      error(file, `unknown frontmatter key "${key}"`);
+    }
+  }
+  checkText(file, 'description', data.description);
+  if (data.sections === undefined) return;
+  if (!isMap(data.sections)) {
+    error(file, 'sections must be nested keys');
+    return;
+  }
+  const slugs: string[] = PORTFOLIO_SECTIONS.map((s) => s.slug);
+  for (const [slug, copy] of Object.entries(data.sections)) {
+    if (!slugs.includes(slug)) {
+      error(file, `unknown section "${slug}"`);
+    } else if (!isMap(copy)) {
+      error(file, `sections.${slug} must be nested keys`);
+    } else {
+      for (const [key, value] of Object.entries(copy)) {
+        if (['name', 'description', 'note'].includes(key)) {
+          checkText(file, `sections.${slug}.${key}`, value);
+        } else {
+          error(file, `unknown key "${key}" in sections.${slug}`);
+        }
+      }
+    }
+  }
+}
+
 function checkTagVocabulary() {
   // `next-js` and `nextjs` slug apart, so report the spellings together.
   const collapsed = new Map<string, string[]>();
@@ -314,6 +356,7 @@ for (const section of PORTFOLIO_SECTIONS) {
 }
 
 checkAbout();
+checkPortfolioPage();
 
 checkTagVocabulary();
 

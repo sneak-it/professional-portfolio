@@ -7,7 +7,7 @@ copy in any shipped image your content still uses, such as the avatar placeholde
 
 ## Special pages
 
-Four files at the top of `content/` hold the copy for the fixed pages. Each is optional:
+Files at the top of `content/` hold the copy for the fixed pages. Each is optional:
 a missing or unparseable file falls back to built-in defaults, as does any individual
 frontmatter field. In home, about, and contact, the MDX body is the page's prose.
 
@@ -68,6 +68,18 @@ The 404 page, under the large `404`. Frontmatter only; the body is ignored.
 | --- | --- | --- |
 | `title` | Heading. | `Page not found.` |
 | `message` | Line under the heading. | `The page you are looking for cannot be found.` |
+
+### `content/portfolio.mdx`
+
+The Portfolio page and its three sections. Frontmatter only; the body is ignored.
+`<slug>` is a section folder: `technology-consulting`, `photography`, or `open-source`.
+
+| Field | Purpose | Default |
+| --- | --- | --- |
+| `description` | Line under the Portfolio heading, and its meta description. | None (line left out) |
+| `sections.<slug>.name` | Section heading, hub card title, and gallery back button. | The folder name in title case |
+| `sections.<slug>.description` | Line under the section heading, and its meta description. | None |
+| `sections.<slug>.note` | A short line at the bottom of the section page; Markdown links work. Point `SITE_PHOTO_LICENSE_URL` at a section page whose note states your photo terms. | None |
 
 ## Checking content
 
@@ -152,11 +164,13 @@ Run `npm run check:content` before committing: it catches a tag spelled two ways
 
 Three sections under `content/portfolio/<section>/`:
 
-| Section | Folder | Type |
+| Default name | Folder | Type |
 | --- | --- | --- |
 | Technology Consulting | `technology-consulting/` | Project write-up |
 | Open Source | `open-source/` | Project write-up |
 | Photography | `photography/` | Image gallery |
+
+Section names and descriptions come from `content/portfolio.mdx`.
 
 Placeholder entries (`example-engagement.mdx`, `example-project.mdx`) are templates:
 copy one, rename it, edit.

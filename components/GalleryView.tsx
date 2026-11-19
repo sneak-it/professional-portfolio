@@ -18,9 +18,11 @@ import type { GalleryItem } from '@/lib/portfolio';
 export default function GalleryView({
   gallery,
   backHref,
+  backLabel,
 }: {
   gallery: GalleryItem;
   backHref: string;
+  backLabel: string;
 }) {
   const [index, setIndex] = useState(-1);
 
@@ -53,7 +55,7 @@ export default function GalleryView({
 
   return (
     <Container>
-      <BackButton href={backHref} label="Back to Photography" />
+      <BackButton href={backHref} label={backLabel} />
 
       <PageHeader
         align="left"

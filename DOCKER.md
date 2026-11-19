@@ -43,6 +43,22 @@ For a quick local look without a proxy, use the `docker run -p 3000:3000` comman
 default umask sets. If a tree genuinely is unreadable, the site renders empty and logs
 `Cannot read content dir "<path>"`. Fix with `chmod -R a+rX content media`.
 
+## Content files
+
+Every file in `content/` is optional; [CONTENT.md](CONTENT.md) lists each one and its
+defaults. The image ships a sample of each, but your `./content` mount hides them. To
+start from a sample, copy it out of the image (it has no shell, so use `docker cp`):
+
+```bash
+docker create --name samples ghcr.io/sneak-it/professional-portfolio:latest
+docker cp samples:/app/content/portfolio.mdx ./content/   # one file
+docker cp samples:/app/content/. ./content/               # every sample; overwrites same names
+docker rm samples
+```
+
+A release can add a content file. Your mount keeps hiding it, so its page uses the
+defaults until you copy it in the same way.
+
 ## Building manually
 
 ```bash

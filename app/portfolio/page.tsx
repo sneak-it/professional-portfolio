@@ -1,4 +1,4 @@
-import { getSectionSummaries } from '@/lib/portfolio';
+import { getPortfolioPage, getSectionSummaries } from '@/lib/portfolio';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
 import { pageMetadata } from '@/lib/metadata';
 import JsonLd from '@/components/JsonLd';
@@ -8,18 +8,14 @@ import PortfolioHub from './PortfolioHub';
 // config both apply immediately. See lib/portfolio.ts and lib/site.ts.
 export const dynamic = 'force-dynamic';
 
-// Single source for both the metadata description and the visible PageHeader.
-const description =
-  'Selected work across technology consulting, photography, and open source.';
-
-export const metadata = pageMetadata({
-  title: 'Portfolio',
-  description,
-  path: '/portfolio',
-});
+export function generateMetadata() {
+  const { description } = getPortfolioPage();
+  return pageMetadata({ title: 'Portfolio', description, path: '/portfolio' });
+}
 
 export default function PortfolioPage() {
   const sections = getSectionSummaries();
+  const { description } = getPortfolioPage();
 
   return (
     <>

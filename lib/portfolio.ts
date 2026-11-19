@@ -10,6 +10,7 @@ import {
   text,
   type MdxFile,
 } from './content.ts';
+import { titleFromSlug } from './slug.ts';
 import { byDateDesc, byName } from './sort.ts';
 
 /**
@@ -21,30 +22,16 @@ import { byDateDesc, byName } from './sort.ts';
  */
 
 export const PORTFOLIO_SECTIONS = [
-  {
-    slug: 'technology-consulting',
-    name: 'Technology Consulting',
-    type: 'project',
-    description:
-      'Consulting engagements — strategy, architecture, and hands-on delivery.',
-  },
-  {
-    slug: 'photography',
-    name: 'Photography',
-    type: 'gallery',
-    description: 'Photography collections, organized by subject.',
-  },
-  {
-    slug: 'open-source',
-    name: 'Open Source',
-    type: 'project',
-    description: 'Open source projects and contributions.',
-  },
+  { slug: 'technology-consulting', type: 'project' },
+  { slug: 'photography', type: 'gallery' },
+  { slug: 'open-source', type: 'project' },
 ] as const;
 
-/** `cardDescription`, optional: text on the section's hub card. */
+/** Copy from `content/portfolio.mdx`; `description` and `note` are '' when unset. */
 export type PortfolioSection = (typeof PORTFOLIO_SECTIONS)[number] & {
-  cardDescription?: string;
+  name: string;
+  description: string;
+  note: string;
 };
 export type SectionSlug = PortfolioSection['slug'];
 
@@ -101,7 +88,6 @@ export type GallerySummary = Omit<GalleryItem, 'images'> & {
 export interface SectionSummary {
   slug: SectionSlug;
   name: string;
-  cardDescription?: string;
   type: PortfolioSection['type'];
   count: number;
   coverImage: string | null;
@@ -113,9 +99,37 @@ const mediaPhotographyDirectory = path.join(
   'portfolio/photography',
 );
 
+/** Nested frontmatter keys, or {} for anything that is not a map. */
+function keys(value: unknown): Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function portfolioPage(): Record<string, unknown> {
+  return readMdxFile(contentDir(), 'portfolio')?.data ?? {};
+}
+
+export function getPortfolioPage(): { description: string } {
+  return { description: text(portfolioPage().description, '') };
+}
+
+export function getSections(): PortfolioSection[] {
+  const copy = keys(portfolioPage().sections);
+  return PORTFOLIO_SECTIONS.map((section) => {
+    const data = keys(copy[section.slug]);
+    return {
+      ...section,
+      name: text(data.name, titleFromSlug(section.slug)),
+      description: text(data.description, ''),
+      note: text(data.note, ''),
+    };
+  });
+}
+
 /** Look up a section by slug; validates a dynamic route param. */
 export function getSection(slug: string): PortfolioSection | null {
-  return PORTFOLIO_SECTIONS.find((s) => s.slug === slug) ?? null;
+  return getSections().find((s) => s.slug === slug) ?? null;
 }
 
 function sectionDir(section: SectionSlug): string {
@@ -280,13 +294,12 @@ export function getPhotographyGalleries(): GallerySummary[] {
 // -- Hub ---------------------------------------------------------------------
 
 export function getSectionSummaries(): SectionSummary[] {
-  return PORTFOLIO_SECTIONS.map((section: PortfolioSection) => {
+  return getSections().map((section) => {
     if (section.type === 'gallery') {
       const covers = getPhotographyGalleries();
       return {
         slug: section.slug,
         name: section.name,
-        cardDescription: section.cardDescription,
         type: section.type,
         count: covers.length,
         coverImage: covers[0]?.coverImage ?? null,
@@ -297,7 +310,6 @@ export function getSectionSummaries(): SectionSummary[] {
     return {
       slug: section.slug,
       name: section.name,
-      cardDescription: section.cardDescription,
       type: section.type,
       count: items.length,
       coverImage: items[0]?.coverImage ?? null,

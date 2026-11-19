@@ -7,7 +7,7 @@ const OG_IMAGE = `/brand/opengraph-image?v=${BRAND_VERSION}`;
 interface Page {
   /** Omitted on the home page, which keeps the root title. */
   title?: string;
-  description: string;
+  description?: string;
   /** Site-relative; the canonical and og:url. */
   path: string;
   /** Site-relative share image; the generated card when absent. */
@@ -30,7 +30,8 @@ export function pageMetadata(page: Page): Metadata {
     : [{ url: OG_IMAGE, width: 1200, height: 630, alt: siteConfig.title }];
   return {
     ...(title && { title }),
-    description,
+    // null, not undefined: stops the root layout's SITE_DESCRIPTION filling in.
+    description: description || null,
     ...(keywords && keywords.length > 0 && { keywords }),
     ...(robots && { robots }),
     alternates: {
@@ -44,14 +45,14 @@ export function pageMetadata(page: Page): Metadata {
       siteName: siteConfig.name,
       locale: siteConfig.locale.replace('-', '_'),
       title: shareTitle,
-      description,
+      ...(description && { description }),
       url: path,
       images,
     },
     twitter: {
       card: 'summary_large_image',
       title: shareTitle,
-      description,
+      ...(description && { description }),
       images: images.map((i) => i.url),
     },
   };

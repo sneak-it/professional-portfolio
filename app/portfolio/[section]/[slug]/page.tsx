@@ -92,7 +92,11 @@ export default async function PortfolioItemPage({
             `/portfolio/${config.slug}/${gallery.slug}`,
           )}
         />
-        <GalleryView gallery={gallery} backHref={`/portfolio/${config.slug}`} />
+        <GalleryView
+          gallery={gallery}
+          backHref={`/portfolio/${config.slug}`}
+          backLabel={`Back to ${config.name}`}
+        />
       </>
     );
   }
