@@ -17,7 +17,7 @@ The homepage hero.
 
 | Field | Purpose | Default |
 | --- | --- | --- |
-| `eyebrow` | Small line above the headline. | `Portfolio and blog` |
+| `eyebrow` | Small line above the headline, and the page's main heading, so your name fits best. | `Portfolio and blog` |
 | `headline` | Static first word of the hero. | `Creating` |
 | `words` | List cycled by the typewriter after the headline. An empty list falls back. | `Experiences`, `Opportunities`, `Connections`, `Solutions` |
 

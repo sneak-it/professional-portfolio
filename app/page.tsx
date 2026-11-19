@@ -33,13 +33,13 @@ export default function Home() {
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className={styles.enter}>
-            <p
+            <h1
               className={`${styles.eyebrow} text-sm md:text-base font-semibold tracking-widest text-accent-text uppercase font-mono mb-4`}
             >
               {eyebrow}
-            </p>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter mb-6 flex flex-wrap justify-center gap-x-4">
-              <span className={`${styles.word} inline-block`}>{headline}</span>
+            </h1>
+            <p className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter mb-6 flex flex-wrap justify-center gap-x-4">
+              <span className={`${styles.word} inline-block`}>{headline}</span>{' '}
               <span aria-hidden className="w-full h-0" />
               <span
                 className={`${styles.word} ${styles.word2} text-transparent bg-clip-text bg-gradient-to-r from-accent-from-text via-accent-via-text to-accent-to-text inline-block`}
@@ -50,7 +50,7 @@ export default function Home() {
                   className={`${styles.cursor} inline-block w-[4px] h-[0.9em] bg-accent ml-2 align-middle -mt-2`}
                 />
               </span>
-            </h1>
+            </p>
             <div
               className={`${styles.surface} surface mt-4 max-w-2xl mx-auto mb-10 p-6`}
             >
