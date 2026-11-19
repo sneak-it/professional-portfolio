@@ -5,6 +5,7 @@ import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
+import SectionNote from '@/components/SectionNote';
 import { GitHubIcon } from '@/components/icons/BrandIcons';
 import type { ProjectSummary } from '@/lib/portfolio';
 
@@ -114,11 +115,7 @@ export default function SectionProjectList({
           })}
         </div>
       )}
-      {note && (
-        <div className="mt-12 text-center text-sm text-gray-600 dark:text-gray-400 [&_a]:underline">
-          {note}
-        </div>
-      )}
+      <SectionNote>{note}</SectionNote>
     </Container>
   );
 }

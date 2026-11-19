@@ -88,7 +88,7 @@ The Portfolio page and its three sections. Frontmatter only; the body is ignored
 | `description` | Line under the Portfolio heading, and its meta description. | None (line left out) |
 | `sections.<slug>.name` | Section heading, hub card title, and gallery back button. | The folder name in title case |
 | `sections.<slug>.description` | Line under the section heading, and its meta description. | None |
-| `sections.<slug>.note` | A short line at the bottom of the section page; Markdown links work. Point `SITE_PHOTO_LICENSE_URL` at a section page whose note states your photo terms. | None |
+| `sections.<slug>.note` | A short line at the bottom of the section page, and of every gallery for `photography`; Markdown links work. Point `SITE_PHOTO_LICENSE_URL` at a section page whose note states your photo terms. | None |
 
 ## Checking content
 

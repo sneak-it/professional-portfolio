@@ -78,6 +78,7 @@ export default async function PortfolioItemPage({
           gallery={gallery}
           backHref={`/portfolio/${config.slug}`}
           backLabel={`Back to ${config.name}`}
+          note={config.note ? <CachedMDX source={config.note} /> : undefined}
         />
       </>
     );

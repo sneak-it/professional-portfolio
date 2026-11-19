@@ -13,16 +13,20 @@ import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import EmptyState from '@/components/EmptyState';
 import PageHeader from '@/components/PageHeader';
+import SectionNote from '@/components/SectionNote';
 import type { GalleryItem } from '@/lib/portfolio';
 
 export default function GalleryView({
   gallery,
   backHref,
   backLabel,
+  note,
 }: {
   gallery: GalleryItem;
   backHref: string;
   backLabel: string;
+  /** The section note, rendered on the server. */
+  note?: React.ReactNode;
 }) {
   const [index, setIndex] = useState(-1);
 
@@ -119,6 +123,7 @@ export default function GalleryView({
         }}
         styles={{ root: { '--yarl__color_backdrop': 'rgb(0 0 0 / 0.9)' } }}
       />
+      <SectionNote>{note}</SectionNote>
     </Container>
   );
 }
