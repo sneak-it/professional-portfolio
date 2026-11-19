@@ -50,6 +50,7 @@ An empty folder is not an error. The gallery renders with "No images in this gal
 | `title` | yes | Gallery heading, and the fallback alt text |
 | `description` | yes | Subheading and meta description |
 | `date` | no | Sorts the gallery within the Photography listing, newest first |
+| `updated` | no | Your last change to the title, description, or alt text. Added, removed, or replaced photos count on their own |
 | `coverImage` | no | Card image for the listing. Defaults to the first file in the folder |
 | `alt` | no | Per-file alt text, keyed by filename |
 | `draft` | no | `true` hides it from listings while keeping the URL reachable |

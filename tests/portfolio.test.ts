@@ -10,7 +10,8 @@ after(() => {
 });
 process.env.CONTENT_DIR = root;
 process.env.MEDIA_DIR = path.join(root, 'media');
-const { getPortfolioPage, getSection } = await import('../lib/portfolio.ts');
+const { galleryPhotosChanged, getPortfolioPage, getSection } =
+  await import('../lib/portfolio.ts');
 
 // readMdxFile caches by mtime, so each rewrite moves the mtime forward.
 let mtime = Date.now() / 1000;
@@ -53,4 +54,29 @@ void test('non-text values and unknown section keys are ignored', () => {
   );
   assert.equal(getSection('photography')?.name, 'Photography');
   assert.equal(getSection('bogus'), null);
+});
+
+void test('galleryPhotosChanged takes the newest of the folder and its photos', () => {
+  const dir = path.join(root, 'media/portfolio/photography/trip');
+  const at = (iso: string) => new Date(iso);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'a.jpg'), '');
+  fs.writeFileSync(path.join(dir, 'notes.txt'), '');
+  fs.utimesSync(path.join(dir, 'a.jpg'), at('2026-01-01'), at('2026-01-01'));
+  fs.utimesSync(
+    path.join(dir, 'notes.txt'),
+    at('2026-06-01'),
+    at('2026-06-01'),
+  );
+  fs.utimesSync(dir, at('2026-02-01'), at('2026-02-01'));
+  assert.equal(
+    galleryPhotosChanged('trip')?.toISOString(),
+    '2026-02-01T00:00:00.000Z',
+  );
+  fs.utimesSync(path.join(dir, 'a.jpg'), at('2026-03-01'), at('2026-03-01'));
+  assert.equal(
+    galleryPhotosChanged('trip')?.toISOString(),
+    '2026-03-01T00:00:00.000Z',
+  );
+  assert.equal(galleryPhotosChanged('missing'), undefined);
 });

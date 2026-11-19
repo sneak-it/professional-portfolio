@@ -194,6 +194,7 @@ copy one, rename it, edit.
    title: 'My Project'
    description: 'One-line summary.'
    date: 'YYYY-MM-DD'
+   updated: 'YYYY-MM-DD' # optional: your last real change, for search engines
    coverImage: '/media/images/my-project.jpg' # same-origin only, under media/
    tech: ['TypeScript', 'Node.js']
    github: 'https://github.com/you/my-project' # optional
@@ -201,6 +202,9 @@ copy one, rename it, edit.
    linkLabel: 'Read the Docs' # optional button text for link, default "Visit Site"
    ---
    ```
+
+   A bare year (`date: '2019'`) is fine; the sitemap only uses dates given in full as
+   `YYYY-MM-DD`.
 
 3. Write the body: features, the story of the work, and anything else, laid out as
    [cards](#cards).

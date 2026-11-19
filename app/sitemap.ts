@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next';
-import { toDate } from '@/lib/date';
+import { toFullDate } from '@/lib/date';
 import { TAG_INDEX_MIN_POSTS, getAllPostMeta, getTags } from '@/lib/mdx';
 import {
   PORTFOLIO_SECTIONS,
+  galleryPhotosChanged,
   getProjectItems,
   getPhotographyGalleries,
 } from '@/lib/portfolio';
@@ -34,18 +35,22 @@ function entry(url: string, lastModified?: Date): Entry {
 }
 
 /**
- * Origin-independent routes from a full content scan, cached by `getRoutes`.
- * The origin is applied per request, so a `SITE_URL` change is served fresh.
+ * Origin-independent routes from a full content scan; `sitemap()` applies the
+ * origin per request.
  */
 function buildRoutes(): Route[] {
   const postItems = getAllPostMeta().map((post) => ({
     path: `/blog/${post.slug}`,
-    date: latest([toDate(post.meta.date), toDate(post.meta.updated)]),
+    date: latest([toFullDate(post.meta.date), toFullDate(post.meta.updated)]),
   }));
 
   const photographyItems = getPhotographyGalleries().map((gallery) => ({
     path: `/portfolio/photography/${gallery.slug}`,
-    date: toDate(gallery.date),
+    date: latest([
+      toFullDate(gallery.date),
+      toFullDate(gallery.updated),
+      galleryPhotosChanged(gallery.slug),
+    ]),
   }));
 
   const projectItems = PORTFOLIO_SECTIONS.filter(
@@ -53,7 +58,7 @@ function buildRoutes(): Route[] {
   ).flatMap((section) =>
     getProjectItems(section.slug).map((item) => ({
       path: `/portfolio/${section.slug}/${item.slug}`,
-      date: toDate(item.date),
+      date: latest([toFullDate(item.date), toFullDate(item.updated)]),
       section: section.slug,
     })),
   );

@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import { imageDimensions, mediaDir } from './image.ts';
 import {
@@ -27,7 +28,7 @@ export const PORTFOLIO_SECTIONS = [
   { slug: 'open-source', type: 'project' },
 ] as const;
 
-/** Copy from `content/portfolio.mdx`; `description` and `note` are '' when unset. */
+/** Copy from `content/portfolio.mdx`; `description`, `note` are '' if unset. */
 export type PortfolioSection = (typeof PORTFOLIO_SECTIONS)[number] & {
   name: string;
   description: string;
@@ -51,6 +52,7 @@ export interface ProjectItem {
   description: string;
   coverImage: string;
   date: string;
+  updated?: string;
   /** Only ever set on a direct lookup; listings filter drafts out. */
   draft?: true;
   content?: string;
@@ -82,6 +84,7 @@ export type ProjectSummary = Omit<ProjectItem, 'content'>;
 export type GallerySummary = Omit<GalleryItem, 'images'> & {
   imageCount: number;
   cardDescription?: string;
+  updated?: string;
 };
 
 /** Hub-card summary for the /portfolio index. */
@@ -148,6 +151,7 @@ function projectSummary(section: SectionSlug, file: MdxFile): ProjectSummary {
     description: text(data.description, ''),
     coverImage: text(data.coverImage, ''),
     date: text(data.date, ''),
+    updated: text(data.updated, '') || undefined,
     ...(isDraft(data) && { draft: true as const }),
     tech: strings(data.tech),
     link,
@@ -181,6 +185,23 @@ function listGalleryImageFiles(slug: string): string[] {
   return listDir(path.join(mediaPhotographyDirectory, slug))
     .filter((file) => IMAGE_FILE_RE.test(file))
     .sort(byName);
+}
+
+/**
+ * Newest mtime of a gallery's media folder and photos. The folder's moves when
+ * a photo is added or removed, even if the copy kept the file's old mtime.
+ */
+export function galleryPhotosChanged(slug: string): Date | undefined {
+  const dir = path.join(mediaPhotographyDirectory, slug);
+  const files = listGalleryImageFiles(slug).map((file) => path.join(dir, file));
+  const times = [dir, ...files].flatMap((file) => {
+    try {
+      return [fs.statSync(file).mtimeMs];
+    } catch {
+      return [];
+    }
+  });
+  return times.length > 0 ? new Date(Math.max(...times)) : undefined;
 }
 
 /**
@@ -285,6 +306,7 @@ export function getPhotographyGalleries(): GallerySummary[] {
         cardDescription: text(data.cardDescription, '') || undefined,
         coverImage: galleryCoverSrc(mdx.slug, data.coverImage),
         date: text(data.date, ''),
+        updated: text(data.updated, '') || undefined,
         imageCount: listGalleryImageFiles(mdx.slug).length,
       };
     })

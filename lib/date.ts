@@ -18,6 +18,11 @@ export function formatDate(iso: string): string {
   return Number.isNaN(parsed.getTime()) ? iso : FORMATTER.format(parsed);
 }
 
+/** `toDate` for full `YYYY-MM-DD` only: a bare year would publish January 1. */
+export function toFullDate(value: string | undefined): Date | undefined {
+  return value && /^\d{4}-\d{2}-\d{2}/.test(value) ? toDate(value) : undefined;
+}
+
 /** Parses an ISO frontmatter date, or `undefined` if missing/unparseable. */
 export function toDate(value: string | undefined): Date | undefined {
   if (!value) return undefined;
