@@ -8,6 +8,7 @@ import PageTransition from '@/components/PageTransition';
 import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
 import { BRAND_VERSION, siteConfig } from '@/lib/site';
+import { siteJsonLd } from '@/lib/jsonld';
 import { pageMetadata } from '@/lib/metadata';
 import { cspNonce } from '@/lib/nonce';
 import { BACKGROUND } from '@/lib/brand';
@@ -53,14 +54,6 @@ export const viewport: Viewport = {
   ],
 };
 
-const personJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: siteConfig.author,
-  url: siteConfig.url,
-  description: siteConfig.description,
-};
-
 export default async function RootLayout({
   children,
 }: {
@@ -81,7 +74,7 @@ export default async function RootLayout({
         className="font-sans antialiased bg-background text-gray-900 dark:text-gray-100 flex flex-col min-h-screen"
         suppressHydrationWarning
       >
-        <JsonLd data={personJsonLd} />
+        <JsonLd data={siteJsonLd()} />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-lg"

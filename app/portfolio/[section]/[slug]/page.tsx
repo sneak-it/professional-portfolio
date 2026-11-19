@@ -10,8 +10,7 @@ import {
   getProjectItem,
   getPhotographyGallery,
 } from '@/lib/portfolio';
-import { absoluteUrl, siteConfig } from '@/lib/site';
-import { breadcrumbJsonLd } from '@/lib/jsonld';
+import { breadcrumbJsonLd, galleryJsonLd, projectJsonLd } from '@/lib/jsonld';
 import { pageMetadata } from '@/lib/metadata';
 import ProjectDetailClient from './ProjectDetailClient';
 
@@ -69,29 +68,12 @@ export default async function PortfolioItemPage({
     const gallery = await getPhotographyGallery(slug);
     if (!gallery) notFound();
 
-    const url = absoluteUrl(`/portfolio/${config.slug}/${gallery.slug}`);
-    const galleryJsonLd = {
-      '@context': 'https://schema.org',
-      '@type': 'ImageGallery',
-      name: gallery.title,
-      description: gallery.description,
-      url,
-      datePublished: gallery.date || undefined,
-      // Gallery srcs are always site-relative (scanned out of media/), so
-      // JSON-LD just needs the origin prepended. They point at the stripping
-      // route, so Google Images caches sanitized copies.
-      image: gallery.images.map((img) => absoluteUrl(img.src)),
-    };
+    const path = `/portfolio/${config.slug}/${gallery.slug}`;
 
     return (
       <>
-        <JsonLd data={galleryJsonLd} />
-        <JsonLd
-          data={breadcrumbFor(
-            gallery.title,
-            `/portfolio/${config.slug}/${gallery.slug}`,
-          )}
-        />
+        <JsonLd data={galleryJsonLd(gallery, path)} />
+        <JsonLd data={breadcrumbFor(gallery.title, path)} />
         <GalleryView
           gallery={gallery}
           backHref={`/portfolio/${config.slug}`}
@@ -105,28 +87,12 @@ export default async function PortfolioItemPage({
   const project = getProjectItem(config.slug, slug);
   if (!project) notFound();
 
-  const url = absoluteUrl(`/portfolio/${config.slug}/${project.slug}`);
-  const projectJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'CreativeWork',
-    name: project.title,
-    description: project.description,
-    url,
-    datePublished: project.date || undefined,
-    image: project.coverImage
-      ? URL.parse(project.coverImage, siteConfig.url)?.href
-      : undefined,
-  };
+  const path = `/portfolio/${config.slug}/${project.slug}`;
 
   return (
     <>
-      <JsonLd data={projectJsonLd} />
-      <JsonLd
-        data={breadcrumbFor(
-          project.title,
-          `/portfolio/${config.slug}/${project.slug}`,
-        )}
-      />
+      <JsonLd data={projectJsonLd(project, path)} />
+      <JsonLd data={breadcrumbFor(project.title, path)} />
       <Container size="lg">
         <BackButton
           href={`/portfolio/${config.slug}`}

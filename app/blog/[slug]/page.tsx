@@ -4,8 +4,7 @@ import { getAdjacentPosts, getPostBySlug } from '@/lib/mdx';
 import BlogPostContent from '@/components/BlogPostContent';
 import { CachedMDX } from '@/components/MDXComponents';
 import JsonLd from '@/components/JsonLd';
-import { absoluteUrl, siteConfig } from '@/lib/site';
-import { breadcrumbJsonLd } from '@/lib/jsonld';
+import { blogPostingJsonLd, breadcrumbJsonLd } from '@/lib/jsonld';
 import { pageMetadata } from '@/lib/metadata';
 import { notFound } from 'next/navigation';
 
@@ -55,25 +54,11 @@ export default async function BlogPost({
     notFound();
   }
 
-  const url = absoluteUrl(`/blog/${post.slug}`);
   const { prev, next } = getAdjacentPosts(post.slug);
-
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.meta.title,
-    description: post.meta.excerpt,
-    image: post.meta.image && URL.parse(post.meta.image, siteConfig.url)?.href,
-    datePublished: post.meta.date,
-    dateModified: post.meta.updated || post.meta.date,
-    keywords: post.meta.tags.join(', '),
-    author: { '@type': 'Person', name: siteConfig.author, url: siteConfig.url },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-  };
 
   return (
     <>
-      <JsonLd data={articleJsonLd} />
+      <JsonLd data={blogPostingJsonLd(post)} />
       <JsonLd
         data={breadcrumbJsonLd([
           { name: 'Home', path: '/' },

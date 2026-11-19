@@ -1,5 +1,7 @@
 import AboutClient from './AboutClient';
 import { CachedMDX } from '@/components/MDXComponents';
+import JsonLd from '@/components/JsonLd';
+import { profilePageJsonLd } from '@/lib/jsonld';
 import { getAbout } from '@/lib/about';
 import { pageMetadata } from '@/lib/metadata';
 import { avatarSrc, siteConfig } from '@/lib/site';
@@ -27,19 +29,22 @@ export default function AboutPage() {
   } = getAbout(FALLBACK_DESCRIPTION);
 
   return (
-    <AboutClient
-      name={siteConfig.name}
-      heading={heading}
-      linkedin={siteConfig.social.linkedin}
-      avatarUrl={avatarSrc()}
-      skills={skills}
-      interests={interests}
-      skillsHeading={skillsHeading}
-      skillsBlurb={skillsBlurb}
-      interestsHeading={interestsHeading}
-      interestsBlurb={interestsBlurb}
-    >
-      <CachedMDX source={content} />
-    </AboutClient>
+    <>
+      <JsonLd data={profilePageJsonLd()} />
+      <AboutClient
+        name={siteConfig.name}
+        heading={heading}
+        linkedin={siteConfig.social.linkedin}
+        avatarUrl={avatarSrc()}
+        skills={skills}
+        interests={interests}
+        skillsHeading={skillsHeading}
+        skillsBlurb={skillsBlurb}
+        interestsHeading={interestsHeading}
+        interestsBlurb={interestsBlurb}
+      >
+        <CachedMDX source={content} />
+      </AboutClient>
+    </>
   );
 }
