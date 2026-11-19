@@ -96,8 +96,8 @@ The Portfolio page and its three sections. Frontmatter only; the body is ignored
 npm run check:content
 ```
 
-Lints every blog post, every portfolio entry, and `about.mdx` (the other special pages
-above are not checked): missing required fields, unknown keys (a typo'd `catgeory:`
+Lints every blog post, every portfolio entry, `about.mdx`, `blog.mdx`, and `portfolio.mdx`
+(the other special pages above are not checked): missing required fields, unknown keys (a typo'd `catgeory:`
 otherwise does nothing), unparseable dates, a `draft` that is the string `'true'` rather
 than a boolean, a list where text belongs or text where a list belongs (the page would
 drop the value), About skills and interests with no `name`, a cover image with no file

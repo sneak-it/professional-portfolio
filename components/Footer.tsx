@@ -30,7 +30,7 @@ export default function Footer() {
                 key={name}
                 href={href}
                 target="_blank"
-                rel="me noopener noreferrer"
+                rel={`${siteConfig.profileUrls.includes(href) ? 'me ' : ''}noopener noreferrer`}
                 className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
               >
                 <span className="sr-only">{name}</span>

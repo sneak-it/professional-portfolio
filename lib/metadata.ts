@@ -41,7 +41,7 @@ export function pageMetadata(page: Page): Metadata {
     : [{ url: OG_IMAGE, width: 1200, height: 630, alt: siteConfig.title }];
   return {
     ...(title && { title }),
-    // null, not undefined: stops the root layout's SITE_DESCRIPTION filling in.
+    // Always set the key: an absent one inherits the layout's SITE_DESCRIPTION.
     description: description || null,
     ...(keywords && keywords.length > 0 && { keywords }),
     ...(robots && { robots }),
