@@ -1,4 +1,6 @@
+import { getImageProps } from 'next/image';
 import { getAbout } from './about';
+import { OG_IMAGE } from './metadata';
 import type { BlogPost } from './mdx';
 import type { GalleryItem, ProjectItem } from './portfolio';
 import { AVATAR_FALLBACK, absoluteUrl, avatarSrc, siteConfig } from './site';
@@ -74,7 +76,9 @@ export function blogPostingJsonLd(post: BlogPost): Record<string, unknown> {
     '@type': 'BlogPosting',
     headline: post.meta.title,
     description: post.meta.excerpt,
-    image: post.meta.image && URL.parse(post.meta.image, siteConfig.url)?.href,
+    image: post.meta.image
+      ? URL.parse(post.meta.image, siteConfig.url)?.href
+      : absoluteUrl(OG_IMAGE),
     datePublished: post.meta.date,
     dateModified: post.meta.updated || post.meta.date,
     keywords: post.meta.tags.join(', '),
@@ -93,7 +97,9 @@ export function projectJsonLd(
 ): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
-    '@type': 'CreativeWork',
+    ...(project.github
+      ? { '@type': 'SoftwareSourceCode', codeRepository: project.github }
+      : { '@type': 'CreativeWork' }),
     name: project.title,
     description: project.description,
     url: absoluteUrl(path),
@@ -110,6 +116,9 @@ export function galleryJsonLd(
   gallery: GalleryItem,
   path: string,
 ): Record<string, unknown> {
+  const license =
+    siteConfig.photoLicenseUrl &&
+    URL.parse(siteConfig.photoLicenseUrl, siteConfig.url)?.href;
   return {
     '@context': 'https://schema.org',
     '@type': 'ImageGallery',
@@ -117,10 +126,27 @@ export function galleryJsonLd(
     description: gallery.description,
     url: absoluteUrl(path),
     datePublished: gallery.date || undefined,
-    // Gallery srcs are always site-relative (scanned out of media/), so
-    // JSON-LD just needs the origin prepended. They point at the stripping
-    // route, so Google Images caches sanitized copies.
-    image: gallery.images.map((img) => absoluteUrl(img.src)),
+    image: gallery.images.map((img) => ({
+      '@type': 'ImageObject',
+      // With a `vw` in `sizes`, `src` is the largest configured width, which
+      // is what the gallery's <img src> carries.
+      contentUrl: absoluteUrl(
+        getImageProps({
+          src: img.src,
+          alt: img.alt,
+          width: img.width,
+          height: img.height,
+          sizes: '100vw',
+        }).props.src,
+      ),
+      width: img.width,
+      height: img.height,
+      caption: img.alt,
+      creator: authorRef(),
+      creditText: siteConfig.author,
+      copyrightNotice: `© ${siteConfig.author}`,
+      ...(license && { license, acquireLicensePage: license }),
+    })),
     author: authorRef(),
   };
 }

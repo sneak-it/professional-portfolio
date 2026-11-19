@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { BRAND_VERSION, siteConfig } from './site';
 
 /** The generated share card (app/brand/opengraph-image). */
-const OG_IMAGE = `/brand/opengraph-image?v=${BRAND_VERSION}`;
+export const OG_IMAGE = `/brand/opengraph-image?v=${BRAND_VERSION}`;
 
 interface Page {
   /** Omitted on the home page, which keeps the root title. */
