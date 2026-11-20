@@ -10,9 +10,9 @@ import { useMotionEnabled } from '@/hooks/use-motion-enabled';
 /* Site-wide background, mounted once in app/layout.tsx, and the bundle-size
    gate for the WebGL gradient:
 
-     - full → lazy OGL shader gradient. Gated behind the post-mount tier, so
+     - full + SITE_BACKGROUND=topographic → lazy OGL shader, after mount, so
        the chunk loads on desktop only, after first paint.
-     - lite / none → static CSS gradient, zero JS, same --accent-* tokens. */
+     - otherwise → static CSS gradient, zero JS, same --accent-* tokens. */
 
 const ShaderGradient = dynamic(() => import('./ShaderGradient'), {
   ssr: false,
@@ -53,7 +53,7 @@ function useHydrated() {
   );
 }
 
-/** Static, zero-JS gradient for non-desktop / reduced-motion tiers. */
+/** Static, zero-JS gradient: the default, and the phone / reduced-motion fallback. */
 function StaticGradient() {
   return (
     <div
@@ -86,7 +86,11 @@ function StaticGradient() {
 // Decoration must never take the page down with it.
 const StaticOnError = catchError(() => <StaticGradient />);
 
-export default function BackgroundCanvas() {
+export default function BackgroundCanvas({
+  topographic,
+}: {
+  topographic: boolean;
+}) {
   const { tier } = useMotionEnabled();
 
   const hydrated = useHydrated();
@@ -96,7 +100,7 @@ export default function BackgroundCanvas() {
   const [paused, setPaused] = useState(readPaused);
   const calm = usePathname() !== '/';
 
-  if (!hydrated || tier !== 'full') return <StaticGradient />;
+  if (!topographic || !hydrated || tier !== 'full') return <StaticGradient />;
 
   return (
     <>

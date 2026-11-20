@@ -88,7 +88,9 @@ export default async function RootLayout({
           disableTransitionOnChange
           nonce={nonce}
         >
-          <BackgroundCanvas />
+          <BackgroundCanvas
+            topographic={siteConfig.background === 'topographic'}
+          />
           <Navbar monogram={siteConfig.monogram} />
           <main id="main-content" className="flex-grow pt-20">
             <PageTransition>{children}</PageTransition>

@@ -74,6 +74,20 @@ export function licenseUrl(raw = process.env.SITE_PHOTO_LICENSE_URL): string {
   return '';
 }
 
+export type Background = 'gradient' | 'topographic';
+
+/** Unset or unknown values give the still gradient. */
+export function background(raw = process.env.SITE_BACKGROUND): Background {
+  const value = raw?.trim().toLowerCase();
+  if (value === 'topographic') return 'topographic';
+  if (value && value !== 'gradient') {
+    console.warn(
+      `[site] SITE_BACKGROUND "${value}" is not "gradient" or "topographic"; using gradient.`,
+    );
+  }
+  return 'gradient';
+}
+
 /** Bounded once, so the chrome and the icons agree. */
 export function monogram(raw = process.env.SITE_MONOGRAM): string {
   return (raw?.trim() || 'YN').slice(0, 3);

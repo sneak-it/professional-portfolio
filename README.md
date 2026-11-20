@@ -48,6 +48,7 @@ optional, a missing or misplaced `.env` is not an error: the container logs
 | `SITE_LOCATION` | Location shown on the site. | `Your City, ST` |
 | `SITE_MONOGRAM` | Wordmark in the navbar, footer, generated icons, and OG card. First 3 characters used. | `YN` |
 | `SITE_LOCALE` | BCP 47 tag for `<html lang>` and the OG locale. | `en-US` |
+| `SITE_BACKGROUND` | `gradient` for a still gradient, or `topographic` for animated contour lines on desktop (phones and reduced motion keep the gradient). | `gradient` |
 | `SITE_AVATAR_URL` | Portrait on the about page and blog byline. Site-relative only; see [DOCKER.md](DOCKER.md). | `/media/images/avatar-placeholder.png` |
 | `SITE_GITHUB_URL` | GitHub profile link. Empty hides it. | `https://github.com/your-username` |
 | `SITE_LINKEDIN_URL` | LinkedIn profile link. Empty hides it. | `https://linkedin.com/in/your-profile` |

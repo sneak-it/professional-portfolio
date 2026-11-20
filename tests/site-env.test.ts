@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   GITHUB_PLACEHOLDER,
   LINKEDIN_PLACEHOLDER,
+  background,
   brandVersion,
   licenseUrl,
   monogram,
@@ -95,4 +96,23 @@ void test('licenseUrl keeps site paths and http(s) URLs only', () => {
   assert.equal(licenseUrl('contact'), '');
   assert.equal(licenseUrl(undefined), '');
   assert.equal(licenseUrl('  '), '');
+});
+
+void test('background defaults to the still gradient', (t) => {
+  const warn = t.mock.method(console, 'warn', () => undefined);
+  assert.equal(background(undefined), 'gradient');
+  assert.equal(background(''), 'gradient');
+  assert.equal(background('gradient'), 'gradient');
+  assert.equal(warn.mock.callCount(), 0);
+});
+
+void test('background accepts topographic, trimmed and case-insensitive', () => {
+  assert.equal(background('topographic'), 'topographic');
+  assert.equal(background(' Topographic '), 'topographic');
+});
+
+void test('background falls back to the gradient for unknown values', (t) => {
+  const warn = t.mock.method(console, 'warn', () => undefined);
+  assert.equal(background('shader'), 'gradient');
+  assert.equal(warn.mock.callCount(), 1);
 });

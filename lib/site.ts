@@ -5,6 +5,7 @@ import { mediaFilePath } from './image';
 import {
   GITHUB_PLACEHOLDER,
   LINKEDIN_PLACEHOLDER,
+  background,
   brandVersion,
   licenseUrl,
   monogram,
@@ -62,6 +63,7 @@ export const siteConfig = {
   // Profiles that are also the owner, for structured data; never placeholders.
   profileUrls: profileUrls([github, linkedin]),
   photoLicenseUrl: licenseUrl(),
+  background: background(),
 } as const;
 
 /**
