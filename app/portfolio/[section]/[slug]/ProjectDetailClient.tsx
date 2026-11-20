@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { ExternalLink, GitFork } from 'lucide-react';
 import Surface from '@/components/Surface';
 import type { ProjectItem } from '@/lib/portfolio';
-import { coverSizes } from '@/lib/image';
+import { localImageDimensions } from '@/lib/image';
 
 export default async function ProjectDetailClient({
   project,
@@ -12,6 +12,9 @@ export default async function ProjectDetailClient({
   sectionName: string;
 }) {
   const tech = project.tech ?? [];
+  const dims = project.coverImage
+    ? await localImageDimensions(project.coverImage)
+    : null;
 
   return (
     // Without a cover image, the title card spans both columns.
@@ -75,8 +78,11 @@ export default async function ProjectDetailClient({
 
       {project.coverImage && (
         <div
-          style={{ animationDelay: '200ms' }}
-          className="enter-up relative photo-edge aspect-square lg:aspect-auto lg:h-full rounded-3xl overflow-hidden shadow-2xl"
+          style={{
+            animationDelay: '200ms',
+            aspectRatio: dims ? `${dims.width} / ${dims.height}` : '1',
+          }}
+          className="enter-up lg:self-center relative photo-edge rounded-3xl overflow-hidden shadow-2xl"
         >
           <Image
             src={project.coverImage}
@@ -84,12 +90,7 @@ export default async function ProjectDetailClient({
             fill
             loading="eager"
             fetchPriority="high"
-            sizes={await coverSizes(
-              project.coverImage,
-              '(max-width: 64rem) 100vw, 29rem',
-              // Square below lg; at lg as tall as the text card, so 1 is an estimate.
-              1,
-            )}
+            sizes="(max-width: 64rem) 100vw, 29rem"
             className="object-cover"
             referrerPolicy="no-referrer"
           />
