@@ -48,7 +48,14 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   // A sub-pixel radius is the only one of those five with no rendering or
   // containing-block side effects.
   return (
-    <ViewTransition default={nav.cls}>
+    <ViewTransition
+      default={nav.cls}
+      // Spent once it animates: a later update, such as lazy code arriving,
+      // would otherwise replay the last navigation's animation.
+      onUpdate={() => {
+        setNav((n) => (n.cls === 'none' ? n : { ...n, cls: 'none' }));
+      }}
+    >
       <div style={{ borderRadius: '0.01px' }}>{children}</div>
     </ViewTransition>
   );
