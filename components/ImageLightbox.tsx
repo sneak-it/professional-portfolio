@@ -26,7 +26,10 @@ export default function ImageLightbox({
       slides={slides}
       plugins={[Download, Fullscreen, Zoom]}
       controller={{ closeOnBackdropClick: true, closeOnPullDown: true }}
-      carousel={{ imageProps: { referrerPolicy: 'no-referrer' } }}
+      carousel={{
+        finite: true,
+        imageProps: { referrerPolicy: 'no-referrer' },
+      }}
       render={{ buttonPrev: noButton, buttonNext: noButton }}
       labels={{
         Lightbox: 'Image viewer',
