@@ -62,6 +62,11 @@ export default function PostLightbox() {
     };
   }, [pathname]);
 
+  // Render-phase close on a route change, so coming back doesn't reopen it.
+  if (state && state.index >= 0 && state.path !== pathname) {
+    setState({ ...state, index: -1 });
+  }
+
   // Stays mounted after the first open, so closing animates and restores focus.
   if (!state) return null;
   return (

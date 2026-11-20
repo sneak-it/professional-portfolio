@@ -4,6 +4,7 @@ import {
   isValidElement,
   type ComponentPropsWithoutRef,
   type ReactElement,
+  type ReactNode,
 } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -43,18 +44,26 @@ import { remarkMermaid } from '@/lib/mermaid';
 
 const Blocked = () => null;
 
+/** A linked image follows its link, so no image inside one is a lightbox link. */
+function withoutLightbox(children: ReactNode): ReactNode {
+  return Children.map(children, (child) => {
+    if (!isValidElement<{ children?: ReactNode }>(child)) return child;
+    if (child.type === SafeImage || child.type === Figure) {
+      return cloneElement(child as ReactElement<{ lightbox?: boolean }>, {
+        lightbox: false,
+      });
+    }
+    return child.props.children === undefined
+      ? child
+      : cloneElement(child, undefined, withoutLightbox(child.props.children));
+  });
+}
+
 function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   // A blocked scheme renders as the link text alone.
   if (!isSafeHref(href)) return <>{children}</>;
 
-  // A linked image follows its link, so it is not also a lightbox button.
-  const linked = Children.map(children, (child) =>
-    isValidElement(child) && child.type === SafeImage
-      ? cloneElement(child as ReactElement<{ lightbox?: boolean }>, {
-          lightbox: false,
-        })
-      : child,
-  );
+  const linked = withoutLightbox(children);
 
   // `rest` first: authored MDX attributes must not override the hardening below.
   if (isExternalHref(href)) {

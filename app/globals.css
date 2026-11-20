@@ -278,7 +278,8 @@
       .not-prose,
       :has(> pre),
       :has(> table),
-      :has(> img:only-child)
+      :has(> img:only-child),
+      :has(> [data-lightbox]:only-child)
     ) {
   @apply mx-auto max-w-measure;
 }
