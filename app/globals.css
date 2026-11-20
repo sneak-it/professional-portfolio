@@ -5,26 +5,10 @@
 
 /* Design tokens for backgrounds and the accent gradient, declared under
    :root / .dark. `@theme inline` below emits `var(--token)`, so the .dark
-   override applies at runtime. The accent trio is mirrored in lib/brand.ts for
-   the app/brand/* next/og routes. */
+   override applies at runtime. The accent tokens come from lib/themes.ts,
+   written into <head> by app/layout.tsx. */
 :root {
-  /* ===== RESKIN HERE. Every accent in the site reads from these ten hexes;
-     mirror --accent-from/via/to into lib/brand.ts. ===== */
-  --accent: #ff4d6d; /* primary   — coral-rose (vivid, warm)      */
-  --accent-2: #ffb400; /* secondary — amber-gold                   */
-  --accent-text: #be123c; /* text accent; needs 4.5:1 on light backgrounds */
-  /* Light-mode gradient text (3:1, large) and field lines; .dark maps each
-     to its accent. */
-  --accent-2-text: #ea580c;
-  --accent-from-text: #ea580c;
-  --accent-via-text: #f0443a;
-  --accent-to-text: #e11d48;
-  /* Gradient stops (text/CTAs) — "Solar Flare" warm sunset, amber→coral→rose. */
-  --accent-from: #ffb400; /* amber gold      (low elevation)  */
-  --accent-via: #ff6b3d; /* vivid coral     (mid)            */
-  --accent-to: #ff1e78; /* hot rose-magenta (high)           */
-  /* ===================================================================== */
-
+  /* --accent* tokens: lib/themes.ts (SITE_THEME). */
   --background: #f5f5f5;
   --background-deep: #f5f5f5;
   /* Mermaid diagrams (lib/mermaid.ts). bg also fills edge-label boxes, so it

@@ -11,7 +11,8 @@ import { BRAND_VERSION, siteConfig } from '@/lib/site';
 import { siteJsonLd } from '@/lib/jsonld';
 import { pageMetadata } from '@/lib/metadata';
 import { cspNonce } from '@/lib/nonce';
-import { BACKGROUND } from '@/lib/brand';
+import { BACKGROUND, THEME } from '@/lib/brand';
+import { themeCss } from '@/lib/themes';
 
 // One variable-font instance covers every weight; --font-display maps to it in
 // globals.css. Mono is a system stack, so this is the only family downloaded.
@@ -70,6 +71,9 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
+      <head>
+        <style>{themeCss(THEME)}</style>
+      </head>
       <body
         className="font-sans antialiased bg-background text-gray-900 dark:text-gray-100 flex flex-col min-h-screen"
         suppressHydrationWarning

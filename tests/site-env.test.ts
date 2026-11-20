@@ -9,6 +9,7 @@ import {
   monogram,
   profileUrls,
   siteUrl,
+  theme,
 } from '../lib/site-env.ts';
 
 const DEFAULT_URL = 'http://localhost:3000';
@@ -120,5 +121,25 @@ void test('background accepts the still patterns', () => {
 void test('background falls back to the gradient for unknown values', (t) => {
   const warn = t.mock.method(console, 'warn', () => undefined);
   assert.equal(background('shader'), 'gradient');
+  assert.equal(warn.mock.callCount(), 1);
+});
+
+void test('theme defaults to sunset', (t) => {
+  const warn = t.mock.method(console, 'warn', () => undefined);
+  assert.equal(theme(undefined), 'sunset');
+  assert.equal(theme(''), 'sunset');
+  assert.equal(theme('sunset'), 'sunset');
+  assert.equal(warn.mock.callCount(), 0);
+});
+
+void test('theme accepts each name, trimmed and case-insensitive', () => {
+  assert.equal(theme(' Ocean '), 'ocean');
+  assert.equal(theme('forest'), 'forest');
+  assert.equal(theme('VIOLET'), 'violet');
+});
+
+void test('theme falls back to sunset for unknown values', (t) => {
+  const warn = t.mock.method(console, 'warn', () => undefined);
+  assert.equal(theme('mono'), 'sunset');
   assert.equal(warn.mock.callCount(), 1);
 });

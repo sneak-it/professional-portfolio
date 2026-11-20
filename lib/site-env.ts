@@ -3,6 +3,7 @@
  * module's `server-only` guard.
  */
 import { createHash } from 'node:crypto';
+import { THEME_NAMES, type ThemeName } from './themes.ts';
 
 const DEFAULT_URL = 'http://localhost:3000';
 
@@ -92,6 +93,17 @@ export function background(raw = process.env.SITE_BACKGROUND): Background {
     `[site] SITE_BACKGROUND "${value}" is not one of ${BACKGROUNDS.join(', ')}; using gradient.`,
   );
   return 'gradient';
+}
+
+/** Unset or unknown values give the sunset theme. */
+export function theme(raw = process.env.SITE_THEME): ThemeName {
+  const value = raw?.trim().toLowerCase() || 'sunset';
+  const match = THEME_NAMES.find((t) => t === value);
+  if (match) return match;
+  console.warn(
+    `[site] SITE_THEME "${value}" is not one of ${THEME_NAMES.join(', ')}; using sunset.`,
+  );
+  return 'sunset';
 }
 
 /** Bounded once, so the chrome and the icons agree. */

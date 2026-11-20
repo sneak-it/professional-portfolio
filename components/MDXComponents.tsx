@@ -145,8 +145,8 @@ function Figure({
   );
 }
 
-// Semantic colors rather than the brand accents: the palette is two warm
-// tones, so a coral "note" and a red "warning" would be indistinguishable.
+// Semantic colors rather than the brand accents: a theme's accents sit close in
+// hue, so a "note" and a "warning" drawn in them would be indistinguishable.
 const CALLOUTS = {
   note: {
     Icon: Info,
