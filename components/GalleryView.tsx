@@ -1,20 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import Image, { getImageProps } from 'next/image';
-import Lightbox from 'yet-another-react-lightbox';
-import Download from 'yet-another-react-lightbox/plugins/download';
-import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
-import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
-import 'yet-another-react-lightbox/styles.css';
-import 'yet-another-react-lightbox/plugins/thumbnails.css';
+import Image from 'next/image';
 import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import EmptyState from '@/components/EmptyState';
+import ImageLightbox from '@/components/ImageLightbox';
 import PageHeader from '@/components/PageHeader';
 import SectionNote from '@/components/SectionNote';
 import type { GalleryItem } from '@/lib/portfolio';
+import { toSlide } from '@/lib/lightbox';
 
 export default function GalleryView({
   gallery,
@@ -30,32 +25,7 @@ export default function GalleryView({
 }) {
   const [index, setIndex] = useState(-1);
 
-  // A sizes without vw lists every configured width; the lightbox picks per
-  // drawn size and zoom. Widths past the served copy are dropped.
-  const slides = gallery.images.map(({ src, alt, width, height }) => {
-    const { props } = getImageProps({ src, alt, width, height, sizes: '1px' });
-    return {
-      src: props.src,
-      alt,
-      width,
-      height,
-      download: { url: src, filename: src.slice(src.lastIndexOf('/') + 1) },
-      srcSet: props.srcSet
-        ?.split(', ')
-        .map((entry) => {
-          const space = entry.lastIndexOf(' ');
-          const slideWidth = parseInt(entry.slice(space + 1), 10);
-          return {
-            src: entry.slice(0, space),
-            width: slideWidth,
-            height: Math.round((slideWidth * height) / width),
-          };
-        })
-        .filter((s) => s.width <= width),
-    };
-  });
-  const multiple = slides.length > 1;
-  const noButton = multiple ? undefined : () => null;
+  const slides = gallery.images.map(toSlide);
 
   return (
     <Container>
@@ -100,28 +70,12 @@ export default function GalleryView({
         ))}
       </div>
 
-      <Lightbox
-        open={index >= 0}
+      <ImageLightbox
+        slides={slides}
         index={index}
         close={() => {
           setIndex(-1);
         }}
-        slides={slides}
-        plugins={
-          multiple
-            ? [Download, Fullscreen, Thumbnails, Zoom]
-            : [Download, Fullscreen, Zoom]
-        }
-        controller={{ closeOnBackdropClick: true, closeOnPullDown: true }}
-        carousel={{ imageProps: { referrerPolicy: 'no-referrer' } }}
-        render={{ buttonPrev: noButton, buttonNext: noButton }}
-        labels={{
-          Lightbox: 'Image viewer',
-          Close: 'Close image viewer',
-          Previous: 'Previous image',
-          Next: 'Next image',
-        }}
-        styles={{ root: { '--yarl__color_backdrop': 'rgb(0 0 0 / 0.9)' } }}
       />
       <SectionNote>{note}</SectionNote>
     </Container>
