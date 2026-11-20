@@ -6,13 +6,14 @@ import { catchError } from 'next/error';
 import { usePathname } from 'next/navigation';
 import { Pause, Play } from 'lucide-react';
 import { useMotionEnabled } from '@/hooks/use-motion-enabled';
+import type { Background } from '@/lib/site-env';
 
 /* Site-wide background, mounted once in app/layout.tsx, and the bundle-size
    gate for the WebGL gradient:
 
      - full + SITE_BACKGROUND=topographic → lazy OGL shader, after mount, so
        the chunk loads on desktop only, after first paint.
-     - otherwise → static CSS gradient, zero JS, same --accent-* tokens. */
+     - otherwise → static CSS background, zero JS, same --accent-* tokens. */
 
 const ShaderGradient = dynamic(() => import('./ShaderGradient'), {
   ssr: false,
@@ -53,43 +54,86 @@ function useHydrated() {
   );
 }
 
-/** Static, zero-JS gradient: the default, and the phone / reduced-motion fallback. */
-function StaticGradient() {
+// Accent glow on the right, in the shader's line colors.
+const GLOW =
+  'radial-gradient(70% 90% at 100% 18%, var(--accent-to-text), transparent 60%), radial-gradient(60% 80% at 92% 85%, var(--accent-via-text), transparent 60%), radial-gradient(55% 70% at 80% 50%, var(--accent-from-text), transparent 65%)';
+
+/** Zero-JS backgrounds; `topographic` here is its phone / reduced-motion gradient. */
+function StaticBackground({ background }: { background: Background }) {
+  if (background === 'solid') {
+    return (
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 z-[-1] pointer-events-none bg-background-deep"
+      />
+    );
+  }
+
   return (
     <div
       aria-hidden="true"
       className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-background-deep"
     >
-      {/* Soft accent tint on the calm side, matching the shader's ambient
-          wash: dark mode only. */}
-      <div
-        className="absolute inset-0 hidden opacity-[0.18] dark:block"
-        style={{
-          background:
-            'linear-gradient(110deg, var(--accent-from) 0%, var(--accent-via) 22%, transparent 50%)',
-        }}
-      />
-      {/* Gradient concentrated on the right, in the shader's line colors. */}
-      <div
-        className="absolute inset-0 opacity-30 dark:opacity-50"
-        style={{
-          background:
-            'radial-gradient(70% 90% at 100% 18%, var(--accent-to-text), transparent 60%), radial-gradient(60% 80% at 92% 85%, var(--accent-via-text), transparent 60%), radial-gradient(55% 70% at 80% 50%, var(--accent-from-text), transparent 65%)',
-        }}
-      />
-      {/* Vignette keeps text legible — matches the shader wrapper. */}
+      {background === 'dots' ? (
+        // The glow shows through a dot grid.
+        <div
+          className="absolute inset-0 opacity-70 dark:opacity-90"
+          style={{
+            background: GLOW,
+            mask: 'radial-gradient(circle, #000 0.06rem, transparent 0.09rem) 0 0 / 1.5rem 1.5rem',
+          }}
+        />
+      ) : (
+        <>
+          {/* Soft accent tint on the calm side, matching the shader's ambient
+              wash: dark mode only. */}
+          <div
+            className="absolute inset-0 hidden opacity-[0.18] dark:block"
+            style={{
+              background:
+                'linear-gradient(110deg, var(--accent-from) 0%, var(--accent-via) 22%, transparent 50%)',
+            }}
+          />
+          <div
+            className="absolute inset-0 opacity-30 dark:opacity-50"
+            style={{ background: GLOW }}
+          />
+        </>
+      )}
+      {/* Vignette keeps text legible, matching the shader wrapper. */}
       <div className="absolute inset-0 bg-gradient-to-t from-background-deep via-transparent to-background-deep opacity-80" />
+      {background === 'grain' && (
+        <svg className="absolute inset-0 h-full w-full opacity-[0.12] dark:opacity-[0.1]">
+          <filter id="bg-grain">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.8"
+              numOctaves="3"
+              stitchTiles="stitch"
+            />
+            {/* Gray from red, contrast stretched; turbulence alpha is noise
+                too, so force it opaque. */}
+            <feColorMatrix
+              type="matrix"
+              values="2.5 0 0 0 -0.75 2.5 0 0 0 -0.75 2.5 0 0 0 -0.75 0 0 0 0 1"
+            />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#bg-grain)" />
+        </svg>
+      )}
     </div>
   );
 }
 
 // Decoration must never take the page down with it.
-const StaticOnError = catchError(() => <StaticGradient />);
+const StaticOnError = catchError(() => (
+  <StaticBackground background="gradient" />
+));
 
 export default function BackgroundCanvas({
-  topographic,
+  background,
 }: {
-  topographic: boolean;
+  background: Background;
 }) {
   const { tier } = useMotionEnabled();
 
@@ -100,7 +144,9 @@ export default function BackgroundCanvas({
   const [paused, setPaused] = useState(readPaused);
   const calm = usePathname() !== '/';
 
-  if (!topographic || !hydrated || tier !== 'full') return <StaticGradient />;
+  if (background !== 'topographic' || !hydrated || tier !== 'full') {
+    return <StaticBackground background={background} />;
+  }
 
   return (
     <>

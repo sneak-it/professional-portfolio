@@ -74,17 +74,23 @@ export function licenseUrl(raw = process.env.SITE_PHOTO_LICENSE_URL): string {
   return '';
 }
 
-export type Background = 'gradient' | 'topographic';
+const BACKGROUNDS = [
+  'gradient',
+  'topographic',
+  'solid',
+  'dots',
+  'grain',
+] as const;
+export type Background = (typeof BACKGROUNDS)[number];
 
 /** Unset or unknown values give the still gradient. */
 export function background(raw = process.env.SITE_BACKGROUND): Background {
-  const value = raw?.trim().toLowerCase();
-  if (value === 'topographic') return 'topographic';
-  if (value && value !== 'gradient') {
-    console.warn(
-      `[site] SITE_BACKGROUND "${value}" is not "gradient" or "topographic"; using gradient.`,
-    );
-  }
+  const value = raw?.trim().toLowerCase() || 'gradient';
+  const match = BACKGROUNDS.find((b) => b === value);
+  if (match) return match;
+  console.warn(
+    `[site] SITE_BACKGROUND "${value}" is not one of ${BACKGROUNDS.join(', ')}; using gradient.`,
+  );
   return 'gradient';
 }
 

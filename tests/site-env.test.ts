@@ -111,6 +111,12 @@ void test('background accepts topographic, trimmed and case-insensitive', () => 
   assert.equal(background(' Topographic '), 'topographic');
 });
 
+void test('background accepts the still patterns', () => {
+  assert.equal(background('solid'), 'solid');
+  assert.equal(background(' DOTS '), 'dots');
+  assert.equal(background('grain'), 'grain');
+});
+
 void test('background falls back to the gradient for unknown values', (t) => {
   const warn = t.mock.method(console, 'warn', () => undefined);
   assert.equal(background('shader'), 'gradient');
