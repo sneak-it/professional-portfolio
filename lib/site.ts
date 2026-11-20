@@ -74,6 +74,8 @@ export function absoluteUrl(path: string): string {
   return `${siteConfig.url}${path}`;
 }
 
+export const REPO_URL = 'https://github.com/sneak-it/professional-portfolio';
+
 export const AVATAR_FALLBACK = '/media/images/avatar-placeholder.png';
 const missingAvatars = new Set<string>();
 

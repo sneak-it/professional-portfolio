@@ -8,7 +8,7 @@ import PageTransition from '@/components/PageTransition';
 import PostLightbox from '@/components/PostLightbox';
 import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
-import { BRAND_VERSION, siteConfig } from '@/lib/site';
+import { BRAND_VERSION, REPO_URL, siteConfig } from '@/lib/site';
 import { siteJsonLd } from '@/lib/jsonld';
 import { pageMetadata } from '@/lib/metadata';
 import { cspNonce } from '@/lib/nonce';
@@ -27,8 +27,7 @@ const share = pageMetadata({ description: siteConfig.description, path: '/' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  generator:
-    'professional-portfolio (https://github.com/sneak-it/professional-portfolio)',
+  generator: `professional-portfolio (${REPO_URL})`,
   title: {
     default: siteConfig.title,
     // Per-route titles inherit this template: "About | Professional Portfolio".
