@@ -3,10 +3,8 @@
 import Lightbox, { type SlideImage } from 'yet-another-react-lightbox';
 import Download from 'yet-another-react-lightbox/plugins/download';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
-import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
-import 'yet-another-react-lightbox/plugins/thumbnails.css';
 
 /** The site's lightbox, open while `index >= 0`. Build slides with `toSlide`. */
 export default function ImageLightbox({
@@ -18,8 +16,7 @@ export default function ImageLightbox({
   index: number;
   close: () => void;
 }) {
-  const multiple = slides.length > 1;
-  const noButton = multiple ? undefined : () => null;
+  const noButton = slides.length > 1 ? undefined : () => null;
 
   return (
     <Lightbox
@@ -27,11 +24,7 @@ export default function ImageLightbox({
       index={index}
       close={close}
       slides={slides}
-      plugins={
-        multiple
-          ? [Download, Fullscreen, Thumbnails, Zoom]
-          : [Download, Fullscreen, Zoom]
-      }
+      plugins={[Download, Fullscreen, Zoom]}
       controller={{ closeOnBackdropClick: true, closeOnPullDown: true }}
       carousel={{ imageProps: { referrerPolicy: 'no-referrer' } }}
       render={{ buttonPrev: noButton, buttonNext: noButton }}
