@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BackgroundCanvas from '@/components/BackgroundCanvas';
 import PageTransition from '@/components/PageTransition';
+import PostLightbox from '@/components/PostLightbox';
 import { ThemeProvider } from 'next-themes';
 import JsonLd from '@/components/JsonLd';
 import { BRAND_VERSION, siteConfig } from '@/lib/site';
@@ -97,6 +98,7 @@ export default async function RootLayout({
           <main id="main-content" className="flex-grow pt-20">
             <PageTransition>{children}</PageTransition>
           </main>
+          <PostLightbox />
           <Footer />
         </ThemeProvider>
       </body>

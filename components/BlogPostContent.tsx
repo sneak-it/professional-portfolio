@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowUp } from 'lucide-react';
 import Container from '@/components/Container';
 import CoverImage from '@/components/CoverImage';
+import LightboxTrigger from '@/components/LightboxTrigger';
 import Surface from '@/components/Surface';
 import BackButton from '@/components/BackButton';
 import ShareButton from '@/components/ShareButton';
@@ -10,12 +11,16 @@ import PostMeta from '@/components/PostMeta';
 import TagList from '@/components/TagList';
 import PostNav from '@/components/PostNav';
 import TableOfContents from '@/components/TableOfContents';
+import { localImageDimensions } from '@/lib/image';
 import { headings } from '@/lib/markdown';
 import { PROSE, PROSE_CODE } from '@/lib/prose';
 import { avatarSrc, siteConfig } from '@/lib/site';
 import type { BlogPost, BlogPostSummary } from '@/lib/mdx';
 
-export default function BlogPostContent({
+const HEADER_COVER =
+  'relative photo-edge aspect-video rounded-3xl overflow-hidden mb-10';
+
+export default async function BlogPostContent({
   post,
   prev,
   next,
@@ -27,6 +32,17 @@ export default function BlogPostContent({
   children: React.ReactNode;
 }) {
   const avatar = avatarSrc();
+  const coverDims = post.meta.image
+    ? await localImageDimensions(post.meta.image)
+    : null;
+  const cover = (
+    <CoverImage
+      src={post.meta.image}
+      alt=""
+      priority
+      sizes="(max-width: 896px) 100vw, 736px"
+    />
+  );
   const toc = headings(post.content);
   // Fewer than four sections is shorter than the list describing them.
   const showToc =
@@ -57,14 +73,18 @@ export default function BlogPostContent({
             </div>
           </div>
 
-          <div className="relative photo-edge aspect-video rounded-3xl overflow-hidden mb-10">
-            <CoverImage
+          {post.meta.image && coverDims ? (
+            <LightboxTrigger
               src={post.meta.image}
-              alt=""
-              priority
-              sizes="(max-width: 896px) 100vw, 736px"
-            />
-          </div>
+              alt={post.meta.title}
+              {...coverDims}
+              className={`${HEADER_COVER} block w-full`}
+            >
+              {cover}
+            </LightboxTrigger>
+          ) : (
+            <div className={HEADER_COVER}>{cover}</div>
+          )}
         </header>
 
         {showToc && (

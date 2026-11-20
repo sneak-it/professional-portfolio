@@ -1,8 +1,12 @@
 import Image from 'next/image';
 import { ExternalLink, GitFork } from 'lucide-react';
+import LightboxTrigger from '@/components/LightboxTrigger';
 import Surface from '@/components/Surface';
 import type { ProjectItem } from '@/lib/portfolio';
 import { localImageDimensions } from '@/lib/image';
+
+const COVER_BOX =
+  'enter-up lg:self-center relative photo-edge rounded-3xl overflow-hidden shadow-2xl';
 
 export default async function ProjectDetailClient({
   project,
@@ -15,6 +19,22 @@ export default async function ProjectDetailClient({
   const dims = project.coverImage
     ? await localImageDimensions(project.coverImage)
     : null;
+  const coverStyle = {
+    animationDelay: '200ms',
+    aspectRatio: dims ? `${dims.width} / ${dims.height}` : '1',
+  };
+  const cover = project.coverImage ? (
+    <Image
+      src={project.coverImage}
+      alt=""
+      fill
+      loading="eager"
+      fetchPriority="high"
+      sizes="(max-width: 64rem) 100vw, 29rem"
+      className="object-cover"
+      referrerPolicy="no-referrer"
+    />
+  ) : null;
 
   return (
     // Without a cover image, the title card spans both columns.
@@ -76,26 +96,22 @@ export default async function ProjectDetailClient({
         </Surface>
       </div>
 
-      {project.coverImage && (
-        <div
-          style={{
-            animationDelay: '200ms',
-            aspectRatio: dims ? `${dims.width} / ${dims.height}` : '1',
-          }}
-          className="enter-up lg:self-center relative photo-edge rounded-3xl overflow-hidden shadow-2xl"
-        >
-          <Image
+      {project.coverImage &&
+        (dims ? (
+          <LightboxTrigger
             src={project.coverImage}
-            alt=""
-            fill
-            loading="eager"
-            fetchPriority="high"
-            sizes="(max-width: 64rem) 100vw, 29rem"
-            className="object-cover"
-            referrerPolicy="no-referrer"
-          />
-        </div>
-      )}
+            alt={project.title}
+            {...dims}
+            style={coverStyle}
+            className={`${COVER_BOX} block w-full`}
+          >
+            {cover}
+          </LightboxTrigger>
+        ) : (
+          <div style={coverStyle} className={COVER_BOX}>
+            {cover}
+          </div>
+        ))}
     </div>
   );
 }

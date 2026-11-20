@@ -1,4 +1,10 @@
-import type { ComponentPropsWithoutRef, ReactElement } from 'react';
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  type ComponentPropsWithoutRef,
+  type ReactElement,
+} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { compileMDX } from 'next-mdx-remote/rsc';
@@ -12,6 +18,7 @@ import CoverCard from '@/components/CoverCard';
 import CoverImage from '@/components/CoverImage';
 import EmptyState from '@/components/EmptyState';
 import IconBadge from '@/components/IconBadge';
+import LightboxTrigger from '@/components/LightboxTrigger';
 import Mermaid from '@/components/Mermaid';
 import PostMeta from '@/components/PostMeta';
 import Stats, { Stat } from '@/components/Stats';
@@ -40,24 +47,33 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   // A blocked scheme renders as the link text alone.
   if (!isSafeHref(href)) return <>{children}</>;
 
+  // A linked image follows its link, so it is not also a lightbox button.
+  const linked = Children.map(children, (child) =>
+    isValidElement(child) && child.type === SafeImage
+      ? cloneElement(child as ReactElement<{ lightbox?: boolean }>, {
+          lightbox: false,
+        })
+      : child,
+  );
+
   // `rest` first: authored MDX attributes must not override the hardening below.
   if (isExternalHref(href)) {
     return (
       <a {...rest} href={href} rel="noopener noreferrer" target="_blank">
-        {children}
+        {linked}
       </a>
     );
   }
   if (href.startsWith('/')) {
     return (
       <Link {...rest} href={href} prefetch={false}>
-        {children}
+        {linked}
       </Link>
     );
   }
   return (
     <a {...rest} href={href}>
-      {children}
+      {linked}
     </a>
   );
 }
@@ -65,8 +81,9 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
 async function SafeImage({
   src,
   alt = '',
+  lightbox = true,
   ...rest
-}: ComponentPropsWithoutRef<'img'>) {
+}: ComponentPropsWithoutRef<'img'> & { lightbox?: boolean }) {
   // Off-origin sources render nothing, so a bad src is visible while
   // authoring. The CSP (`img-src 'self'`) blocks them in the browser too.
   if (!isLocalSrc(src)) return null;
@@ -75,7 +92,7 @@ async function SafeImage({
   // srcset from the optimizer; SVG and unmeasured files stay a plain <img>.
   const dims = await localImageDimensions(src);
   if (dims && !/\.svg$/i.test(src)) {
-    return (
+    const image = (
       <Image
         src={src}
         alt={alt}
@@ -86,6 +103,18 @@ async function SafeImage({
         className={rest.className}
         referrerPolicy="no-referrer"
       />
+    );
+    if (!lightbox) return image;
+    return (
+      // Prose zeroes a figure's own children; in <Figure> the image is one level down.
+      <LightboxTrigger
+        src={src}
+        alt={alt}
+        {...dims}
+        className="block [figure>&>img]:my-0"
+      >
+        {image}
+      </LightboxTrigger>
     );
   }
   // `dims` then `rest` so an explicit width/height in MDX still wins, then the

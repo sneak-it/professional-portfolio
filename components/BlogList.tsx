@@ -24,7 +24,7 @@ export default function BlogList({
   tags,
   activeTag,
 }: {
-  posts: (BlogPostSummary & { coverAspect?: number })[];
+  posts: Array<BlogPostSummary & { coverAspect?: number }>;
   currentPage: number;
   totalPages: number;
   tags: Tag[];

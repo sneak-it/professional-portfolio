@@ -1,15 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Container from '@/components/Container';
 import BackButton from '@/components/BackButton';
 import EmptyState from '@/components/EmptyState';
-import ImageLightbox from '@/components/ImageLightbox';
 import PageHeader from '@/components/PageHeader';
 import SectionNote from '@/components/SectionNote';
 import type { GalleryItem } from '@/lib/portfolio';
 import { toSlide } from '@/lib/lightbox';
+
+// Its own chunk: project pages share this route and would load it otherwise.
+const ImageLightbox = dynamic(() => import('@/components/ImageLightbox'), {
+  ssr: false,
+});
 
 export default function GalleryView({
   gallery,
