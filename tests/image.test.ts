@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
 import {
+  coverSizes,
   imageDimensions,
   isLocalSrc,
   mediaDir,
@@ -94,4 +95,28 @@ void test('imageDimensions reports the served size: turned, long edge capped', a
     width: 600,
     height: 400,
   });
+});
+
+void test('coverSizes widens each slot by how far the photo overflows its box', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cover-test-'));
+  process.env.MEDIA_DIR = dir;
+  const write = (name: string, width: number, height: number) =>
+    sharp({ create: { width, height, channels: 3, background: '#c33' } })
+      .jpeg()
+      .toFile(path.join(dir, name));
+  await write('wide.jpg', 1600, 900);
+  await write('tall.jpg', 900, 1600);
+  const sizes = '(max-width: 48rem) 100vw, 24rem';
+
+  // 16:9 in a 4:5 box: drawn at 2.23 box widths.
+  assert.equal(
+    await coverSizes('/media/wide.jpg', sizes, 4 / 5),
+    '(max-width: 48rem) calc(100vw * 2.23), calc(24rem * 2.23)',
+  );
+  // Narrower than the box: it fills the width, so the slot already fits.
+  assert.equal(await coverSizes('/media/tall.jpg', sizes, 1), sizes);
+  // Unmeasurable sources keep the box width.
+  assert.equal(await coverSizes('/media/missing.jpg', sizes, 1), sizes);
+  assert.equal(await coverSizes(null, sizes, 1), sizes);
+  delete process.env.MEDIA_DIR;
 });

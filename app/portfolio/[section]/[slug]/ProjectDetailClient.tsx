@@ -2,8 +2,9 @@ import Image from 'next/image';
 import { ExternalLink, GitFork } from 'lucide-react';
 import Surface from '@/components/Surface';
 import type { ProjectItem } from '@/lib/portfolio';
+import { coverSizes } from '@/lib/image';
 
-export default function ProjectDetailClient({
+export default async function ProjectDetailClient({
   project,
   sectionName,
 }: {
@@ -83,7 +84,12 @@ export default function ProjectDetailClient({
             fill
             loading="eager"
             fetchPriority="high"
-            sizes="(max-width: 64rem) 100vw, 27.5rem"
+            sizes={await coverSizes(
+              project.coverImage,
+              '(max-width: 64rem) 100vw, 29rem',
+              // Square below lg; at lg as tall as the text card, so 1 is an estimate.
+              1,
+            )}
             className="object-cover"
             referrerPolicy="no-referrer"
           />

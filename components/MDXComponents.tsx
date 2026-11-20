@@ -17,7 +17,7 @@ import PostMeta from '@/components/PostMeta';
 import Stats, { Stat } from '@/components/Stats';
 import Surface from '@/components/Surface';
 import Timeline, { Milestone } from '@/components/Timeline';
-import { imageDimensions, isLocalSrc, mediaFilePath } from '@/lib/image';
+import { isLocalSrc, localImageDimensions } from '@/lib/image';
 import { isExternalHref, isSafeHref } from '@/lib/href';
 import { remarkCardWrap } from '@/lib/cards';
 import { BLOCKED_TAGS, hardenRawHtml } from '@/lib/harden';
@@ -60,26 +60,6 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
       {children}
     </a>
   );
-}
-
-// Extensions `imageDimensions` can measure.
-const LOCAL_IMAGE_RE = /\.(jpe?g|png|webp|gif|svg)$/i;
-
-/**
- * Intrinsic width/height for a local (media/) image, read on the server to
- * reserve layout space. Null for an unreadable file or unmeasurable extension.
- */
-async function localImageDimensions(
-  src: string,
-): Promise<{ width: number; height: number } | null> {
-  if (!LOCAL_IMAGE_RE.test(src)) return null;
-  const file = mediaFilePath(src);
-  if (file === null) return null;
-  try {
-    return await imageDimensions(file);
-  } catch {
-    return null;
-  }
 }
 
 async function SafeImage({

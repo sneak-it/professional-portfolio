@@ -80,3 +80,44 @@ export async function imageDimensions(imagePath: string): Promise<Size> {
   dimensionCache.set(imagePath, { mtimeMs, ...size });
   return size;
 }
+
+// Extensions `imageDimensions` can measure.
+const LOCAL_IMAGE_RE = /\.(jpe?g|png|webp|gif|svg)$/i;
+
+/**
+ * Intrinsic width/height for a local (media/) image, read on the server to
+ * reserve layout space. Null for an unreadable file or unmeasurable extension.
+ */
+export async function localImageDimensions(
+  src: string,
+): Promise<{ width: number; height: number } | null> {
+  if (!LOCAL_IMAGE_RE.test(src)) return null;
+  const file = mediaFilePath(src);
+  if (file === null) return null;
+  try {
+    return await imageDimensions(file);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * `sizes` for an object-cover image. A photo wider than its box (width over
+ * height) is drawn wider than the box, so every slot grows by that factor.
+ */
+export async function coverSizes(
+  src: string | null | undefined,
+  sizes: string,
+  boxAspect: number,
+): Promise<string> {
+  const dims = src ? await localImageDimensions(src) : null;
+  if (!dims) return sizes;
+  const stretch = Math.ceil((dims.width / dims.height / boxAspect) * 100) / 100;
+  if (stretch <= 1) return sizes;
+  return sizes
+    .split(',')
+    .map((slot) =>
+      slot.trim().replace(/\S+$/, (len) => `calc(${len} * ${stretch})`),
+    )
+    .join(', ');
+}

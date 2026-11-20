@@ -1,13 +1,22 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import CoverImage from '@/components/CoverImage';
+import { coverSizes } from '@/lib/image';
+
+// Width over height of an `aspect-*` class; Infinity (never widened) if unknown.
+function boxAspect(aspect: string): number {
+  if (aspect === 'aspect-square') return 1;
+  if (aspect === 'aspect-video') return 16 / 9;
+  const m = /^aspect-\[?(\d+)\/(\d+)\]?$/.exec(aspect);
+  return m ? Number(m[1]) / Number(m[2]) : Infinity;
+}
 
 /**
  * Overlay cover card: full-bleed image under a darkening gradient, with a
  * bottom title block and optional description, meta row, and badge. Shared by
  * the portfolio hub and the photography grid.
  */
-export default function CoverCard({
+export default async function CoverCard({
   href,
   coverImage,
   title,
@@ -38,7 +47,7 @@ export default function CoverCard({
         src={coverImage}
         alt=""
         priority={priority}
-        sizes={sizes}
+        sizes={await coverSizes(coverImage, sizes, boxAspect(aspect))}
         className="transition-transform duration-700 group-hover:scale-105"
       />
       {badge && (
