@@ -57,7 +57,7 @@ export default async function ProjectDetailClient({
                 <a
                   href={project.link}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
                   className="pill-solid px-6 py-3"
                 >
                   {project.linkLabel} <ExternalLink size={18} />
@@ -67,7 +67,7 @@ export default async function ProjectDetailClient({
                 <a
                   href={project.github}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
                   className="pill-outline px-6 py-3"
                 >
                   Source Code <GitFork size={18} />

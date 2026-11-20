@@ -96,7 +96,7 @@ export default function AboutClient({
                 <a
                   href={linkedin}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
                   className="pill-solid px-6 py-3"
                 >
                   <LinkedInIcon size={18} /> View LinkedIn

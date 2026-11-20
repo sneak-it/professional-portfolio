@@ -70,7 +70,7 @@ export default async function SectionProjectList({
                       <a
                         href={project.link}
                         target="_blank"
-                        rel="noopener noreferrer"
+                        rel="noopener"
                         className="pointer-events-auto w-10 h-10 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform shadow-md"
                         aria-label={`${project.linkLabel}: ${project.title}`}
                       >
@@ -81,7 +81,7 @@ export default async function SectionProjectList({
                       <a
                         href={project.github}
                         target="_blank"
-                        rel="noopener noreferrer"
+                        rel="noopener"
                         className="pointer-events-auto w-10 h-10 bg-white rounded-full flex items-center justify-center text-black hover:scale-110 transition-transform shadow-md"
                         aria-label={`View ${project.title} source on GitHub`}
                       >

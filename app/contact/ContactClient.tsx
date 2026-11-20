@@ -61,7 +61,7 @@ export default function ContactClient({
               style={{ animationDelay: '200ms' }}
               href={linkedin}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener"
               className="enter-up group flex flex-col items-center p-8 card-surface transition-colors duration-300 hover:border-accent"
             >
               <IconBadge

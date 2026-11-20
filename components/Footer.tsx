@@ -32,7 +32,7 @@ export default function Footer() {
                 key={name}
                 href={href}
                 target="_blank"
-                rel={`${siteConfig.profileUrls.includes(href) ? 'me ' : ''}noopener noreferrer`}
+                rel={`${siteConfig.profileUrls.includes(href) ? 'me ' : ''}noopener`}
                 className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
               >
                 <span className="sr-only">{name}</span>
@@ -43,8 +43,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Mirrors the pause button's position (BackgroundCanvas.tsx). No noreferrer,
-          so GitHub's traffic page lists the sites that run this. */}
+      {/* Mirrors the pause button's position (BackgroundCanvas.tsx). */}
       <a
         href={REPO_URL}
         target="_blank"

@@ -68,7 +68,7 @@ function SafeLink({ href, children, ...rest }: ComponentPropsWithoutRef<'a'>) {
   // `rest` first: authored MDX attributes must not override the hardening below.
   if (isExternalHref(href)) {
     return (
-      <a {...rest} href={href} rel="noopener noreferrer" target="_blank">
+      <a {...rest} href={href} rel="noopener" target="_blank">
         {linked}
       </a>
     );
