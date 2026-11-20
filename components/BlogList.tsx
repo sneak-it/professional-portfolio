@@ -24,7 +24,7 @@ export default function BlogList({
   tags,
   activeTag,
 }: {
-  posts: BlogPostSummary[];
+  posts: (BlogPostSummary & { coverAspect?: number })[];
   currentPage: number;
   totalPages: number;
   tags: Tag[];
@@ -106,16 +106,25 @@ export default function BlogList({
           <article
             key={post.slug}
             style={{ animationDelay: `${index * 100}ms` }}
-            className="enter-up group relative flex flex-col md:flex-row gap-8 items-start card-surface p-6 hover:border-accent/50 transition-colors"
+            className="enter-up group relative flex flex-col md:flex-row gap-8 items-start md:items-center card-surface p-6 hover:border-accent/50 transition-colors"
           >
-            <div className="w-full md:w-2/5 aspect-video md:aspect-square lg:aspect-[4/3] relative photo-edge rounded-2xl overflow-hidden shrink-0">
-              <CoverImage
-                src={post.meta.image}
-                alt=""
-                priority={index === 0}
-                sizes="(max-width: 48rem) 100vw, 20rem"
-                className="transition-transform duration-700 group-hover:scale-105"
-              />
+            <div className="w-full md:w-2/5 shrink-0">
+              {/* The cover's own shape, at most as tall as the column is wide. */}
+              <div
+                className="mx-auto relative photo-edge rounded-2xl overflow-hidden"
+                style={{
+                  aspectRatio: post.coverAspect ?? 16 / 9,
+                  width: `${Math.min(1, post.coverAspect ?? 1) * 100}%`,
+                }}
+              >
+                <CoverImage
+                  src={post.meta.image}
+                  alt=""
+                  priority={index === 0}
+                  sizes="(max-width: 48rem) 100vw, 20rem"
+                  className="transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
             </div>
 
             <div className="flex flex-col flex-grow justify-center h-full py-2">

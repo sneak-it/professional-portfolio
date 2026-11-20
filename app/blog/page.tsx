@@ -10,6 +10,7 @@ import {
 } from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
 import { getBlogPage } from '@/lib/blog';
+import { localImageDimensions } from '@/lib/image';
 import { pageMetadata } from '@/lib/metadata';
 
 // Rendered per request: the bind-mounted content/ dir and the runtime site
@@ -106,10 +107,18 @@ export default async function Blog({
   if (missingTag || currentPage === null) notFound();
 
   const start = (currentPage - 1) * POSTS_PER_PAGE;
+  const listed = await Promise.all(
+    posts.slice(start, start + POSTS_PER_PAGE).map(async (post) => {
+      const dims = post.meta.image
+        ? await localImageDimensions(post.meta.image)
+        : null;
+      return dims ? { ...post, coverAspect: dims.width / dims.height } : post;
+    }),
+  );
 
   return (
     <BlogList
-      posts={posts.slice(start, start + POSTS_PER_PAGE)}
+      posts={listed}
       currentPage={currentPage}
       totalPages={totalPages}
       tags={tags}
