@@ -206,6 +206,11 @@ copy one, rename it, edit.
    A bare year (`date: '2019'`) is fine; the sitemap only uses dates given in full as
    `YYYY-MM-DD`.
 
+   A cover is cropped to fill its card. One that is transparent, much wider or taller
+   than its card, or under 640 px wide is shown whole instead: on a light panel if
+   transparent, otherwise over a blurred copy of itself. It is never drawn larger than
+   its own pixels, so for a logo, use an SVG: it stays sharp at any size.
+
 3. Write the body: features, the story of the work, and anything else, laid out as
    [cards](#cards).
 

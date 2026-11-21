@@ -1,9 +1,9 @@
-import Image from 'next/image';
 import { ExternalLink, GitFork } from 'lucide-react';
+import CoverImage from '@/components/CoverImage';
 import LightboxTrigger from '@/components/LightboxTrigger';
 import Surface from '@/components/Surface';
 import type { ProjectItem } from '@/lib/portfolio';
-import { localImageDimensions } from '@/lib/image';
+import { coverFit, localImageDimensions } from '@/lib/image';
 
 const COVER_BOX =
   'enter-up lg:self-center relative photo-edge rounded-3xl overflow-hidden shadow-2xl';
@@ -24,15 +24,12 @@ export default async function ProjectDetailClient({
     aspectRatio: dims ? `${dims.width} / ${dims.height}` : '1',
   };
   const cover = project.coverImage ? (
-    <Image
+    <CoverImage
       src={project.coverImage}
       alt=""
-      fill
-      loading="eager"
-      fetchPriority="high"
+      priority
       sizes="(max-width: 64rem) 100vw, 29rem"
-      className="object-cover"
-      referrerPolicy="no-referrer"
+      fit={await coverFit(project.coverImage)}
     />
   ) : null;
 

@@ -11,7 +11,7 @@ import PostMeta from '@/components/PostMeta';
 import TagList from '@/components/TagList';
 import PostNav from '@/components/PostNav';
 import TableOfContents from '@/components/TableOfContents';
-import { localImageDimensions } from '@/lib/image';
+import { coverFit, localImageDimensions } from '@/lib/image';
 import { headings } from '@/lib/markdown';
 import { PROSE, PROSE_CODE } from '@/lib/prose';
 import { avatarSrc, siteConfig } from '@/lib/site';
@@ -41,6 +41,7 @@ export default async function BlogPostContent({
       alt=""
       priority
       sizes="(max-width: 896px) 100vw, 736px"
+      fit={await coverFit(post.meta.image, 16 / 9)}
     />
   );
   const toc = headings(post.content);

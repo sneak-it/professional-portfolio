@@ -93,6 +93,9 @@ Photos appear in filename order, read the way people count: `IMG_2` comes before
 `IMG_10`. The default cover is the first of them. To pick a different cover, set
 `coverImage`; to change the order, rename the files.
 
+A cover more than twice as wide as it is tall, or the reverse, is shown whole over a
+blurred copy of itself instead of cropped, and so is one under 640 px wide.
+
 ## What happens to your photograph
 
 Nothing under `media/` is served as a file. Every request goes through

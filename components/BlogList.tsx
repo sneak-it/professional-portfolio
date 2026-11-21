@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import CoverImage from '@/components/CoverImage';
+import type { CoverFit } from '@/lib/image';
 import {
   ArrowRight,
   ChevronDown,
@@ -24,7 +25,9 @@ export default function BlogList({
   tags,
   activeTag,
 }: {
-  posts: Array<BlogPostSummary & { coverAspect?: number }>;
+  posts: Array<
+    BlogPostSummary & { coverAspect?: number; coverFit?: CoverFit | null }
+  >;
   currentPage: number;
   totalPages: number;
   tags: Tag[];
@@ -122,6 +125,7 @@ export default function BlogList({
                   alt=""
                   priority={index === 0}
                   sizes="(max-width: 48rem) 100vw, 20rem"
+                  fit={post.coverFit}
                   className="transition-transform duration-700 group-hover:scale-105"
                 />
               </div>

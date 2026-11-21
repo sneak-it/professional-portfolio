@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
-import { MAX_EDGE } from './media.ts';
+import { MAX_EDGE, isOpaque } from './media.ts';
 
 /**
  * Server-only: same-origin src validation, `media/` containment, and a
@@ -42,26 +42,34 @@ export function mediaFilePath(
   return full === dir || full.startsWith(dir + path.sep) ? full : null;
 }
 
-const dimensionCache = new Map<
-  string,
-  { mtimeMs: number; width: number; height: number }
->();
-// About 0.4 MB when full.
-const DIMENSION_CACHE_MAX = 2000;
-
 interface Size {
   width: number;
   height: number;
 }
 
+interface Measured extends Size {
+  mtimeMs: number;
+  alpha: boolean;
+  // Set by coverFit on first use.
+  opaque?: boolean;
+}
+
+const dimensionCache = new Map<string, Measured>();
+// About 0.4 MB when full.
+const DIMENSION_CACHE_MAX = 2000;
+
 export async function imageDimensions(imagePath: string): Promise<Size> {
+  const { width, height } = await measure(imagePath);
+  return { width, height };
+}
+
+async function measure(imagePath: string): Promise<Measured> {
   const { mtimeMs } = await fs.promises.stat(imagePath);
   const cached = dimensionCache.get(imagePath);
-  if (cached && cached.mtimeMs === mtimeMs) {
-    return { width: cached.width, height: cached.height };
-  }
+  if (cached && cached.mtimeMs === mtimeMs) return cached;
 
-  const { width, height, orientation } = await sharp(imagePath).metadata();
+  const { width, height, orientation, hasAlpha } =
+    await sharp(imagePath).metadata();
   if (!width || !height) throw new Error(`no dimensions in ${imagePath}`);
 
   // Served pixels: quarter-turns (orientations 5-8) applied, long edge capped at
@@ -69,7 +77,12 @@ export async function imageDimensions(imagePath: string): Promise<Size> {
   const [w, h] =
     orientation && orientation >= 5 ? [height, width] : [width, height];
   const scale = Math.min(1, MAX_EDGE / Math.max(w, h));
-  const size = { width: Math.round(w * scale), height: Math.round(h * scale) };
+  const entry: Measured = {
+    mtimeMs,
+    width: Math.round(w * scale),
+    height: Math.round(h * scale),
+    alpha: hasAlpha,
+  };
 
   // Insertion-ordered eviction: a long-lived container serving a bind-mounted,
   // editable tree would otherwise grow this Map for every path ever requested.
@@ -77,8 +90,8 @@ export async function imageDimensions(imagePath: string): Promise<Size> {
     const oldest = dimensionCache.keys().next().value;
     if (oldest !== undefined) dimensionCache.delete(oldest);
   }
-  dimensionCache.set(imagePath, { mtimeMs, ...size });
-  return size;
+  dimensionCache.set(imagePath, entry);
+  return entry;
 }
 
 // Extensions `imageDimensions` can measure.
@@ -120,4 +133,47 @@ export async function coverSizes(
       slot.trim().replace(/\S+$/, (len) => `calc(${len} * ${stretch})`),
     )
     .join(', ');
+}
+
+/** How a cover sits in its box when it doesn't fill it; px caps are absent for SVG. */
+export interface CoverFit {
+  backdrop: 'blur' | 'panel';
+  maxWidth?: number;
+  maxHeight?: number;
+}
+
+// Next's smallest device width: narrower covers are enlarged in a phone-wide box.
+const MIN_FILL_WIDTH = 640;
+
+/**
+ * Null fills the box, cropped. Otherwise the cover is drawn whole on a backdrop:
+ * a panel behind transparency, else a blurred copy of itself.
+ * @param box Box width over height; omit when the box takes the cover's shape.
+ * @param maxCrop Largest share of the cover a fill may crop away.
+ */
+export async function coverFit(
+  src: string | null | undefined,
+  box?: number,
+  maxCrop = 0.25,
+): Promise<CoverFit | null> {
+  if (!src || !LOCAL_IMAGE_RE.test(src)) return null;
+  const file = mediaFilePath(src);
+  if (file === null) return null;
+  let m: Measured;
+  try {
+    m = await measure(file);
+    m.opaque ??= m.alpha ? await isOpaque(file) : true;
+  } catch {
+    return null;
+  }
+
+  const svg = /\.svg$/i.test(src);
+  const cap = svg ? {} : { maxWidth: m.width, maxHeight: m.height };
+  if (!m.opaque) return { backdrop: 'panel', ...cap };
+  const r = box && Number.isFinite(box) ? m.width / m.height / box : 1;
+  const crop = 1 - Math.min(r, 1 / r);
+  if (crop > maxCrop || (!svg && m.width < MIN_FILL_WIDTH)) {
+    return { backdrop: 'blur', ...cap };
+  }
+  return null;
 }

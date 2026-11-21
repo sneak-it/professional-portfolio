@@ -8,7 +8,7 @@ import PageHeader from '@/components/PageHeader';
 import SectionNote from '@/components/SectionNote';
 import { GitHubIcon } from '@/components/icons/BrandIcons';
 import type { ProjectSummary } from '@/lib/portfolio';
-import { coverSizes } from '@/lib/image';
+import { coverFit, coverSizes } from '@/lib/image';
 
 const SIZES =
   '(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, (max-width: 80rem) 33vw, 24rem';
@@ -26,8 +26,12 @@ export default async function SectionProjectList({
   projects: ProjectSummary[];
   note?: React.ReactNode;
 }) {
-  const sizes = await Promise.all(
-    projects.map((p) => coverSizes(p.coverImage, SIZES, 4 / 3)),
+  const covers = await Promise.all(
+    projects.map(async (p) => {
+      const fit = await coverFit(p.coverImage, 4 / 3);
+      const sizes = fit ? SIZES : await coverSizes(p.coverImage, SIZES, 4 / 3);
+      return { fit, sizes };
+    }),
   );
   return (
     <Container>
@@ -59,7 +63,8 @@ export default async function SectionProjectList({
                     src={project.coverImage}
                     alt=""
                     priority={index === 0}
-                    sizes={sizes[index] ?? SIZES}
+                    sizes={covers[index]?.sizes ?? SIZES}
+                    fit={covers[index]?.fit}
                     className="transition-transform duration-700 group-hover:scale-105"
                   />
                 </Link>

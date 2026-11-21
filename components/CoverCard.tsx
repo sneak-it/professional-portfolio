@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import CoverImage from '@/components/CoverImage';
-import { coverSizes } from '@/lib/image';
+import { coverFit, coverSizes } from '@/lib/image';
 
 // Width over height of an `aspect-*` class; Infinity (never widened) if unknown.
 function boxAspect(aspect: string): number {
@@ -37,6 +37,9 @@ export default async function CoverCard({
   meta?: ReactNode;
   badge?: ReactNode;
 }) {
+  const box = boxAspect(aspect);
+  // Photo-led: a photo survives a deeper crop than a screenshot.
+  const fit = await coverFit(coverImage, box, 0.5);
   return (
     <Link
       prefetch={false}
@@ -47,7 +50,8 @@ export default async function CoverCard({
         src={coverImage}
         alt=""
         priority={priority}
-        sizes={await coverSizes(coverImage, sizes, boxAspect(aspect))}
+        sizes={fit ? sizes : await coverSizes(coverImage, sizes, box)}
+        fit={fit}
         className="transition-transform duration-700 group-hover:scale-105"
       />
       {badge && (

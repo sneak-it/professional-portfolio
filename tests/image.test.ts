@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
 import {
+  coverFit,
   coverSizes,
   imageDimensions,
   isLocalSrc,
@@ -118,5 +119,88 @@ void test('coverSizes widens each slot by how far the photo overflows its box', 
   // Unmeasurable sources keep the box width.
   assert.equal(await coverSizes('/media/missing.jpg', sizes, 1), sizes);
   assert.equal(await coverSizes(null, sizes, 1), sizes);
+  delete process.env.MEDIA_DIR;
+});
+
+void test('coverFit fills ordinary covers and fits the rest', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'fit-test-'));
+  process.env.MEDIA_DIR = dir;
+  const write = (name: string, width: number, height: number, alpha = 1) =>
+    sharp({
+      create: {
+        width,
+        height,
+        channels: 4,
+        background: { r: 200, g: 50, b: 50, alpha },
+      },
+    }).toFile(path.join(dir, name));
+  await write('photo.jpg', 1600, 1200);
+  await write('wide.jpg', 1600, 900);
+  await write('screenshot.png', 1000, 1030);
+  await write('logo.png', 1000, 153, 0);
+  await write('small.jpg', 170, 128);
+  await sharp({
+    create: { width: 2000, height: 1500, channels: 4, background: '#c33' },
+  })
+    .composite([
+      {
+        input: {
+          create: {
+            width: 2000,
+            height: 100,
+            channels: 4,
+            background: '#000',
+          },
+        },
+        top: 0,
+        left: 0,
+        blend: 'dest-out',
+      },
+    ])
+    .png()
+    .toFile(path.join(dir, 'strip.png'));
+  fs.writeFileSync(
+    path.join(dir, 'logo.svg'),
+    '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="30" viewBox="0 0 100 30"><rect x="10" y="5" width="80" height="20" fill="#333"/></svg>',
+  );
+
+  assert.equal(await coverFit('/media/photo.jpg', 4 / 3), null);
+  assert.equal(await coverFit('/media/photo.jpg'), null);
+  // 16:9 in 4:3 crops exactly a quarter.
+  assert.equal(await coverFit('/media/wide.jpg', 4 / 3), null);
+  // screenshot: an alpha channel with nothing transparent in it.
+  assert.deepEqual(await coverFit('/media/screenshot.png', 4 / 3), {
+    backdrop: 'blur',
+    maxWidth: 1000,
+    maxHeight: 1030,
+  });
+  assert.equal(await coverFit('/media/screenshot.png', 4 / 3, 0.5), null);
+  // unknown box
+  assert.equal(await coverFit('/media/screenshot.png', Infinity), null);
+  assert.deepEqual(await coverFit('/media/logo.png', 4 / 3), {
+    backdrop: 'panel',
+    maxWidth: 1000,
+    maxHeight: 153,
+  });
+  // strip: survives the downscale before the check.
+  assert.equal((await coverFit('/media/strip.png', 4 / 3))?.backdrop, 'panel');
+  const small = { backdrop: 'blur', maxWidth: 170, maxHeight: 128 };
+  assert.deepEqual(await coverFit('/media/small.jpg', 4 / 3), small);
+  assert.deepEqual(await coverFit('/media/small.jpg'), small);
+  // svg: no pixel cap on a vector.
+  assert.deepEqual(await coverFit('/media/logo.svg', 4 / 3), {
+    backdrop: 'panel',
+  });
+
+  // replaced: same name, new mtime, opaque now.
+  const logo = path.join(dir, 'logo.png');
+  await write('logo.png', 1600, 1200);
+  const later = new Date(Date.now() + 60_000);
+  fs.utimesSync(logo, later, later);
+  assert.equal(await coverFit('/media/logo.png', 4 / 3), null);
+
+  assert.equal(await coverFit('/media/missing.png', 4 / 3), null);
+  assert.equal(await coverFit(null, 4 / 3), null);
+  assert.equal(await coverFit('https://example.com/a.png', 4 / 3), null);
   delete process.env.MEDIA_DIR;
 });

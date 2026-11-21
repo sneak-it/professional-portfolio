@@ -10,7 +10,7 @@ import {
 } from '@/lib/mdx';
 import BlogList from '@/components/BlogList';
 import { getBlogPage } from '@/lib/blog';
-import { localImageDimensions } from '@/lib/image';
+import { coverFit, localImageDimensions } from '@/lib/image';
 import { pageMetadata } from '@/lib/metadata';
 
 // Rendered per request: the bind-mounted content/ dir and the runtime site
@@ -112,7 +112,12 @@ export default async function Blog({
       const dims = post.meta.image
         ? await localImageDimensions(post.meta.image)
         : null;
-      return dims ? { ...post, coverAspect: dims.width / dims.height } : post;
+      if (!dims) return post;
+      return {
+        ...post,
+        coverAspect: dims.width / dims.height,
+        coverFit: await coverFit(post.meta.image),
+      };
     }),
   );
 
