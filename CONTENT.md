@@ -140,10 +140,18 @@ field, Markdown feature, and component on one page, including the ones that deli
 do not render.
 
 Components available in the body: `<Callout type="note|tip|warn" title="…">`,
-`<Figure src alt caption />`, plus `Container`, `Surface`, `CoverCard`, `CoverImage`,
-`IconBadge`, `EmptyState`, `PostMeta`. Raw HTML is not a feature: `<script>`, `<iframe>`,
-`<input>` and friends are stripped, images must be same-origin, links are limited to
-http/https/mailto.
+`<Figure src alt caption />`, `<FigureRow>`, plus `Container`, `Surface`, `CoverCard`,
+`CoverImage`, `IconBadge`, `EmptyState`, `PostMeta`. Raw HTML is not a feature:
+`<script>`, `<iframe>`, `<input>` and friends are stripped, images must be same-origin,
+links are limited to http/https/mailto.
+
+Wrap two or more `<Figure>`s in `<FigureRow>` to show them side by side, in one row of
+equal columns. Add `cols="2"`, `cols="3"`, or `cols="4"` to wrap them into rows of that
+many instead. Three columns show as two until the row is 42rem wide, and four until
+48rem, which is wider than a blog post, so posts show four as two. Any other `cols` value
+is ignored. Figures stack where the row is narrower than 36rem: on phones, and in a
+card that shares its row with another card. Use `<Figure>` inside it, not `![]()`, and
+images of the same shape so the captions line up.
 
 Charts and diagrams render on the server and follow the theme toggle: `<Stats>` with
 `<Stat value label note />` tiles, `<BarChart title note orientation hideTable>` with
@@ -243,8 +251,8 @@ A longer description, with **bold**, [links](https://example.com), and images.
 - Text outside any card gets a full-width card of its own, so a body with no cards
   shows as one card.
 - Anything that works in a blog post works in a card: images, `<Figure>`,
-  `<Callout>`, code blocks, tables, `###` headings. Footnotes are the exception:
-  their list renders below the cards, outside any card.
+  `<FigureRow>`, `<Callout>`, code blocks, tables, `###` headings. Footnotes are the
+  exception: their list renders below the cards, outside any card.
 - `{` and `<` are MDX syntax. Write `\{` and `\<` when you mean the characters.
 
 `content/portfolio/open-source/example-project.mdx` uses all of the above.

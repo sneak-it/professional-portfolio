@@ -85,6 +85,23 @@ Without `caption` it is just a block-level image with figure spacing:
 
 <Figure src="/media/images/blog/cover-demo.png" alt="The cover image, inline" />
 
+`FigureRow` puts figures side by side, and stacks them where it is narrower
+than 36rem:
+
+<FigureRow>
+<Figure src="/media/images/blog/cover-demo.png" alt="The cover image, left" caption="One figure" />
+<Figure src="/media/images/blog/cover-demo.png" alt="The cover image, right" caption="And another of the same shape" />
+</FigureRow>
+
+`cols` sets how many figures go in each row, here two rows of two:
+
+<FigureRow cols="2">
+<Figure src="/media/images/blog/cover-demo.png" alt="The cover image, first" caption="First" />
+<Figure src="/media/images/blog/cover-demo.png" alt="The cover image, second" caption="Second" />
+<Figure src="/media/images/blog/cover-demo.png" alt="The cover image, third" caption="Third" />
+<Figure src="/media/images/blog/cover-demo.png" alt="The cover image, fourth" caption="Fourth" />
+</FigureRow>
+
 Images must be same-origin, under `media/`. An off-site `src` renders nothing
 at all rather than leaking a request:
 

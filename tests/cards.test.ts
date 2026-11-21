@@ -17,6 +17,10 @@ async function render(source: string) {
         createElement('section', { 'data-title': title }, children),
       CardRow: ({ children }: { children?: ReactNode }) =>
         createElement('div', { 'data-row': '' }, children),
+      FigureRow: ({ children }: { children?: ReactNode }) =>
+        createElement('div', { 'data-figures': '' }, children),
+      Figure: ({ src }: { src?: string }) =>
+        createElement('figure', { 'data-src': src }),
     },
     options: {
       mdxOptions: {
@@ -100,4 +104,19 @@ void test('blocked tags in loose content are still dropped', async () => {
 
 void test('an empty body renders nothing', async () => {
   assert.equal(await render(''), '');
+});
+
+void test('figure rows keep figures as direct children, inside a card', async () => {
+  const expected =
+    '<section><div data-figures=""><figure data-src="/a.png"></figure><figure data-src="/b.png"></figure></div></section>';
+  const a = '<Figure src="/a.png" alt="A" />';
+  const b = '<Figure src="/b.png" alt="B" />';
+  assert.equal(
+    await render(`<FigureRow>\n${a}\n${b}\n</FigureRow>\n`),
+    expected,
+  );
+  assert.equal(
+    await render(`<FigureRow>\n\n${a}\n\n${b}\n\n</FigureRow>\n`),
+    expected,
+  );
 });

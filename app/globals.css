@@ -275,6 +275,7 @@
       pre,
       table,
       figure,
+      .figure-row,
       .not-prose,
       :has(> pre),
       :has(> table),

@@ -163,6 +163,30 @@ function Figure({
   );
 }
 
+// Stacked below 36rem; `cols` 3 shows two columns until 42rem, 4 until 48rem.
+const FIGURE_COLUMNS: Record<number, string> = {
+  2: '@xl:grid-cols-2',
+  3: '@xl:grid-cols-2 @2xl:grid-cols-3',
+  4: '@xl:grid-cols-2 @3xl:grid-cols-4',
+};
+
+/** `<FigureRow cols="2">`: figures side by side, in rows of `cols`; without it, all in one row. */
+function FigureRow({
+  cols,
+  children,
+}: {
+  cols?: string;
+  children?: ReactNode;
+}) {
+  const columns =
+    FIGURE_COLUMNS[Number(cols)] ?? '@xl:grid-flow-col @xl:auto-cols-fr';
+  return (
+    <div className="figure-row @container my-8">
+      <div className={`grid gap-8 ${columns} [&>figure]:my-0`}>{children}</div>
+    </div>
+  );
+}
+
 // Semantic colors rather than the brand accents: a theme's accents sit close in
 // hue, so a "note" and a "warning" drawn in them would be indistinguishable.
 const CALLOUTS = {
@@ -283,13 +307,14 @@ export const mdxComponents = {
   MdxRawLink: SafeLink,
   MdxRawImage: SafeImage,
   Figure,
+  FigureRow,
   Callout,
   h2: heading('h2'),
   h3: heading('h3'),
-  // The one client piece in a post body: its copy button.
+  // One client piece in a post body, the copy button
   pre: CodeBlock,
   table: ScrollTable,
-  // Server components only: a client one would ship JS per post for no gain.
+  // Server components only
   Container,
   CoverCard,
   CoverImage,
